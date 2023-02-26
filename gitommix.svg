@@ -8,15 +8,446 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
-   sodipodi:docname="gitannex.svg"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
+   sodipodi:docname="gitommix.svg"
    id="svg8"
    version="1.1"
    viewBox="0 0 210 297"
    height="297mm"
-   width="210mm">
+   width="210mm"
+   inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+   inkscape:export-xdpi="90.039284"
+   inkscape:export-ydpi="90.039284">
   <defs
      id="defs2">
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker11138"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#808080;stroke-width:1pt;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path11136" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker11128"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#808080;stroke-width:1pt;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path11126" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker10314"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#808080;stroke-width:1pt;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path10312" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker10304"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#808080;stroke-width:1pt;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path10302" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker9518"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#808080;stroke-width:1pt;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path9516" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Sstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker8768"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path8766"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#808080;stroke-width:1pt;stroke-opacity:1;fill:#808080;fill-opacity:1"
+         transform="scale(0.2) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker7472"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path7470" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker6746"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path6744" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker6034"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path6032" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker5324"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path5322" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker4610"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path4608" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible;"
+       id="marker2781"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lend">
+      <path
+         transform="scale(0.8) rotate(180) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt;stroke-opacity:1;fill:#ff0000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path2779" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker2771"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="StopL">
+      <path
+         transform="scale(0.8)"
+         style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0.0,5.65 L 0.0,-5.65"
+         id="path2769" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Sstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker2761"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path2759"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.2) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Sstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker2751"
+       style="overflow:visible"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path2749"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.2) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker2741"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path2739" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker2731"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path2729" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker2721"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path2719" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker2711"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path2709" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker2701"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path2699" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker2691"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path2689" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker2681"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path2679" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker2671"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path2669" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker2661"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path2659" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker2651"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path2649" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker2641"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Sstart">
+      <path
+         transform="scale(0.2) translate(6,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path2639" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Sstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker2631"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path2629"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.2) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Sstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker2621"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path2619"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.2) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible;"
+       id="marker1609"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lend">
+      <path
+         transform="scale(0.8) rotate(180) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt;stroke-opacity:1;fill:#ff0000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path1607" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker1599"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="StopL">
+      <path
+         transform="scale(0.8)"
+         style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0.0,5.65 L 0.0,-5.65"
+         id="path1597" />
+    </marker>
     <marker
        inkscape:isstock="true"
        style="overflow:visible;"
@@ -68,7 +499,8 @@
        refX="0.0"
        id="marker3719"
        style="overflow:visible"
-       inkscape:isstock="true">
+       inkscape:isstock="true"
+       inkscape:collect="always">
       <path
          id="path3717"
          d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
@@ -82,7 +514,8 @@
        refX="0.0"
        id="marker3709"
        style="overflow:visible"
-       inkscape:isstock="true">
+       inkscape:isstock="true"
+       inkscape:collect="always">
       <path
          id="path3707"
          d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
@@ -96,7 +529,8 @@
        refX="0.0"
        refY="0.0"
        orient="auto"
-       inkscape:stockid="Arrow1Sstart">
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
       <path
          transform="scale(0.2) translate(6,0)"
          style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
@@ -110,7 +544,8 @@
        refX="0.0"
        refY="0.0"
        orient="auto"
-       inkscape:stockid="Arrow1Sstart">
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
       <path
          transform="scale(0.2) translate(6,0)"
          style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
@@ -124,7 +559,8 @@
        refX="0.0"
        refY="0.0"
        orient="auto"
-       inkscape:stockid="Arrow1Sstart">
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
       <path
          transform="scale(0.2) translate(6,0)"
          style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
@@ -160,14 +596,14 @@
          id="path2055" />
     </marker>
     <marker
-       inkscape:collect="always"
        inkscape:isstock="true"
        style="overflow:visible"
        id="marker2047"
        refX="0.0"
        refY="0.0"
        orient="auto"
-       inkscape:stockid="Arrow1Sstart">
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
       <path
          transform="scale(0.2) translate(6,0)"
          style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
@@ -175,14 +611,14 @@
          id="path2045" />
     </marker>
     <marker
-       inkscape:collect="always"
        inkscape:isstock="true"
        style="overflow:visible"
        id="marker2037"
        refX="0.0"
        refY="0.0"
        orient="auto"
-       inkscape:stockid="Arrow1Sstart">
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
       <path
          transform="scale(0.2) translate(6,0)"
          style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
@@ -196,7 +632,8 @@
        refX="0.0"
        refY="0.0"
        orient="auto"
-       inkscape:stockid="Arrow1Sstart">
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
       <path
          transform="scale(0.2) translate(6,0)"
          style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
@@ -210,7 +647,8 @@
        refX="0.0"
        refY="0.0"
        orient="auto"
-       inkscape:stockid="Arrow1Sstart">
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
       <path
          transform="scale(0.2) translate(6,0)"
          style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
@@ -224,7 +662,8 @@
        refX="0.0"
        refY="0.0"
        orient="auto"
-       inkscape:stockid="Arrow1Sstart">
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
       <path
          transform="scale(0.2) translate(6,0)"
          style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
@@ -238,7 +677,8 @@
        refX="0.0"
        refY="0.0"
        orient="auto"
-       inkscape:stockid="Arrow1Sstart">
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
       <path
          transform="scale(0.2) translate(6,0)"
          style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
@@ -252,7 +692,8 @@
        refX="0.0"
        refY="0.0"
        orient="auto"
-       inkscape:stockid="Arrow1Sstart">
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
       <path
          transform="scale(0.2) translate(6,0)"
          style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
@@ -882,7 +1323,8 @@
        refX="0.0"
        refY="0.0"
        orient="auto"
-       inkscape:stockid="Arrow1Sstart">
+       inkscape:stockid="Arrow1Sstart"
+       inkscape:collect="always">
       <path
          transform="scale(0.2) translate(6,0)"
          style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
@@ -890,14 +1332,14 @@
          id="path4695" />
     </marker>
     <marker
-       inkscape:collect="always"
        inkscape:stockid="Arrow1Sstart"
        orient="auto"
        refY="0.0"
        refX="0.0"
        id="marker4439"
        style="overflow:visible"
-       inkscape:isstock="true">
+       inkscape:isstock="true"
+       inkscape:collect="always">
       <path
          id="path4437"
          d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
@@ -911,7 +1353,8 @@
        refX="0.0"
        id="marker4419"
        style="overflow:visible"
-       inkscape:isstock="true">
+       inkscape:isstock="true"
+       inkscape:collect="always">
       <path
          id="path4417"
          d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
@@ -919,14 +1362,14 @@
          transform="scale(0.2) translate(6,0)" />
     </marker>
     <marker
-       inkscape:collect="always"
        inkscape:isstock="true"
        style="overflow:visible"
        id="StopL"
        refX="0.0"
        refY="0.0"
        orient="auto"
-       inkscape:stockid="StopL">
+       inkscape:stockid="StopL"
+       inkscape:collect="always">
       <path
          transform="scale(0.8)"
          style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt;stroke-opacity:1"
@@ -934,14 +1377,14 @@
          id="path1006" />
     </marker>
     <marker
-       inkscape:collect="always"
        inkscape:isstock="true"
        style="overflow:visible;"
        id="Arrow1Lend"
        refX="0.0"
        refY="0.0"
        orient="auto"
-       inkscape:stockid="Arrow1Lend">
+       inkscape:stockid="Arrow1Lend"
+       inkscape:collect="always">
       <path
          transform="scale(0.8) rotate(180) translate(12.5,0)"
          style="fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt;stroke-opacity:1;fill:#ff0000;fill-opacity:1"
@@ -959,7 +1402,7 @@
      inkscape:snap-smooth-nodes="true"
      inkscape:guide-bbox="true"
      showguides="true"
-     inkscape:window-maximized="1"
+     inkscape:window-maximized="0"
      inkscape:window-y="40"
      inkscape:window-x="10"
      inkscape:window-height="1550"
@@ -971,10 +1414,10 @@
      inkscape:object-nodes="true"
      showgrid="false"
      inkscape:document-rotation="0"
-     inkscape:current-layer="layer9"
+     inkscape:current-layer="layer3"
      inkscape:document-units="mm"
-     inkscape:cy="532.1501"
-     inkscape:cx="592.89745"
+     inkscape:cy="546.72776"
+     inkscape:cx="1351.5466"
      inkscape:zoom="1.0192758"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
@@ -997,11 +1440,11 @@
     </rdf:RDF>
   </metadata>
   <g
-     sodipodi:insensitive="true"
      inkscape:groupmode="layer"
      id="layer8"
      inkscape:label="distribution"
-     style="display:inline">
+     style="display:none"
+     sodipodi:insensitive="true">
     <path
        inkscape:connector-curvature="0"
        inkscape:connector-type="polyline"
@@ -1251,9 +1694,658 @@
   </g>
   <g
      inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="example"
+     style="display:inline">
+    <path
+       sodipodi:nodetypes="cccc"
+       id="path8762"
+       d="m 405.68134,192.78769 v 15.85142 m 0,3.86495 v 10.85344"
+       style="display:inline;opacity:1;fill:none;fill-rule:evenodd;stroke:#808080;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1.2, 0.6;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker8768)"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       r="2.4396048"
+       cy="190.10362"
+       cx="405.68134"
+       id="circle8764"
+       style="display:inline;opacity:1;fill:#8080ff;fill-opacity:1;stroke:#808080;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:1.2, 0.6;stroke-dashoffset:0;stroke-opacity:1"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       sodipodi:nodetypes="cccccc"
+       id="path9512"
+       d="m 435.78207,192.78769 v 15.85142 m 0,3.86495 v 10.40479 m 0,2.36756 v 12.96733"
+       style="display:inline;opacity:1;fill:none;fill-rule:evenodd;stroke:#808080;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1.2, 0.6;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker9518)"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       r="2.4396048"
+       cy="190.10362"
+       cx="435.78207"
+       id="circle9514"
+       style="display:inline;opacity:1;fill:#8080ff;fill-opacity:1;stroke:#808080;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:1.2, 0.6;stroke-dashoffset:0;stroke-opacity:1"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       id="path10294"
+       d="m 466.00992,192.78769 v 8.1222"
+       style="display:inline;opacity:1;fill:none;fill-rule:evenodd;stroke:#808080;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1.2, 0.6;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker10314)"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       r="2.4396048"
+       cy="190.10362"
+       cx="466.00992"
+       id="circle10296"
+       style="display:inline;opacity:1;fill:#8080ff;fill-opacity:1;stroke:#808080;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:1.2, 0.6;stroke-dashoffset:0;stroke-opacity:1"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       sodipodi:nodetypes="cccccc"
+       id="path10298"
+       d="m 466.00992,205.84972 v 2.78939 m 0,3.86495 v 8.771 m 0,10.50107 v 8.01706"
+       style="display:inline;opacity:1;fill:none;fill-rule:evenodd;stroke:#808080;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1.2, 0.6;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker10304)"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       style="display:inline;opacity:1;fill:#ffffff;fill-opacity:1;stroke:#808080;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:1.2, 0.6;stroke-dashoffset:0;stroke-opacity:1"
+       id="circle10300"
+       cx="466.00992"
+       cy="203.5744"
+       r="2.4396048"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       sodipodi:nodetypes="cc"
+       id="path11118"
+       d="m 496.17377,192.78769 v 8.4175"
+       style="display:inline;opacity:1;fill:none;fill-rule:evenodd;stroke:#808080;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1.2, 0.6;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker11138)"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       r="2.4396048"
+       cy="190.10362"
+       cx="496.17377"
+       id="circle11120"
+       style="display:inline;opacity:1;fill:#8080ff;fill-opacity:1;stroke:#808080;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:1.2, 0.6;stroke-dashoffset:0;stroke-opacity:1"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       sodipodi:nodetypes="cccc"
+       id="path11122"
+       d="m 496.17377,205.84973 v 2.78938 m 0,3.86495 v 10.85319"
+       style="display:inline;opacity:1;fill:none;fill-rule:evenodd;stroke:#808080;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1.2, 0.6;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker11128)"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       style="display:inline;opacity:1;fill:#ffffff;fill-opacity:1;stroke:#808080;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:1.2, 0.6;stroke-dashoffset:0;stroke-opacity:1"
+       id="circle11124"
+       cx="496.17377"
+       cy="203.5744"
+       r="2.4396048"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 435.53599,238.68356 H 466.1546"
+       id="path8650"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 404.72898,224.01101 h 93.04654"
+       id="path8648"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       style="fill:none;stroke:#ff0000;stroke-width:0.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-mid:url(#marker1599);marker-end:url(#marker1609)"
+       d="m 394.04923,210.56941 h 11.54261 30.21186 30.21478 30.21477 11.50911"
+       id="path1593"
+       sodipodi:nodetypes="cccccc"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       r="2.4396048"
+       cy="224.011"
+       cx="405.68134"
+       id="circle2328"
+       style="display:inline;fill:#ff0000;fill-opacity:1;stroke:#000000;stroke-width:0.600001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       r="2.4396048"
+       cy="224.011"
+       cx="466.00992"
+       id="circle2355"
+       style="display:inline;fill:#ff0000;fill-opacity:1;stroke:#000000;stroke-width:0.600001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       r="2.4396048"
+       cy="224.011"
+       cx="496.17377"
+       id="circle2357"
+       style="display:inline;fill:#ff0000;fill-opacity:1;stroke:#000000;stroke-width:0.600001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       r="2.4396048"
+       cy="238.68355"
+       cx="435.78207"
+       id="circle2359"
+       style="display:inline;fill:#ff0000;fill-opacity:1;stroke:#000000;stroke-width:0.600001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       r="2.4396048"
+       cy="238.68355"
+       cx="466.00992"
+       id="circle2361"
+       style="display:inline;fill:#ff0000;fill-opacity:1;stroke:#000000;stroke-width:0.600001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       sodipodi:nodetypes="cccc"
+       id="path2497"
+       d="m 405.60714,61.042167 v 16.612111 m 0,4.028699 v 8.65145"
+       style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker2761)"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       sodipodi:nodetypes="cc"
+       id="path2499"
+       d="M 405.60714,95.208627 V 107.6567"
+       style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker2751)"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       sodipodi:nodetypes="cc"
+       id="path2505"
+       d="M 435.82027,95.208627 V 107.6567"
+       style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker2741)"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       style="display:inline;fill:none;stroke:#000000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 465.90424,91.254517 c 0,-2.421399 0.0295,-7.716215 0.06,-9.57154 m -0.0303,-4.028699 c -0.32078,-5.532534 -4.8558,-5.823421 -8.89528,-5.823661"
+       id="path2507"
+       sodipodi:nodetypes="cccc"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       sodipodi:nodetypes="cccc"
+       id="path2509"
+       d="m 435.74172,91.254517 c 0,-2.421399 0.0294,-7.716102 0.0598,-9.57154 m -0.0321,-4.028699 c -0.32316,-5.533513 -4.8581,-5.827557 -8.89954,-5.827804"
+       style="display:inline;fill:none;stroke:#000000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       sodipodi:nodetypes="cccc"
+       id="path2511"
+       d="m 496.19919,91.254517 c 0,-2.421399 0.0295,-7.716044 0.0602,-9.57154 m -0.0292,-4.028699 c -0.31903,-5.53449 -4.85072,-5.82968 -8.89242,-5.829931"
+       style="display:inline;fill:none;stroke:#000000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       r="2.4396048"
+       cy="92.76902"
+       cx="405.60715"
+       id="circle2515"
+       style="display:inline;fill:#0000ff;fill-opacity:1;stroke:#000000;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       r="2.4396048"
+       cy="92.76902"
+       cx="435.82028"
+       id="circle2517"
+       style="display:inline;fill:#0000ff;fill-opacity:1;stroke:#000000;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       style="display:inline;fill:none;stroke:#000000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 489.38291,71.827027 h -68.95325 c -14.77314,0 -14.74224,-0.0239 -14.74224,-13.19872"
+       id="path2527"
+       sodipodi:nodetypes="ccc"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <g
+       id="g2535"
+       transform="translate(369.69483,25.69593)"
+       style="display:inline"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284">
+      <circle
+         style="fill:#ff0000;fill-opacity:1;stroke:#000000;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="circle2531"
+         cx="35.912315"
+         cy="32.906631"
+         r="2.4396048" />
+      <circle
+         r="0.86091805"
+         cy="32.906631"
+         cx="35.912315"
+         id="circle2533"
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+    <path
+       sodipodi:nodetypes="cc"
+       id="path2541"
+       d="m 435.82027,111.99907 c 0,11.12965 14.79801,0.19147 14.79801,11.29"
+       style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker2711)"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       id="path2547"
+       d="M 465.9403,95.176937 V 107.69828"
+       style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker2701)"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       sodipodi:nodetypes="cc"
+       id="path2555"
+       d="M 496.24652,95.208627 V 107.6567"
+       style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker2661)"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       r="2.4396048"
+       cy="92.76902"
+       cx="466.03339"
+       id="circle2565"
+       style="display:inline;fill:#0000ff;fill-opacity:1;stroke:#000000;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       r="2.4396048"
+       cy="92.76902"
+       cx="496.24652"
+       id="circle2567"
+       style="display:inline;fill:#0000ff;fill-opacity:1;stroke:#000000;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       style="display:inline;fill:#ea0000;fill-opacity:1;stroke:#000000;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="circle2585"
+       cx="435.82028"
+       cy="109.20117"
+       r="2.4396048"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       style="fill:none;stroke:#ff0000;stroke-width:0.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-mid:url(#marker2771);marker-end:url(#marker2781)"
+       d="m 394.04923,79.764531 h 11.56376 30.21186 30.21478 30.21477 11.48796"
+       id="path2603"
+       sodipodi:nodetypes="cccccc"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       sodipodi:nodetypes="cc"
+       id="path4606"
+       d="m 465.9403,111.99907 c 0,11.12965 -15.32202,0.19147 -15.32202,11.29"
+       style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker4610)"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       style="display:inline;fill:#ea0000;fill-opacity:1;stroke:#000000;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="circle5308"
+       cx="450.6911"
+       cy="125.63334"
+       r="2.4396048"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       style="display:inline;fill:#ea0000;fill-opacity:1;stroke:#000000;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="circle5312"
+       cx="496.40359"
+       cy="158.49763"
+       r="2.4396048"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       sodipodi:nodetypes="cc"
+       id="path5320"
+       d="m 405.60714,111.99907 c 0,36.28453 60.33316,8.41927 60.33316,27.69294"
+       style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker5324)"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       sodipodi:nodetypes="cc"
+       id="path6030"
+       d="m 465.9403,111.99907 v 27.69294"
+       style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker6034)"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       sodipodi:nodetypes="cc"
+       id="path6742"
+       d="m 496.24652,111.99907 v 44.11308"
+       style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker6746)"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <path
+       sodipodi:nodetypes="cc"
+       id="path7468"
+       d="m 465.9403,144.62078 c 0,11.12965 30.30622,0.39284 30.30622,11.49137"
+       style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker7472)"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="circle2573"
+       cx="466.03339"
+       cy="109.20117"
+       r="2.4396048"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       style="display:inline;fill:#ea0000;fill-opacity:1;stroke:#000000;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="circle5310"
+       cx="465.91379"
+       cy="142.06548"
+       r="2.4396048"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="circle2577"
+       cx="496.24652"
+       cy="109.20117"
+       r="2.4396048"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <circle
+       style="display:inline;fill:#ff0000;fill-opacity:1;stroke:#000000;stroke-width:0.6;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="circle2519"
+       cx="405.60715"
+       cy="109.20117"
+       r="2.4396048"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="398.27206"
+       y="110.48705"
+       id="text8606"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284"><tspan
+         sodipodi:role="line"
+         id="tspan8604"
+         x="398.27206"
+         y="110.48705"
+         style="stroke-width:0.264583">K₁</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="428.22433"
+       y="110.48705"
+       id="text8610"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284"><tspan
+         sodipodi:role="line"
+         id="tspan8608"
+         x="428.22433"
+         y="110.48705"
+         style="stroke-width:0.264583">K₂</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="427.1445"
+       y="126.9485"
+       id="text8614"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284"><tspan
+         sodipodi:role="line"
+         id="tspan8612"
+         x="427.1445"
+         y="126.9485"
+         style="stroke-width:0.264583">K₂ circulant</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="441.87323"
+       y="143.38063"
+       id="text8618"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284"><tspan
+         sodipodi:role="line"
+         id="tspan8616"
+         x="441.87323"
+         y="143.38063"
+         style="stroke-width:0.264583">K₁ circulant</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="474.73959"
+       y="159.88342"
+       id="text8622"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284"><tspan
+         sodipodi:role="line"
+         id="tspan8620"
+         x="474.73959"
+         y="159.88342"
+         style="stroke-width:0.264583">Métastase</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="386.16086"
+       y="93.742256"
+       id="text8626"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284"><tspan
+         sodipodi:role="line"
+         id="tspan8624"
+         x="386.16086"
+         y="93.742256"
+         style="stroke-width:0.264583">biopsie 1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="416.11142"
+       y="93.742256"
+       id="text8630"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284"><tspan
+         sodipodi:role="line"
+         id="tspan8628"
+         x="416.11142"
+         y="93.742256"
+         style="stroke-width:0.264583">biopsie 2</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="453.71228"
+       y="93.742256"
+       id="text8634"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284"><tspan
+         sodipodi:role="line"
+         id="tspan8632"
+         x="453.71228"
+         y="93.742256"
+         style="stroke-width:0.264583">sang</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="477.01337"
+       y="93.742256"
+       id="text8638"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284"><tspan
+         sodipodi:role="line"
+         id="tspan8636"
+         x="477.01337"
+         y="93.742256"
+         style="stroke-width:0.264583">biopsie 3</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="489.15384"
+       y="110.47413"
+       id="text8642"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284"><tspan
+         sodipodi:role="line"
+         id="tspan8640"
+         x="489.15384"
+         y="110.47413"
+         style="stroke-width:0.264583">K₃</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="446.7222"
+       y="110.51633"
+       id="text8646"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284"><tspan
+         sodipodi:role="line"
+         id="tspan8644"
+         x="446.7222"
+         y="110.51633"
+         style="stroke-width:0.264583">circulant</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="403.74088"
+       y="230.86253"
+       id="text8660"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284"><tspan
+         sodipodi:role="line"
+         id="tspan8658"
+         x="403.74088"
+         y="230.86253"
+         style="stroke-width:0.264583">K₁</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="433.85626"
+       y="245.44289"
+       id="text8664"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284"><tspan
+         sodipodi:role="line"
+         id="tspan8662"
+         x="433.85626"
+         y="245.44289"
+         style="stroke-width:0.264583">K₂</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="455.84003"
+       y="245.44289"
+       id="text8668"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284"><tspan
+         sodipodi:role="line"
+         id="tspan8666"
+         x="455.84003"
+         y="245.44289"
+         style="stroke-width:0.264583">K₂ circulant</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="455.84003"
+       y="230.86253"
+       id="text8672"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284"><tspan
+         sodipodi:role="line"
+         id="tspan8670"
+         x="455.84003"
+         y="230.86253"
+         style="stroke-width:0.264583">K₁ circulant</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="487.01932"
+       y="230.86253"
+       id="text8676"
+       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-xdpi="90.039284"
+       inkscape:export-ydpi="90.039284"><tspan
+         sodipodi:role="line"
+         id="tspan8674"
+         x="487.01932"
+         y="230.86253"
+         style="stroke-width:0.264583">Métastase</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
      id="layer7"
      inkscape:label="timeline"
-     style="display:inline">
+     style="display:none"
+     sodipodi:insensitive="true">
     <rect
        transform="rotate(40.778772)"
        ry="3.3434074"
@@ -1405,7 +2497,7 @@
     </g>
     <path
        style="display:inline;fill:none;stroke:#ff0000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5371)"
-       d="m 55.899439,235.71368 0,20.40345"
+       d="m 55.899439,235.71368 v 20.40345"
        id="path5367"
        sodipodi:nodetypes="cc" />
     <path
@@ -1420,11 +2512,11 @@
        sodipodi:nodetypes="cc" />
   </g>
   <g
-     sodipodi:insensitive="true"
      inkscape:groupmode="layer"
      id="layer6"
      inkscape:label="provenance"
-     style="display:inline">
+     style="display:none"
+     sodipodi:insensitive="true">
     <path
        style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker17187)"
        d="m 130.96876,136.40208 v 8.24345"
@@ -1608,11 +2700,11 @@
     </g>
   </g>
   <g
-     sodipodi:insensitive="true"
      inkscape:groupmode="layer"
      id="layer5"
      inkscape:label="uptodate"
-     style="display:inline">
+     style="display:none"
+     sodipodi:insensitive="true">
     <path
        id="path39648"
        d="m 38.196874,136.40208 v 8.24345"
@@ -1784,7 +2876,6 @@
      inkscape:label="main figure"
      style="display:inline">
     <g
-       sodipodi:insensitive="true"
        inkscape:groupmode="layer"
        id="layer2"
        inkscape:label="boxes"
@@ -1924,7 +3015,6 @@
            sodipodi:role="line">Other tech</tspan></text>
     </g>
     <g
-       sodipodi:insensitive="true"
        id="layer1"
        inkscape:groupmode="layer"
        inkscape:label="graphs"
