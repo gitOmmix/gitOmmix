@@ -108,8 +108,9 @@ result()
 {
     [[ -n $1 ]] || usage
 
-    git checkout $1
+    git checkout $1 2> /dev/null
     git log -n 1 --pretty="format:%s"
+    echo
 }
 
 ## Get up-to-date results from any ref
