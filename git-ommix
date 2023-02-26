@@ -1,0 +1,160 @@
+#!/bin/env bash
+
+# git ommix functions
+source /home/maxx/Projects/Thèse/Papier\ 2/Git\ ommix/functions
+
+# strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+# Default values and config
+[[ -f "$HOME/.config/.gitommix" ]] && source "$HOME/.config/.gitommix"
+GIT_OMMIX_REPO_DIR=${GIT_OMMIX_REPO_DIR:-"$HOME/GitOmmix"}
+CURRENT_DIR="$PWD"
+STATELESS="n"
+
+debug="n"
+DATE=`date +%Y-%m-%d`
+PROVIDER="gitommix <gitommix>"
+PATIENT=
+SAMPLE=
+MESSAGE=
+FILES="*"
+
+# Test getopt
+# allow a command to fail with !’s side effect on errexit
+# use return value from ${PIPESTATUS[0]}, because ! hosed $?
+! getopt --test > /dev/null 
+if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
+    echo 'I’m sorry, `getopt --test` failed in this environment.'
+    exit 1
+fi
+
+# Test for the number of options
+if [[ $# -lt 2 ]]; then
+    echo "Insufficient number of arguments"
+    usage root
+fi
+
+# Get verb and object
+VERB="$1"
+OBJECT="$2"
+shift 2
+
+# getopt options
+OPTIONS=D:P:p:s:m:d
+LONGOPTS=date:,provider:,patient:,sample:,debug
+
+# -temporarily store output to be able to check for errors
+# -activate quoting/enhanced mode (e.g. by writing out “--options”)
+# -pass arguments only via   -- "$@"   to separate them correctly
+! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "git-ommix" -- "$@")
+if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
+    # e.g. return value is 1
+    #  then getopt has complained about wrong arguments to stdout
+    usage root
+    exit 2
+fi
+
+# read getopt’s output this way to handle the quoting right:
+eval set -- "$PARSED"
+
+# Parse remaining options
+while true; do
+    case "$1" in
+        -D|--date)
+            DATE="$2"
+            shift 2
+            ;;
+        -P|--provider)
+            PROVIDER="$2"
+            shift 2
+            ;;
+        -p|--patient)
+            PATIENT="$2"
+            shift 2
+            ;;
+        -s|--sample)
+            SAMPLE="$2"
+            shift 2
+            ;;
+        -m|--message)
+            MESSAGE="$2"
+            shift 2
+            ;;
+        -d|--debug)
+            debug="y"
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            echo "Programming error"
+            exit 3
+            ;;
+    esac
+done
+
+FILES=${@:-$FILES}
+
+# Go to patient's repo if specified
+if [[ -n "$PATIENT" ]]; then
+    STATELESS="y"
+    
+    # Patient and sample must be given in stateless calls when adding
+    [[ ! $VERB = "query" ]] && [[ -z "$SAMPLE" ]] && die "The sample id must be specified"
+
+    # Go to repo dir (create if it does not exist)
+    mkdir -p "$GIT_OMMIX_REPO_DIR"
+    cd "$GIT_OMMIX_REPO_DIR"
+
+    # Go to repo (create if it does not exist)
+    if [[ -d "$PATIENT" ]]; then
+        cd "$PATIENT"
+    else
+        create_repo "$PATIENT"
+    fi
+else
+    set +e
+    REPO=`git rev-parse --show-toplevel 2> /dev/null`
+    RETVAL=$?
+    set -e
+    [[ $RETVAL -ne 0 ]] && die "Not a git ommix repo"
+    PATIENT=${REPO##*/}
+fi
+
+# Check that we are in a git repo
+if [[ ! -d ".git/annex" ]]; then
+    die "Not in a git ommix repo"
+fi
+
+if [[ $debug = y ]]; then
+    echo "Object: $OBJECT"
+    echo "Verb: $VERB"
+    echo "Date: $DATE"
+    echo "Provider: $PROVIDER"
+    echo "Patient: $PATIENT"
+    echo "Sample: $SAMPLE"
+    echo "Message: $MESSAGE"
+    echo "Files: $FILES"
+fi
+
+# Go to sample branch if specified
+if [[ -n "$SAMPLE" ]]; then
+    # checkout branch (create if it does not exist)
+    git stash push &>/dev/null
+    git checkout "$SAMPLE" &>/dev/null || create_sample "$SAMPLE"
+    git stash pop &>/dev/null
+else
+    SAMPLE=`git branch --show-current 2> /dev/null || true`
+fi
+
+case "$VERB" in
+     add) add $OBJECT;;
+     invalidate) invalidate $OBJECT;;
+     revise) revise $OBJECT;;
+     query) query $OBJECT;;
+     *) usage "root";;
+esac

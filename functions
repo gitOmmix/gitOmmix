@@ -1,0 +1,216 @@
+#!/bin/bash
+
+# usage function
+function usage()
+{
+    case "$1" in
+        root) 
+            echo "git ommix {verb} {object} [--options] [files]
+
+Verbs:
+- add
+- invalidate
+- revise
+- query
+- register
+
+Objects:
+- data
+- result
+
+Options:
+- --date/-D : sampling/analysis date (default = current date)
+- --provider/-P : data/result provider (default = current user)
+- --patient/-p : patient (default = current patient)
+- --sample/-s : sample (default = current sample)
+- --message/-m : add an arbitrary PROV-O RDF triplet to the transaction
+- --debug/-d : debug
+
+Files: files to add (default = all new/modified files)
+
+Query
+
+- list 
+- prov 
+
+Register bash completions with register completions
+
+Git ommix can be configured with the \$XDG_CONFIG/.gitommix file, or with environment variables
+
+Available options are:
+- GIT_OMMIX_REPO_DIR : place to find patient repos
+"
+            ;;
+        add)
+            echo "git ommix add {data, result} [--message] [--options]
+
+Add data/result to the current patient and sample if inside a repo, or to the --patient and --sample specified.
+If stateless, copy the files to the repo."
+            ;;
+    esac
+    exit 0
+}
+
+# exit and print message
+function die()
+{
+    echo $@
+    exit 0
+}
+
+# Create a repository
+function create_repo()
+{
+    echo "Creating patient:$1 repo"
+
+    mkdir -p "$1/data"
+    mkdir -p "$1/result"
+    cd "$1"
+    git init &>/dev/null
+    git annex init &>/dev/null
+    git config core.pager cat
+    git config annex.largefiles 'largerthan=1Mb or include=data/* or include=results/*'
+    git commit --allow-empty \
+        --date "$DATE" \
+        --author "$PROVIDER" \
+        -m "Patient: $1
+
+patient:$1 a prov:Entity .
+patient:$1 a MSH:Patient ." &>/dev/null
+}
+
+# Create a sample
+function create_sample()
+{
+    echo "Creating sample:$1 branch"
+    
+    METHOD="sampling"
+    git stash push &>/dev/null
+    git checkout -b "$1" main &>/dev/null
+    git stash pop &>/dev/null
+    git commit --allow-empty \
+        --date "$DATE" \
+        --author "$PROVIDER" \
+        -m "Sample: $1
+
+provider:$PROVIDER a prov:Agent .
+
+method:$METHOD a prov:Activity .
+method:$METHOD used patient:$PATIENT .
+method:$METHOD wasAssociatedWith provider:$PROVIDER .
+
+sample:$1 a prov:Entity .
+sample:$1 wasGeneratedBy method:$METHOD .
+sample:$1 wasDerivedFrom patient:$PATIENT .
+sample:$1 wasAttributedTo provider:$PROVIDER .
+sample:$1 generatedAtTime xsd:dateTime:$DATE ." &>/dev/null
+}
+
+# Add data or result
+function add()
+{
+    echo "Adding $1 $1"
+    
+    METHOD="method_$1"
+    id="$1"
+
+    case "$1" in
+        data);;
+        result);;
+        *) usage "add";;
+    esac
+
+    if [[ "$STATELESS" = "y" ]]; then
+        cp "$CURRENT_DIR/"$FILES "$GIT_OMMIX_REPO_DIR/$PATIENT/$1" -r
+    fi
+
+    git add "$1"
+
+    git commit --date "$DATE" \
+        --author "$PROVIDER" \
+        -m "Add $1
+
+provider:$PROVIDER a prov:Agent .
+
+method:$METHOD a prov:Activity .
+method:$METHOD used sample:$SAMPLE . #used data:xxx
+method:$METHOD wasAssociatedWith provider:$PROVIDER .
+method:$METHOD startedAtTime xsd:dateTime:$DATE .
+
+$1:$id a prov:Entity .
+$1:$id wasGeneratedBy method:$METHOD .
+$1:$id wasDerivedFrom sample:$SAMPLE . #wasDerivedFrom data:xxx
+$1:$id wasAttributedTo provider:$PROVIDER .
+$1:$id generatedAtTime xsd:dateTime:$DATE ."
+}
+
+# invalidate data or result
+function invalidate()
+{
+    echo "invalidate"
+}
+
+# update data or result
+function update()
+{
+    echo "update"
+}
+
+# Query git ommix
+function query()
+{
+    case "$1" in
+        list) list;;
+        prov) prov;;
+        last) last;;
+        *) usage query;;
+    esac
+}
+
+# Return the list of samples
+function list()
+{
+    # List all branches but master an git-annex
+    git branch | grep -v 'master' | grep -v 'git-annex'
+}
+
+# Return the turtle history
+function prov()
+{
+    git log --pretty=format:'# %s%n%b' --author-date-order --reverse
+}
+
+## Get up-to-date result of a sample
+function last()
+{
+    git log -n 1 --pretty="format:%s"
+}
+
+## Completions
+function _completions()
+{
+    #COMP_WORDS = array of words typed after the name of the program
+    #COMP_CWORD = index pointing to the word the cursor is at
+    #COMP_LINE = the current command line
+    if [[ $COMP_CWORD -eq 1 ]];then
+        OPTIONS="add invalidate revise query"
+    elif [[ $COMP_CWORD -eq 2 ]];then
+        case ${COMP_WORDS[1]} in
+            query) OPTIONS="list prov";;
+        esac
+    elif [[ $COMP_CWORD -gt 2 ]];then
+        PREV=${COMP_WORDS[$((COMP_CWORD-1))]}
+        case $PREV in
+            -p|--patient) OPTIONS="$(ls ~/GitOmmix/)";;
+            -s|--sample) OPTIONS="sample1 sample2";;
+            -D|--date) OPTIONS="$(date +%Y-%m-%d)";;
+            -P|--provider) OPTIONS="provider1 provider2";;
+            *) OPTIONS="-p --patient -s --sample -D --date -P --provider -m --message -d --debug $(ls)";;
+        esac
+    fi
+
+    COMPREPLY=`compgen -W "$OPTIONS" -- "${COMP_WORDS[$COMP_CWORD]}"`
+}
+
+
+complete -F _completions git-ommix
