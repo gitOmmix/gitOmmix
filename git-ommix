@@ -8,8 +8,8 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # Default values and config
-[[ -f "$HOME/.config/.gitommix" ]] && source "$HOME/.config/.gitommix"
-GIT_OMMIX_REPO_DIR=${GIT_OMMIX_REPO_DIR:-"$HOME/GitOmmix"}
+[[ -f "/etc/gitommix.conf" ]] && source "/etc/gitommix.conf"
+[[ -f "$HOME/.config/gitommix.conf" ]] && source "$HOME/.config/gitommix.conf"
 CURRENT_DIR="$PWD"
 STATELESS="n"
 
