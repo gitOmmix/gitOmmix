@@ -111,10 +111,9 @@ sample:$1 generatedAtTime xsd:dateTime:$DATE ." &>/dev/null
 # Add data or result
 function add()
 {
-    echo "Adding $1 $1"
+    echo "Adding $1:$ID"
     
     METHOD="method_$1"
-    id="$1"
 
     case "$1" in
         data);;
@@ -126,11 +125,11 @@ function add()
         cp "$CURRENT_DIR/"$FILES "$GIT_OMMIX_REPO_DIR/$PATIENT/$1" -r
     fi
 
-    git add "$1"
+    git add "$1" &>/dev/null
 
     git commit --date "$DATE" \
         --author "$PROVIDER" \
-        -m "Add $1
+        -m "$1: $ID
 
 provider:$PROVIDER a prov:Agent .
 

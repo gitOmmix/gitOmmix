@@ -17,6 +17,8 @@ PATIENT=
 SAMPLE=
 MESSAGE=
 FILES="*"
+ID=`base64 /dev/urandom | tr -d "/+=" | head -c 10`
+
 ## Global config
 [[ -f "/etc/gitommix.conf" ]] && source "/etc/gitommix.conf"
 
@@ -47,8 +49,8 @@ OBJECT="$2"
 shift 2
 
 # getopt options
-OPTIONS=D:P:p:s:m:d
-LONGOPTS=date:,provider:,patient:,sample:,debug
+OPTIONS=D:P:p:s:m:d:i
+LONGOPTS=date:,provider:,patient:,sample:,debug,id:
 
 # -temporarily store output to be able to check for errors
 # -activate quoting/enhanced mode (e.g. by writing out “--options”)
@@ -90,6 +92,10 @@ while true; do
         -d|--debug)
             debug="y"
             shift
+            ;;
+        -i|--id)
+            ID="$2"
+            shift 2
             ;;
         --)
             shift
