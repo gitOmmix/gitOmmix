@@ -7,12 +7,9 @@ source /usr/share/git-ommix/functions
 set -euo pipefail
 IFS=$'\n\t'
 
-# Default values and config
-[[ -f "/etc/gitommix.conf" ]] && source "/etc/gitommix.conf"
-[[ -f "$HOME/.config/gitommix.conf" ]] && source "$HOME/.config/gitommix.conf"
-CURRENT_DIR="$PWD"
-STATELESS="n"
+# Load settings
 
+## Default values
 debug="n"
 DATE=`date +%Y-%m-%d`
 PROVIDER="gitommix <gitommix>"
@@ -20,6 +17,14 @@ PATIENT=
 SAMPLE=
 MESSAGE=
 FILES="*"
+## Global config
+[[ -f "/etc/gitommix.conf" ]] && source "/etc/gitommix.conf"
+
+## Local config
+[[ -f "$HOME/.config/gitommix.conf" ]] && source "$HOME/.config/gitommix.conf"
+
+CURRENT_DIR="$PWD"
+STATELESS="n"
 
 # Test getopt
 # allow a command to fail with !’s side effect on errexit
@@ -99,7 +104,7 @@ done
 
 FILES=${@:-$FILES}
 
-# Go to patient's repo if specified
+# Stateless mode : when the patient is specified, go to the repo or create it if necessary
 if [[ -n "$PATIENT" ]]; then
     STATELESS="y"
     
@@ -116,6 +121,7 @@ if [[ -n "$PATIENT" ]]; then
     else
         create_repo "$PATIENT"
     fi
+# Stateful mode : when we are in the repo get the patient id from the repo name
 else
     set +e
     REPO=`git rev-parse --show-toplevel 2> /dev/null`
@@ -125,23 +131,12 @@ else
     PATIENT=${REPO##*/}
 fi
 
-# Check that we are in a git repo
+# Check that we are indeed in a git repo
 if [[ ! -d ".git/annex" ]]; then
     die "Not in a git ommix repo"
 fi
 
-if [[ $debug = y ]]; then
-    echo "Object: $OBJECT"
-    echo "Verb: $VERB"
-    echo "Date: $DATE"
-    echo "Provider: $PROVIDER"
-    echo "Patient: $PATIENT"
-    echo "Sample: $SAMPLE"
-    echo "Message: $MESSAGE"
-    echo "Files: $FILES"
-fi
-
-# Go to sample branch if specified
+# In stateless mode, go to the sample branch
 if [[ -n "$SAMPLE" ]]; then
     # checkout branch (create if it does not exist)
     git stash push &>/dev/null
@@ -149,8 +144,21 @@ if [[ -n "$SAMPLE" ]]; then
     set +e
     git stash pop &>/dev/null
     set -e
+# In stateful mode, get the sample id from the current branch
 else
     SAMPLE=`git branch --show-current 2> /dev/null || true`
+fi
+
+# Output parameter values for debug
+if [[ $debug = y ]]; then
+    echo "Verb: $VERB"
+    echo "Object: $OBJECT"
+    echo "Patient: $PATIENT"
+    echo "Sample: $SAMPLE"
+    echo "Date: $DATE"
+    echo "Provider: $PROVIDER"
+    echo "Message: $MESSAGE"
+    echo "Files: $FILES"
 fi
 
 case "$VERB" in
