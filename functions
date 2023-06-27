@@ -87,7 +87,9 @@ function create_sample()
     METHOD="sampling"
     git stash push &>/dev/null
     git checkout -b "sample|$1" main &>/dev/null
+    set +e
     git stash pop &>/dev/null
+    set -e
     git commit --allow-empty \
         --date "$DATE" \
         --author "$PROVIDER" \

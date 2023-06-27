@@ -146,7 +146,9 @@ if [[ -n "$SAMPLE" ]]; then
     # checkout branch (create if it does not exist)
     git stash push &>/dev/null
     git checkout "sample|$SAMPLE" &>/dev/null || create_sample "$SAMPLE"
+    set +e
     git stash pop &>/dev/null
+    set -e
 else
     SAMPLE=`git branch --show-current 2> /dev/null || true`
 fi
