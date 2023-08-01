@@ -1,43 +1,48 @@
 #!/bin/env bash
 
-# git ommix functions
-source /usr/share/git-ommix/functions
-
-# strict mode
-set -euo pipefail
+# Boilerplate bash init
+# Set strict mode
+set -uo pipefail
 IFS=$'\n\t'
 
-# Load settings
-
-## Default values
-debug="n"
-DATE=`date +%Y-%m-%d`
-PROVIDER="gitommix <gitommix>"
-PATIENT=
-SAMPLE=
-MESSAGE=
-FILES="*"
-ID=`base64 /dev/urandom | tr -d "/+=" | head -c 10`
-
-## Global config
-[[ -f "/etc/gitommix.conf" ]] && source "/etc/gitommix.conf"
-
-## Local config
-[[ -f "$HOME/.config/gitommix.conf" ]] && source "$HOME/.config/gitommix.conf"
-
-CURRENT_DIR="$PWD"
-STATELESS="n"
-
 # Test getopt
-# allow a command to fail with !’s side effect on errexit
-# use return value from ${PIPESTATUS[0]}, because ! hosed $?
+# Allow a command to fail with !’s side effect on errexit
+# Use return value from ${PIPESTATUS[0]}, because ! hosed $?
 ! getopt --test > /dev/null 
 if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
     echo 'I’m sorry, `getopt --test` failed in this environment.'
     exit 1
 fi
 
-# Test for the number of options
+# Load git ommix functions
+source /usr/share/git-ommix/functions
+
+# Settings
+# Default values
+PROVIDER=
+METHOD=
+PATIENT=
+SAMPLE=
+DATE=`date +%Y-%m-%d`
+ID=`base64 /dev/urandom | tr -d "/+=" | head -c 10`
+INVALIDATE=
+USE=
+REVISION_OF=
+MESSAGE=
+DEBUG="n"
+FILES="*"
+
+# Global config
+[[ -f "/etc/gitommix.conf" ]] && source "/etc/gitommix.conf"
+
+# Local config
+[[ -f "$HOME/.config/gitommix.conf" ]] && source "$HOME/.config/gitommix.conf"
+
+CURRENT_DIR="$PWD"
+STATELESS="n"
+
+# Parse arguments
+# Test for the number of options, at least two (verb + object)
 if [[ $# -lt 2 ]]; then
     echo "Insufficient number of arguments"
     usage root
@@ -49,8 +54,8 @@ OBJECT="$2"
 shift 2
 
 # getopt options
-OPTIONS=D:P:p:s:m:d:i
-LONGOPTS=date:,provider:,patient:,sample:,debug,id:
+OPTIONS=p:s:m:d
+LONGOPTS=provider:,method:,patient:,sample:,date:,id:,invalidate:,use:,revision_of:,message:,debug
 
 # -temporarily store output to be able to check for errors
 # -activate quoting/enhanced mode (e.g. by writing out “--options”)
@@ -63,18 +68,18 @@ if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
     exit 2
 fi
 
-# read getopt’s output this way to handle the quoting right:
+# Read getopt’s output this way to handle the quoting right:
 eval set -- "$PARSED"
 
-# Parse remaining options
+# Parse options
 while true; do
     case "$1" in
-        -D|--date)
-            DATE="$2"
+        --provider)
+            PROVIDER="$2"
             shift 2
             ;;
-        -P|--provider)
-            PROVIDER="$2"
+        --method)
+            METHOD="$2"
             shift 2
             ;;
         -p|--patient)
@@ -85,17 +90,33 @@ while true; do
             SAMPLE="$2"
             shift 2
             ;;
+        --date)
+            DATE="$2"
+            shift 2
+            ;;
+        --id)
+            ID="$2"
+            shift 2
+            ;;
+        --use)
+            USE+=("$2")
+            shift 2
+            ;;
+        --invalidate)
+            INVALIDATE+=("$2")
+            shift 2
+            ;;
+        --revision_of)
+            REVISION_OF="$2"
+            shift 2
+            ;;
         -m|--message)
             MESSAGE="$2"
             shift 2
             ;;
         -d|--debug)
-            debug="y"
+            DEBUG="y"
             shift
-            ;;
-        -i|--id)
-            ID="$2"
-            shift 2
             ;;
         --)
             shift
@@ -110,12 +131,29 @@ done
 
 FILES=${@:-$FILES}
 
+# Output parameter values for debug
+if [[ $DEBUG = "y" ]]; then
+    echo "Verb: $VERB"
+    echo "Object: $OBJECT"
+    echo "Provider: $PROVIDER"
+    echo "Method: $METHOD"
+    echo "Patient: $PATIENT"
+    echo "Sample: $SAMPLE"
+    echo "Date: $DATE"
+    echo "Id: $ID$"
+    echo "Use: ${USE[@]}"
+    echo "Invalidate: ${INVALIDATE[@]}"
+    echo "Revision_of: $REVISION_OF"
+    echo "Message: $MESSAGE"
+    echo "Files: $FILES"
+fi
+
 # Stateless mode : when the patient is specified, go to the repo or create it if necessary
 if [[ -n "$PATIENT" ]]; then
     STATELESS="y"
     
     # Patient and sample must be given in stateless calls when adding
-    [[ ! $VERB = "query" ]] && [[ -z "$SAMPLE" ]] && die "The sample id must be specified"
+    # [[ ! $VERB = "get" ]] && [[ -z "$SAMPLE" ]] && die "The sample id must be specified"
 
     # Go to repo dir (create if it does not exist)
     mkdir -p "$GIT_OMMIX_REPO_DIR"
@@ -129,10 +167,10 @@ if [[ -n "$PATIENT" ]]; then
     fi
 # Stateful mode : when we are in the repo get the patient id from the repo name
 else
-    set +e
+    # set +e
     REPO=`git rev-parse --show-toplevel 2> /dev/null`
     RETVAL=$?
-    set -e
+    # set -e
     [[ $RETVAL -ne 0 ]] && die "Not a git ommix repo"
     PATIENT=${REPO##*/}
 fi
@@ -147,30 +185,17 @@ if [[ -n "$SAMPLE" ]]; then
     # checkout branch (create if it does not exist)
     git stash push &>/dev/null
     git checkout "sample|$SAMPLE" &>/dev/null || create_sample "$SAMPLE"
-    set +e
+    # set +e
     git stash pop &>/dev/null
-    set -e
+    # set -e
 # In stateful mode, get the sample id from the current branch
 else
     SAMPLE=`git branch --show-current 2> /dev/null || true`
 fi
 
-# Output parameter values for debug
-if [[ $debug = y ]]; then
-    echo "Verb: $VERB"
-    echo "Object: $OBJECT"
-    echo "Patient: $PATIENT"
-    echo "Sample: $SAMPLE"
-    echo "Date: $DATE"
-    echo "Provider: $PROVIDER"
-    echo "Message: $MESSAGE"
-    echo "Files: $FILES"
-fi
-
 case "$VERB" in
      add) add $OBJECT;;
-     invalidate) invalidate $OBJECT;;
-     revise) revise $OBJECT;;
-     query) query $OBJECT;;
+     list) list $OBJECT;;
+     get) get $OBJECT;;
      *) usage "root";;
 esac
