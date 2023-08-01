@@ -9,16 +9,18 @@ function usage()
 
 Verbs:
 - add
-- invalidate
-- revise
-- query
-- register
+- list
+- get
 
 Objects:
+- patient
+- sample
 - data
 - result
+- diagnostic
 
 Options:
+- --id/-i : object id (default = random base64 10 chars)
 - --date/-D : sampling/analysis date (default = current date)
 - --provider/-P : data/result provider (default = current user)
 - --patient/-p : patient (default = current patient)
@@ -27,11 +29,6 @@ Options:
 - --debug/-d : debug
 
 Files: files to add (default = all new/modified files)
-
-Query
-
-- list 
-- prov 
 
 Register bash completions with register completions
 
@@ -42,7 +39,62 @@ Available options are:
 "
             ;;
         add)
-            echo "git ommix add {data, result} [--message] [--options]
+            echo "git ommix add {patient, sample, data, result, diagnostic} [--options] [--message]
+
+# Patient 
+
+Create patient repo with the given id.
+Options :
+
+-i <id>
+
+# Sample
+
+Create the branch with the given sample id for the current or selected patient.
+
+Options :
+
+ -i <id>
+ -p <patient>
+
+# Data 
+
+Add the FILES to data, with the given id, for the current or selected sample in the current or selected patient.
+Data are always DERIVED_FROM the sample, but could be also be a REVISION_OF previous data. This can be set by pointing to a data commit to revise.
+The data that has been revised can also be INVALIDATEd at the same time.
+
+Options :
+
+-i <id>
+-p <patient>
+-s <sample>
+[--revision_of <data_hash>]
+[--invalidate]
+
+# Result 
+
+Options :
+
+-i <id> 
+-p <patient> 
+-s <sample> 
+--use <data_hash> 
+[--revision_of <result_hash>]
+[--invalidate]
+
+# Diagnostic
+
+Add a diagnostic with the given id, for the current or selected patient.
+The diagnostic can USE multiple results and diagnostics, be the REVISION_OF multiple diagnostics, which can be INVALIDATEd at the same time.
+The diagnostic branch pointers for the revised diagnostics are destroyed.
+
+Options :
+
+-i <id>
+-p <patient>
+--use <result/diagnostic_hash>
+[--revision_of <diagnostic_hash>]
+[--invalidate]
 
 Add data/result to the current patient and sample if inside a repo, or to the --patient and --sample specified.
 If stateless, copy the files to the repo."
@@ -145,43 +197,28 @@ $1:$id wasAttributedTo provider:$PROVIDER .
 $1:$id generatedAtTime xsd:dateTime:$DATE ."
 }
 
-# invalidate data or result
-function invalidate()
-{
-    echo "invalidate"
-}
+## add diagnostic
+## checkout one of the branches to merge (if a diagnostic exists, pick this one, else pick the first result)
+## create the diagnostic branch
+## git merge diag|1 result|2 result|3 --no-ff -f "diagnostic:1"
 
-# update data or result
-function update()
-{
-    echo "update"
-}
-
-# Query git ommix
-function query()
-{
-    case "$1" in
-        list) list;;
-        prov) prov;;
-        last) last;;
-        *) usage query;;
-    esac
-}
 
 # Return the list of samples
-function list()
+function list_samples()
 {
     # List all branches but master an git-annex
     git branch | grep -v 'master' | grep -v 'git-annex'
 }
 
-# Return the turtle history
-function prov()
+# Return the provenance in turtle format
+# It is the concatenation of all commit messages (without the subject line)
+function prov_all()
 {
     git log --pretty=format:'# %s%n%b' --author-date-order --reverse
 }
 
-## Get up-to-date result of a sample
+# Get up-to-date result of a sample
+# Print the last commit
 function last()
 {
     git log -n 1 --pretty="format:%s"
