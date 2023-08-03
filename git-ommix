@@ -39,9 +39,9 @@ FILES="*"
 [[ -f "$HOME/.config/gitommix.conf" ]] && source "$HOME/.config/gitommix.conf"
 
 CURRENT_DIR="$PWD"
-STATELESS="n"
 
 # Parse arguments
+
 # Test for the number of options, at least two (verb + object)
 if [[ $# -lt 2 ]]; then
     echo "Insufficient number of arguments"
@@ -148,49 +148,28 @@ if [[ -n "$DEBUG" ]]; then
     echo "Files: $FILES"
 fi
 
-# Stateless mode : when the patient is specified, go to the repo or create it if necessary
+# Go to git ommix dir or create if it does not exist
+mkdir -p "$GIT_OMMIX_REPO_DIR"
+cd "$GIT_OMMIX_REPO_DIR"
+
+# If patient is specified, try to go to the repo
 if [[ -n "$PATIENT" ]]; then
-    STATELESS="y"
-    
-    # Patient and sample must be given in stateless calls when adding
-    # [[ ! $VERB = "get" ]] && [[ -z "$SAMPLE" ]] && die "The sample id must be specified"
-
-    # Go to repo dir (create if it does not exist)
-    mkdir -p "$GIT_OMMIX_REPO_DIR"
-    cd "$GIT_OMMIX_REPO_DIR"
-
-    # Go to repo (create if it does not exist)
     if [[ -d "$PATIENT" ]]; then
-        cd "$PATIENT"
+       cd "$PATIENT"
     else
-        create_repo "$PATIENT"
+        die "patient:$PATIENT is not a patient"
     fi
-# Stateful mode : when we are in the repo get the patient id from the repo name
-else
-    # set +e
-    REPO=`git rev-parse --show-toplevel 2> /dev/null`
-    RETVAL=$?
-    # set -e
-    [[ $RETVAL -ne 0 ]] && die "Not a git ommix repo"
-    PATIENT=${REPO##*/}
 fi
 
-# Check that we are indeed in a git repo
-if [[ ! -d ".git/annex" ]]; then
-    die "Not in a git ommix repo"
-fi
-
-# In stateless mode, go to the sample branch
+# If specified, try to go to sample branch
 if [[ -n "$SAMPLE" ]]; then
-    # checkout branch (create if it does not exist)
-    git stash push &>/dev/null
-    git checkout "sample|$SAMPLE" &>/dev/null || create_sample "$SAMPLE"
-    # set +e
-    git stash pop &>/dev/null
-    # set -e
-# In stateful mode, get the sample id from the current branch
-else
-    SAMPLE=`git branch --show-current 2> /dev/null || true`
+    if [[ `git rev-parse --verify "sample|$SAMPLE"` ]];then
+        dbg git stash push
+        dbg git checkout "sample|$SAMPLE"
+        dbg git stash pop
+    else
+        die "sample:$SAMPLE is not a sample of patient $PATIENT"
+    fi
 fi
 
 case "$VERB" in

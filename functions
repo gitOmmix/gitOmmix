@@ -107,7 +107,7 @@ If stateless, copy the files to the repo."
 function die()
 {
     echo $@
-    exit 0
+    exit 1
 }
 
 # redirect commands if not debugging
