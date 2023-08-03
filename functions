@@ -110,6 +110,15 @@ function die()
     exit 0
 }
 
+# redirect commands if not debugging
+function dbg() {
+    if [[ -n "$DEBUG" ]]; then
+        "$@"
+    else
+        "$@" &>/dev/null
+    fi
+}
+
 # Create a repository
 function create_repo()
 {
