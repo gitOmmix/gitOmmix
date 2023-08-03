@@ -18,19 +18,6 @@ fi
 source /usr/share/git-ommix/functions
 
 # Settings
-# Default values
-PROVIDER=
-METHOD=
-PATIENT=
-SAMPLE=
-DATE=`date +%Y-%m-%d`
-ID=`base64 /dev/urandom | tr -d "/+=" | head -c 10`
-INVALIDATE=
-USE=
-REVISION_OF=
-MESSAGE=
-DEBUG="n"
-FILES="*"
 
 # Global config
 [[ -f "/etc/gitommix.conf" ]] && source "/etc/gitommix.conf"
@@ -52,6 +39,20 @@ fi
 VERB="$1"
 OBJECT="$2"
 shift 2
+
+# Default values
+PROVIDER=$GIT_OMMIX_DEFAULT_PROVIDER
+METHOD=
+PATIENT=
+SAMPLE=
+DATE=`date +%Y-%m-%d`
+ID=`base64 /dev/urandom | tr -d "/+=" | head -c 10`
+INVALIDATE=
+USE=
+REVISION_OF=
+MESSAGE2=
+DEBUG=
+FILES="*"
 
 # getopt options
 OPTIONS=p:s:m:d
