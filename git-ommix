@@ -112,7 +112,7 @@ while true; do
             shift 2
             ;;
         -m|--message)
-            MESSAGE="$2"
+            MESSAGE2="$2"
             shift 2
             ;;
         -d|--debug)
@@ -145,7 +145,7 @@ if [[ -n "$DEBUG" ]]; then
     echo "Use: ${USE[@]}"
     echo "Invalidate: ${INVALIDATE[@]}"
     echo "Revision_of: $REVISION_OF"
-    echo "Message: $MESSAGE"
+    echo "Message: $MESSAGE2"
     echo "Files: $FILES"
 fi
 
@@ -174,8 +174,8 @@ if [[ -n "$SAMPLE" ]]; then
 fi
 
 case "$VERB" in
-     add) add $OBJECT;;
-     list) list $OBJECT;;
-     get) get $OBJECT;;
+     add) add;;
+     list) list;;
+     get) get;;
      *) usage "root";;
 esac

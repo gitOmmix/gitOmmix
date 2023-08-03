@@ -119,25 +119,30 @@ function dbg() {
     fi
 }
 
-# Create a repository
-function create_repo()
+# Add patient
+# ID
+function add_patient()
 {
-    echo "Creating patient:$1 repo"
+    mkdir -p "$ID/data"
+    mkdir -p "$ID/result"
 
-    mkdir -p "$1/data"
-    mkdir -p "$1/result"
-    cd "$1"
-    git init &>/dev/null
-    git annex init &>/dev/null
-    git config core.pager cat
-    git config annex.largefiles 'largerthan=1Mb or include=data/* or include=results/*'
-    git commit --allow-empty \
-        --date "$DATE" \
+    cd "$ID"
+
+    dbg git init
+    dbg git annex init
+    dbg git config core.pager cat
+    dbg git config annex.largefiles "$GIT_OMMIX_LARGE_FILES"
+
+    dbg git checkout -b "patient|$ID"
+
+    dbg git commit --allow-empty \
         --author "$PROVIDER" \
-        -m "Patient: $1
+        --date "$DATE" \
+        -m "patient:$ID
 
-patient:$1 a prov:Entity .
-patient:$1 a MSH:Patient ." &>/dev/null
+patient:$ID a prov:Entity .
+patient:$ID a MSH:Patient .
+$MESSAGE2"
 }
 
 # Create a sample
