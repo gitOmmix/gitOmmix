@@ -132,7 +132,7 @@ done
 FILES=${@:-$FILES}
 
 # Output parameter values for debug
-if [[ $DEBUG = "y" ]]; then
+if [[ -n "$DEBUG" ]]; then
     echo "Verb: $VERB"
     echo "Object: $OBJECT"
     echo "Provider: $PROVIDER"
