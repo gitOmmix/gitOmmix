@@ -145,70 +145,154 @@ patient:$ID a MSH:Patient .
 $MESSAGE2"
 }
 
-# Create a sample
-function create_sample()
+# Add sample
+# ID PATIENT
+function add_sample()
 {
-    echo "Creating sample:$1 branch"
-    
-    METHOD="sampling"
-    git stash push &>/dev/null
-    git checkout -b "sample|$1" main &>/dev/null
-    set +e
-    git stash pop &>/dev/null
-    set -e
-    git commit --allow-empty \
-        --date "$DATE" \
-        --author "$PROVIDER" \
-        -m "Sample: $1
+    dbg git stash push
+    dbg git checkout -b "sample|$ID" "patient|$PATIENT"
+    dbg git stash pop
+
+    MESSAGE="sample:$ID
 
 provider:$PROVIDER a prov:Agent .
+
+sample:$ID a prov:Entity .
+sample:$ID wasDerivedFrom patient:$PATIENT .
+sample:$ID wasAttributedTo provider:$PROVIDER .
+sample:$ID generatedAtTime xsd:dateTime:$DATE .
+"
+
+    if [[ -n "$METHOD" ]];then
+        MESSAGE+="sample:$ID wasGeneratedBy method:$METHOD .
 
 method:$METHOD a prov:Activity .
 method:$METHOD used patient:$PATIENT .
 method:$METHOD wasAssociatedWith provider:$PROVIDER .
-
-sample:$1 a prov:Entity .
-sample:$1 wasGeneratedBy method:$METHOD .
-sample:$1 wasDerivedFrom patient:$PATIENT .
-sample:$1 wasAttributedTo provider:$PROVIDER .
-sample:$1 generatedAtTime xsd:dateTime:$DATE ." &>/dev/null
-}
-
-# Add data or result
-function add()
-{
-    echo "Adding $1:$ID"
-    
-    METHOD="method_$1"
-
-    case "$1" in
-        data);;
-        result);;
-        *) usage "add";;
-    esac
-
-    if [[ "$STATELESS" = "y" ]]; then
-        cp "$CURRENT_DIR/"$FILES "$GIT_OMMIX_REPO_DIR/$PATIENT/$1" -r
+"
     fi
 
-    git add "$1" &>/dev/null
-
-    git commit --date "$DATE" \
+    dbg git commit --allow-empty \
         --author "$PROVIDER" \
-        -m "$1: $ID
+        --date "$DATE" \
+        -m "$MESSAGE
+$MESSAGE2"
+}
 
-provider:$PROVIDER a prov:Agent .
+# Add data
+# ID PATIENT SAMPLE REVISION_OF data|<id> | <data_hash> INVALIDATE data|<id> | <data_hash>
+function add_data()
+{
+    cp "$CURRENT_DIR/"$FILES "$GIT_OMMIX_REPO_DIR/$PATIENT/$OBJECT" -r
+
+    dbg git add "$OBJECT"
+
+    #TODO
+    #detect if modified data! -> revision_of
+    #find commit directly?
+    if `git status --porcelain | grep ^M -q`;then
+        git status --porcelain | grep ^M | \
+            (while read line;do
+                 REVISION_OF=`git log --pretty=%s --follow --diff-filter=A ${line:3}`
+             done)
+    fi
+
+    echo "$REVISION_OF"
+    exit 0
+
+    MESSAGE="$OBJECT:$ID
+
+$OBJECT:$ID a prov:Entity .
+$OBJECT:$ID wasDerivedFrom sample:$SAMPLE .
+$OBJECT:$ID wasAttributedTo provider:$PROVIDER .
+$OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
+"
+
+    if [[ -n "$REVISION_OF" ]];then
+        # accept data|id (as is) or commit hash (get data|id) #exit if not okay ? set -e ? ^^
+        if [[ "${REVISION_OF%%:*}" != "$OBJECT" ]];then
+            REVISION_OF=`git log "$REVISION_OF" --pretty=%s -1`
+        fi
+
+        # check if existing data for this sample
+        if `git log --oneline | grep -F "$REVISION_OF" -q`;then
+            MESSAGE+="$OBJECT:$ID wasRevisionOf $REVISION_OF .
+"
+        else
+            die "$REVISION_OF is not an existing data commit in the sample|$SAMPLE of patient|$PATIENT"
+        fi
+    fi
+
+    if [[ -n "$INVALIDATE" && -n "$METHOD" ]];then #deal with arrays!
+        # accept data|id (as is) or commit hash (get data|id) #exit if not okay ? set -e ? ^^
+        if [[ "${INVALIDATE%%:*}" != "$OBJECT" ]];then
+            INVALIDATE=`git log "$INVALIDATE" --pretty=%s -1`
+        fi
+
+        # check if existing data for this sample
+        if `git log --oneline | grep -F $INVALIDATE" -q`;then
+            MESSAGE+="$INVALIDATE wasInvalidatedBy method:$METHOD .
+"
+        else
+            die "$INVALIDATE is not an existing data commit in the sample|$SAMPLE of patient|$PATIENT"
+        fi
+    fi
+
+    if [[ -n "$METHOD" ]];then
+        MESSAGE+="$OBJECT:$ID wasGeneratedBy method:$METHOD .
 
 method:$METHOD a prov:Activity .
-method:$METHOD used sample:$SAMPLE . #used data:xxx
-method:$METHOD wasAssociatedWith provider:$PROVIDER .
+method:$METHOD used sample:$SAMPLE .
 method:$METHOD startedAtTime xsd:dateTime:$DATE .
+method:$METHOD wasAssociatedWith provider:$PROVIDER .
+"
+    fi
 
-$1:$id a prov:Entity .
-$1:$id wasGeneratedBy method:$METHOD .
-$1:$id wasDerivedFrom sample:$SAMPLE . #wasDerivedFrom data:xxx
-$1:$id wasAttributedTo provider:$PROVIDER .
-$1:$id generatedAtTime xsd:dateTime:$DATE ."
+    dbg git commit \
+        --date "$DATE" \
+        --author "$PROVIDER" \
+        -m "$MESSAGE
+$MESSAGE2"
+}
+
+# Add
+function add()
+{
+    echo "Adding $OBJECT:$ID"
+
+    case "$OBJECT" in
+        patient)
+            add_patient
+            exit 0
+            ;;
+        sample)
+            if [[ -z "$PATIENT" ]];then
+                die "Please provide a patient"
+            fi
+
+            add_sample
+            exit 0
+            ;;
+        data)
+            if [[ -z "$PATIENT" ]];then
+                die "Please provide a patient"
+            fi
+
+            if [[ -z "$SAMPLE" ]];then
+                die "Please provide a sample"
+            fi
+
+            # if [[ -z "$FILES" ]];then
+            #     die "Please provide data files to add"
+            # fi
+
+            add_data
+            exit 0
+            ;;
+        result)
+            ;;
+        *) usage "add";;
+    esac
 }
 
 ## add diagnostic
