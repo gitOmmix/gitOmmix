@@ -211,7 +211,11 @@ $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
     if [[ -n "$REVISION_OF" ]];then
         # accept data|id (as is) or commit hash (get data|id) #exit if not okay ? set -e ? ^^
         if [[ "${REVISION_OF%%:*}" != "$OBJECT" ]];then
-            REVISION_OF=`git log "$REVISION_OF" --pretty=%s -1`
+            if `dbg git log "$REVISION_OF" --pretty=%s -1`;then
+                REVISION_OF=`git log "$REVISION_OF" --pretty=%s -1`
+            else
+                die "$REVISION_OF is not the hash of an existing data commit in the sample|$SAMPLE of patient|$PATIENT"
+            fi
         fi
 
         # check if existing data for this sample
@@ -226,7 +230,11 @@ $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
     if [[ -n "$INVALIDATE" && -n "$METHOD" ]];then #deal with arrays!
         # accept data|id (as is) or commit hash (get data|id) #exit if not okay ? set -e ? ^^
         if [[ "${INVALIDATE%%:*}" != "$OBJECT" ]];then
-            INVALIDATE=`git log "$INVALIDATE" --pretty=%s -1`
+            if `dbg git log "$INVALIDATE" --pretty=%s -1`;then
+                INVALIDATE=`git log "$INVALIDATE" --pretty=%s -1`
+            else
+                die "$INVALIDATE is not the hash of an existing data commit in the sample|$SAMPLE of patient|$PATIENT"
+            fi
         fi
 
         # check if existing data for this sample
