@@ -103,14 +103,14 @@ If stateless, copy the files to the repo."
     exit 0
 }
 
-# exit and print message
+# Print messages passed as arguments and exit in error
 function die()
 {
     echo $@
     exit 1
 }
 
-# redirect commands if not debugging
+# Redirect commands to &>/dev/null if not DEBUGging
 function dbg() {
     if [[ -n "$DEBUG" ]]; then
         "$@"
@@ -120,21 +120,31 @@ function dbg() {
 }
 
 # Add patient
-# ID
+# Uses :
+# - ID
 function add_patient()
 {
+    # Create the patient repo dir and data and result subdirs
     mkdir -p "$ID/data"
     mkdir -p "$ID/result"
 
+    # Go to the patient repo
     cd "$ID"
 
+    # Init git, git annex
     dbg git init
     dbg git annex init
+
+    # Set some default options :
+    # - make `cat` the default pager makes it easier to parse outputs
+    # - set rule for annex usage
     dbg git config core.pager cat
     dbg git config annex.largefiles "$GIT_OMMIX_LARGE_FILES"
 
+    # Rename the default branch to the patient ID
     dbg git checkout -b "patient|$ID"
 
+    # Create an empty commit with the PROV message
     dbg git commit --allow-empty \
         --author "$PROVIDER" \
         --date "$DATE" \
@@ -146,13 +156,18 @@ $MESSAGE2"
 }
 
 # Add sample
-# ID PATIENT
+# Uses :
+# - ID
+# - PATIENT
 function add_sample()
 {
+    # Store any changes in the repo in a stash
     dbg git stash push
+    # Create a new sample branch stemming from the patient branch
     dbg git checkout -b "sample|$ID" "patient|$PATIENT"
     dbg git stash pop
 
+    # Build the PROV message
     MESSAGE="sample:$ID
 
 provider:$PROVIDER a prov:Agent .
@@ -163,6 +178,7 @@ sample:$ID wasAttributedTo provider:$PROVIDER .
 sample:$ID generatedAtTime xsd:dateTime:$DATE .
 "
 
+    # Add a method PROV triplets if given
     if [[ -n "$METHOD" ]];then
         MESSAGE+="sample:$ID wasGeneratedBy method:$METHOD .
 
@@ -172,6 +188,7 @@ method:$METHOD wasAssociatedWith provider:$PROVIDER .
 "
     fi
 
+    # Create an empty commit with the PROV message
     dbg git commit --allow-empty \
         --author "$PROVIDER" \
         --date "$DATE" \
@@ -179,16 +196,23 @@ method:$METHOD wasAssociatedWith provider:$PROVIDER .
 $MESSAGE2"
 }
 
-# ID PATIENT SAMPLE REVISION_OF data|<id> | <data_hash> INVALIDATE data|<id> | <data_hash>
 # Add data|result
+# Uses :
+# - ID
+# - PATIENT
+# - SAMPLE
+# - [USE data:<id> | <data_hash>]
+# - [REVISION_OF data|result:<id> | <data|result_hash>]
+# - [INVALIDATE data|result:<id> | <data|result_hash>]
 function add_object()
 {
+    # Copy all the given files to the $OBJECT folder recursively
     cp "$CURRENT_DIR/"$FILES "$GIT_OMMIX_REPO_DIR/$PATIENT/$OBJECT" -r
 
+    # Add the $OBJECT folder to git
     dbg git add "$OBJECT"
 
-    #TODO
-    #detect if modified data! -> revision_of
+    #TODO: detect if modified $OBJECT -> revision_of
     #find commit directly?
     if `git status --porcelain | grep ^M -q`;then
         git status --porcelain | grep ^M | \
@@ -219,6 +243,7 @@ function add_object()
         fi
     fi
 
+    # Build the PROV message
     MESSAGE="$OBJECT:$ID
 
 $OBJECT:$ID a prov:Entity .
@@ -227,6 +252,7 @@ $OBJECT:$ID wasAttributedTo provider:$PROVIDER .
 $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
 "
 
+    # If the $OBJECT is a REVISION_OF
     if [[ -n "$REVISION_OF" ]];then
         # accept $OBJECT:id (as is) or commit hash (translated to $OBJECT:id)
         if [[ "${REVISION_OF%%:*}" != "$OBJECT" ]];then
@@ -246,7 +272,9 @@ $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
         fi
     fi
 
+    # If the $OBJECT INVALIDATEs one or more previous $OBJECT commit(s)
     if [[ -n "$INVALIDATE" && -n "$METHOD" ]];then #TODO: deal with arrays!
+        # accept $OBJECT:id (as is) or commit hash (translated to $OBJECT:id)
         if [[ "${INVALIDATE%%:*}" != "$OBJECT" ]];then
             if `dbg git log "$INVALIDATE" --pretty=%s -1`;then
                 INVALIDATE=`git log "$INVALIDATE" --pretty=%s -1`
@@ -264,6 +292,7 @@ $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
         fi
     fi
 
+    # Add a method PROV triplets if given
     if [[ -n "$METHOD" ]];then
         MESSAGE+="$OBJECT:$ID wasGeneratedBy method:$METHOD .
 
@@ -274,6 +303,7 @@ method:$METHOD wasAssociatedWith provider:$PROVIDER .
 "
     fi
 
+    # Create a commit with the PROV message and the added $OBJECT
     dbg git commit \
         --date "$DATE" \
         --author "$PROVIDER" \
@@ -292,22 +322,26 @@ function add()
             exit 0
             ;;
         sample)
+            # A sample needs a patient
             if [[ -z "$PATIENT" ]];then
-                die "Please provide a patient"
+                die "Please provide a --patient"
             fi
 
             add_sample
             exit 0
             ;;
         data|result)
+            # Data and results need a patient
             if [[ -z "$PATIENT" ]];then
-                die "Please provide a patient"
+                die "Please provide a --patient"
             fi
 
+            # Data and results need a sample
             if [[ -z "$SAMPLE" ]];then
-                die "Please provide a sample"
+                die "Please provide a --sample"
             fi
 
+            # A result needs to use data
             if [[ "$OBJECT" == "result" && -z "$USE" ]];then
                 die "Please --use data when adding a result"
             fi

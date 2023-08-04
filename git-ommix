@@ -169,7 +169,7 @@ if [[ -n "$SAMPLE" ]]; then
         dbg git checkout "sample|$SAMPLE"
         dbg git stash pop
     else
-        die "sample:$SAMPLE is not a sample of patient $PATIENT"
+        die "sample:$SAMPLE is not a sample of patient:$PATIENT"
     fi
 fi
 
