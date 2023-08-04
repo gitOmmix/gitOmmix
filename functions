@@ -179,9 +179,9 @@ method:$METHOD wasAssociatedWith provider:$PROVIDER .
 $MESSAGE2"
 }
 
-# Add data
 # ID PATIENT SAMPLE REVISION_OF data|<id> | <data_hash> INVALIDATE data|<id> | <data_hash>
-function add_data()
+# Add data|result
+function add_object()
 {
     cp "$CURRENT_DIR/"$FILES "$GIT_OMMIX_REPO_DIR/$PATIENT/$OBJECT" -r
 
@@ -200,49 +200,67 @@ function add_data()
     echo "$REVISION_OF"
     exit 0
 
+    if [[ "$OBJECT" == "data" ]];then
+        # data always derives from the sample
+        USE="sample:$SAMPLE"
+    else
+        # accept data:id (as is) or commit hash (translated to data:id)
+        if [[ "${USE%%:*}" != "data" ]];then
+            if `dbg git log "$USE" --pretty=%s -1`;then
+                USE=`git log "$USE" --pretty=%s -1`
+            else
+                die "$USE is not the commit hash or the name of existing data in sample:$SAMPLE of patient:$PATIENT"
+            fi
+        fi
+
+        # check if existing data for this sample
+        if ! `git log --oneline | grep -F "$USE" -q`;then
+            die "$USE is not the name of existing data in sample:$SAMPLE of patient:$PATIENT"
+        fi
+    fi
+
     MESSAGE="$OBJECT:$ID
 
 $OBJECT:$ID a prov:Entity .
-$OBJECT:$ID wasDerivedFrom sample:$SAMPLE .
+$OBJECT:$ID wasDerivedFrom $USE .
 $OBJECT:$ID wasAttributedTo provider:$PROVIDER .
 $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
 "
 
     if [[ -n "$REVISION_OF" ]];then
-        # accept data|id (as is) or commit hash (get data|id) #exit if not okay ? set -e ? ^^
+        # accept $OBJECT:id (as is) or commit hash (translated to $OBJECT:id)
         if [[ "${REVISION_OF%%:*}" != "$OBJECT" ]];then
             if `dbg git log "$REVISION_OF" --pretty=%s -1`;then
                 REVISION_OF=`git log "$REVISION_OF" --pretty=%s -1`
             else
-                die "$REVISION_OF is not the hash of an existing data commit in the sample|$SAMPLE of patient|$PATIENT"
+                die "$REVISION_OF is not the commit hash or the name of existing $OBJECT in sample:$SAMPLE of patient:$PATIENT"
             fi
         fi
 
-        # check if existing data for this sample
+        # check if existing $OBJECT for this sample
         if `git log --oneline | grep -F "$REVISION_OF" -q`;then
             MESSAGE+="$OBJECT:$ID wasRevisionOf $REVISION_OF .
 "
         else
-            die "$REVISION_OF is not an existing data commit in the sample|$SAMPLE of patient|$PATIENT"
+            die "$REVISION_OF is not the name of existing $OBJECT in sample:$SAMPLE of patient:$PATIENT"
         fi
     fi
 
-    if [[ -n "$INVALIDATE" && -n "$METHOD" ]];then #deal with arrays!
-        # accept data|id (as is) or commit hash (get data|id) #exit if not okay ? set -e ? ^^
+    if [[ -n "$INVALIDATE" && -n "$METHOD" ]];then #TODO: deal with arrays!
         if [[ "${INVALIDATE%%:*}" != "$OBJECT" ]];then
             if `dbg git log "$INVALIDATE" --pretty=%s -1`;then
                 INVALIDATE=`git log "$INVALIDATE" --pretty=%s -1`
             else
-                die "$INVALIDATE is not the hash of an existing data commit in the sample|$SAMPLE of patient|$PATIENT"
+                die "$INVALIDATE is not the commit hash or the name of existing $OBJECT in sample:$SAMPLE of patient:$PATIENT"
             fi
         fi
 
-        # check if existing data for this sample
+        # check if existing $OBJECT for this sample
         if `git log --oneline | grep -F $INVALIDATE" -q`;then
             MESSAGE+="$INVALIDATE wasInvalidatedBy method:$METHOD .
 "
         else
-            die "$INVALIDATE is not an existing data commit in the sample|$SAMPLE of patient|$PATIENT"
+            die "$INVALIDATE is not the name of existing $OBJECT in sample:$SAMPLE of patient:$PATIENT"
         fi
     fi
 
@@ -250,7 +268,7 @@ $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
         MESSAGE+="$OBJECT:$ID wasGeneratedBy method:$METHOD .
 
 method:$METHOD a prov:Activity .
-method:$METHOD used sample:$SAMPLE .
+method:$METHOD used $USE .
 method:$METHOD startedAtTime xsd:dateTime:$DATE .
 method:$METHOD wasAssociatedWith provider:$PROVIDER .
 "
@@ -281,7 +299,7 @@ function add()
             add_sample
             exit 0
             ;;
-        data)
+        data|result)
             if [[ -z "$PATIENT" ]];then
                 die "Please provide a patient"
             fi
@@ -290,14 +308,16 @@ function add()
                 die "Please provide a sample"
             fi
 
+            if [[ "$OBJECT" == "result" && -z "$USE" ]];then
+                die "Please --use data when adding a result"
+            fi
+
             # if [[ -z "$FILES" ]];then
             #     die "Please provide data files to add"
             # fi
 
-            add_data
+            add_object
             exit 0
-            ;;
-        result)
             ;;
         *) usage "add";;
     esac
