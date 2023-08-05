@@ -213,7 +213,7 @@ function add_object
     # Add the $OBJECT folder to git
     dbg git add "$OBJECT"
 
-    #TODO: detect if modified $OBJECT -> revision_of
+    # TODO: detect if modified $OBJECT -> revision_of
     #find commit directly?
     if `git status --porcelain | grep ^M -q`;then
         git status --porcelain | grep ^M | \
@@ -245,6 +245,7 @@ function add_object
     fi
 
     # Build the PROV message
+    # TODO: wasRevisionOf should replace wasDerivedFrom
     MESSAGE="$OBJECT:$ID
 
 $OBJECT:$ID a prov:Entity .
