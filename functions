@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # usage function
-function usage()
+function usage
 {
     case "$1" in
         root) 
@@ -104,14 +104,15 @@ If stateless, copy the files to the repo."
 }
 
 # Print messages passed as arguments and exit in error
-function die()
+function die
 {
     echo $@
     exit 1
 }
 
 # Redirect commands to &>/dev/null if not DEBUGging
-function dbg() {
+function dbg
+{
     if [[ -n "$DEBUG" ]]; then
         "$@"
     else
@@ -122,7 +123,7 @@ function dbg() {
 # Add patient
 # Uses :
 # - ID
-function add_patient()
+function add_patient
 {
     # Create the patient repo dir and data and result subdirs
     mkdir -p "$ID/data"
@@ -159,7 +160,7 @@ $MESSAGE2"
 # Uses :
 # - ID
 # - PATIENT
-function add_sample()
+function add_sample
 {
     # Store any changes in the repo in a stash
     dbg git stash push
@@ -204,7 +205,7 @@ $MESSAGE2"
 # - [USE data:<id> | <data_hash>]
 # - [REVISION_OF data|result:<id> | <data|result_hash>]
 # - [INVALIDATE data|result:<id> | <data|result_hash>]
-function add_object()
+function add_object
 {
     # Copy all the given files to the $OBJECT folder recursively
     cp "$CURRENT_DIR/"$FILES "$GIT_OMMIX_REPO_DIR/$PATIENT/$OBJECT" -r
@@ -312,7 +313,7 @@ $MESSAGE2"
 }
 
 # Add
-function add()
+function add
 {
     echo "Adding $OBJECT:$ID"
 
@@ -364,7 +365,7 @@ function add()
 
 
 # Return the list of samples
-function list_samples()
+function list_samples
 {
     # List all branches but master an git-annex
     git branch | grep -v 'master' | grep -v 'git-annex'
@@ -372,20 +373,20 @@ function list_samples()
 
 # Return the provenance in turtle format
 # It is the concatenation of all commit messages (without the subject line)
-function prov_all()
+function prov_all
 {
     git log --pretty=format:'# %s%n%b' --author-date-order --reverse
 }
 
 # Get up-to-date result of a sample
 # Print the last commit
-function last()
+function last
 {
     git log -n 1 --pretty="format:%s"
 }
 
 ## Completions
-function _completions()
+function _completions
 {
     #COMP_WORDS = array of words typed after the name of the program
     #COMP_CWORD = index pointing to the word the cursor is at
