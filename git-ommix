@@ -5,17 +5,14 @@
 set -uo pipefail
 IFS=$'\n\t'
 
+# Load git ommix functions
+source /usr/share/git-ommix/functions
+
 # Test getopt
 # Allow a command to fail with !’s side effect on errexit
 # Use return value from ${PIPESTATUS[0]}, because ! hosed $?
 ! getopt --test > /dev/null 
-if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
-    echo 'I’m sorry, `getopt --test` failed in this environment.'
-    exit 1
-fi
-
-# Load git ommix functions
-source /usr/share/git-ommix/functions
+[[ ${PIPESTATUS[0]} -eq 4 ]] || die 'I’m sorry, `getopt --test` failed in this environment.'
 
 # Settings
 
@@ -30,10 +27,7 @@ CURRENT_DIR="$PWD"
 # Parse arguments
 
 # Test for the number of options, at least two (verb + object)
-if [[ $# -lt 2 ]]; then
-    echo "Insufficient number of arguments"
-    usage root
-fi
+[[ $# -gt 1 ]] || usage root
 
 # Get verb and object
 VERB="$1"
@@ -62,12 +56,7 @@ LONGOPTS=provider:,method:,patient:,sample:,date:,id:,invalidate:,use:,revision_
 # -activate quoting/enhanced mode (e.g. by writing out “--options”)
 # -pass arguments only via   -- "$@"   to separate them correctly
 ! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "git-ommix" -- "$@")
-if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
-    # e.g. return value is 1
-    #  then getopt has complained about wrong arguments to stdout
-    usage root
-    exit 2
-fi
+[[ ${PIPESTATUS[0]} -eq 0 ]] || usage root
 
 # Read getopt’s output this way to handle the quoting right:
 eval set -- "$PARSED"
@@ -133,21 +122,19 @@ done
 FILES=${@:-$FILES}
 
 # Output parameter values for debug
-if [[ -n "$DEBUG" ]]; then
-    echo "Verb: $VERB"
-    echo "Object: $OBJECT"
-    echo "Provider: $PROVIDER"
-    echo "Method: $METHOD"
-    echo "Patient: $PATIENT"
-    echo "Sample: $SAMPLE"
-    echo "Date: $DATE"
-    echo "Id: $ID$"
-    echo "Use: ${USE[@]}"
-    echo "Invalidate: ${INVALIDATE[@]}"
-    echo "Revision_of: $REVISION_OF"
-    echo "Message: $MESSAGE2"
-    echo "Files: $FILES"
-fi
+[[ "$DEBUG" ]] && echo "Verb: $VERB
+Object: $OBJECT
+Provider: $PROVIDER
+Method: $METHOD
+Patient: $PATIENT
+Sample: $SAMPLE
+Date: $DATE
+Id: $ID$
+Use: ${USE[@]}
+Invalidate: ${INVALIDATE[@]}
+Revision_of: $REVISION_OF
+Message: $MESSAGE2
+Files: $FILES"
 
 # Go to git ommix dir or create if it does not exist
 mkdir -p "$GIT_OMMIX_REPO_DIR"
@@ -177,5 +164,5 @@ case "$VERB" in
      add) add;;
      list) list;;
      get) get;;
-     *) usage "root";;
+     *) usage root;;
 esac

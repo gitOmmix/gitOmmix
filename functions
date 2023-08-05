@@ -325,28 +325,20 @@ function add
             ;;
         sample)
             # A sample needs a patient
-            if [[ -z "$PATIENT" ]];then
-                die "Please provide a --patient"
-            fi
+            [[ "$PATIENT" ]] || die "Please provide a --patient"
 
             add_sample
             exit 0
             ;;
         data|result)
             # Data and results need a patient
-            if [[ -z "$PATIENT" ]];then
-                die "Please provide a --patient"
-            fi
+            [[ "$PATIENT" ]] || die "Please provide a --patient"
 
             # Data and results need a sample
-            if [[ -z "$SAMPLE" ]];then
-                die "Please provide a --sample"
-            fi
+            [[ "$SAMPLE" ]] || die "Please provide a --sample"
 
             # A result needs to use data
-            if [[ "$OBJECT" == "result" && -z "$USE" ]];then
-                die "Please --use data when adding a result"
-            fi
+            [[ "$OBJECT" == "result" ]] && [[ "$USE" ]] || die "Please --use data when adding a result"
 
             # if [[ -z "$FILES" ]];then
             #     die "Please provide data files to add"
