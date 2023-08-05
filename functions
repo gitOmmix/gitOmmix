@@ -113,7 +113,7 @@ function die
 # Redirect commands to &>/dev/null if not DEBUGging
 function dbg
 {
-    if [[ -n "$DEBUG" ]]; then
+    if [[ "$DEBUG" ]]; then
         "$@"
     else
         "$@" &>/dev/null
@@ -180,7 +180,7 @@ sample:$ID generatedAtTime xsd:dateTime:$DATE .
 "
 
     # Add a method PROV triplets if given
-    if [[ -n "$METHOD" ]];then
+    if [[ "$METHOD" ]];then
         MESSAGE+="sample:$ID wasGeneratedBy method:$METHOD .
 
 method:$METHOD a prov:Activity .
@@ -254,7 +254,7 @@ $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
 "
 
     # If the $OBJECT is a REVISION_OF
-    if [[ -n "$REVISION_OF" ]];then
+    if [[ "$REVISION_OF" ]];then
         # accept $OBJECT:id (as is) or commit hash (translated to $OBJECT:id)
         if [[ "${REVISION_OF%%:*}" != "$OBJECT" ]];then
             if `dbg git log "$REVISION_OF" --pretty=%s -1`;then
@@ -274,7 +274,7 @@ $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
     fi
 
     # If the $OBJECT INVALIDATEs one or more previous $OBJECT commit(s)
-    if [[ -n "$INVALIDATE" && -n "$METHOD" ]];then #TODO: deal with arrays!
+    if [[ "$INVALIDATE" && "$METHOD" ]];then # TODO: deal with arrays!
         # accept $OBJECT:id (as is) or commit hash (translated to $OBJECT:id)
         if [[ "${INVALIDATE%%:*}" != "$OBJECT" ]];then
             if `dbg git log "$INVALIDATE" --pretty=%s -1`;then
@@ -294,7 +294,7 @@ $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
     fi
 
     # Add a method PROV triplets if given
-    if [[ -n "$METHOD" ]];then
+    if [[ "$METHOD" ]];then
         MESSAGE+="$OBJECT:$ID wasGeneratedBy method:$METHOD .
 
 method:$METHOD a prov:Activity .

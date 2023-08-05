@@ -154,7 +154,7 @@ mkdir -p "$GIT_OMMIX_REPO_DIR"
 cd "$GIT_OMMIX_REPO_DIR"
 
 # If patient is specified, try to go to the repo
-if [[ -n "$PATIENT" ]]; then
+if [[ "$PATIENT" ]]; then
     if [[ -d "$PATIENT" ]]; then
        cd "$PATIENT"
     else
@@ -163,7 +163,7 @@ if [[ -n "$PATIENT" ]]; then
 fi
 
 # If specified, try to go to sample branch
-if [[ -n "$SAMPLE" ]]; then
+if [[ "$SAMPLE" ]]; then
     if [[ `git rev-parse --verify "sample|$SAMPLE"` ]];then
         dbg git stash push
         dbg git checkout "sample|$SAMPLE"
