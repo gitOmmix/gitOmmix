@@ -209,9 +209,9 @@ $MESSAGE2"
 # - ID
 # - PATIENT
 # - SAMPLE
-# - [USE data:<id> | <data_hash>]
+# - [USE data:<id> | <data_hash>] * n
 # - [REVISION_OF data|result:<id> | <data|result_hash>]
-# - [INVALIDATE data|result:<id> | <data|result_hash>]
+# - [INVALIDATE data|result:<id> | <data|result_hash>] * n
 function add_object
 {
     # Copy all the given files to the $OBJECT folder recursively
@@ -229,26 +229,31 @@ function add_object
              done)
     fi
 
-    echo "$REVISION_OF"
-    exit 0
-
     if [[ "$OBJECT" == "data" ]];then
         # data always derives from the sample
-        USE="sample:$SAMPLE"
+        PROV_DERIVE="$OBJECT:$ID wasDerivedFrom sample:$SAMPLE ."
+        PROV_USE="method:$METHOD used sample:$SAMPLE ."
     else
-        # accept data:id (as is) or commit hash (translated to data:id)
-        if [[ "${USE%%:*}" != "data" ]];then
-            if `dbg git log "$USE" --pretty=%s --max-count=1`;then
-                USE=`git log "$USE" --pretty=%s --max-count=1`
-            else
-                die "$USE is not the commit hash or the name of existing data in sample:$SAMPLE of patient:$PATIENT"
+        for use in "${USE[@]}";do
+            # accept data:id (as is) or commit hash (translated to data:id)
+            if [[ "${use%%:*}" != "data" ]];then
+                if `dbg git log "$use" --pretty=%s --max-count=1`;then
+                    use=`git log "$use" --pretty=%s --max-count=1`
+                else
+                    die "$use is not the commit hash or the name of existing data in sample:$SAMPLE of patient:$PATIENT"
+                fi
             fi
-        fi
 
-        # check if existing data for this sample
-        if ! `git log --oneline | grep --fixed-strings "$USE" --quiet`;then
-            die "$USE is not the name of existing data in sample:$SAMPLE of patient:$PATIENT"
-        fi
+            # check if existing data for this sample
+            if ! `git log --oneline | grep --fixed-strings "$use" --quiet`;then
+                die "$use is not the name of existing data in sample:$SAMPLE of patient:$PATIENT"
+            fi
+
+            PROV_DERIVE+="$OBJECT:$ID wasDerivedFrom $use .
+"
+            PROV_USE+="method:$METHOD used $use .
+"
+        done
     fi
 
     # Build the PROV message
@@ -256,7 +261,7 @@ function add_object
     MESSAGE="$OBJECT:$ID
 
 $OBJECT:$ID a prov:Entity .
-$OBJECT:$ID wasDerivedFrom $USE .
+$PROV_DERIVE
 $OBJECT:$ID wasAttributedTo provider:$PROVIDER .
 $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
 "
@@ -282,23 +287,26 @@ $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
     fi
 
     # If the $OBJECT INVALIDATEs one or more previous $OBJECT commit(s)
-    if [[ "$INVALIDATE" && "$METHOD" ]];then # TODO: deal with arrays!
-        # accept $OBJECT:id (as is) or commit hash (translated to $OBJECT:id)
-        if [[ "${INVALIDATE%%:*}" != "$OBJECT" ]];then
-            if `dbg git log "$INVALIDATE" --pretty=%s --max-count=1`;then
-                INVALIDATE=`git log "$INVALIDATE" --pretty=%s --max-count=1`
-            else
-                die "$INVALIDATE is not the commit hash or the name of existing $OBJECT in sample:$SAMPLE of patient:$PATIENT"
+    if [[ "${#INVALIDATE[@]}" -gt 0 && "$METHOD" ]];then
+        local inval
+        for inval in "${INVALIDATE[@]}";do
+            # accept $OBJECT:id (as is) or commit hash (translated to $OBJECT:id)
+            if [[ "${inval%%:*}" != "$OBJECT" ]];then
+                if `git log "$inval" --pretty=%s --max-count=1`;then
+                    inval=`git log "$inval" --pretty=%s --max-count=1`
+                else
+                    die "$inval is not the commit hash or the name of existing $OBJECT in sample:$SAMPLE of patient:$PATIENT"
+                fi
             fi
-        fi
 
-        # check if existing $OBJECT for this sample
-        if `git log --oneline | grep --fixed-strings $INVALIDATE" --quiet`;then
-            MESSAGE+="$INVALIDATE wasInvalidatedBy method:$METHOD .
+            # check if existing $OBJECT for this sample
+            if `git log --oneline | grep --fixed-strings "$inval" --quiet`;then
+                MESSAGE+="$inval wasInvalidatedBy method:$METHOD .
 "
-        else
-            die "$INVALIDATE is not the name of existing $OBJECT in sample:$SAMPLE of patient:$PATIENT"
-        fi
+            else
+                die "$inval is not the name of existing $OBJECT in sample:$SAMPLE of patient:$PATIENT"
+            fi
+        done
     fi
 
     # Add a method PROV triplets if given
@@ -306,7 +314,7 @@ $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
         MESSAGE+="$OBJECT:$ID wasGeneratedBy method:$METHOD .
 
 method:$METHOD a prov:Activity .
-method:$METHOD used $USE .
+$PROV_USE
 method:$METHOD startedAtTime xsd:dateTime:$DATE .
 method:$METHOD wasAssociatedWith provider:$PROVIDER .
 "
@@ -382,23 +390,25 @@ $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
     fi
 
     # If the diagnostic INVALIDATEs one or more previous diagnostic commit(s)
-    if [[ "$INVALIDATE" && "$METHOD" ]];then # TODO: deal with arrays!
-        # accept diagnostic:id (as is) or commit hash (translated to diagnostic:id)
-        if [[ "${INVALIDATE%%:*}" != "diagnostic" ]];then
-            if `dbg git log "$INVALIDATE" --pretty=%s --max-count=1`;then
-                INVALIDATE=`git log "$INVALIDATE" --pretty=%s --max-count=1`
-            else
-                die "$INVALIDATE is not the commit hash or the name of existing diagnostic of patient:$PATIENT"
+    if [[ "${#INVALIDATE[@]}" -gt 0 && "$METHOD" ]];then
+        for inval in "${INVALIDATE[@]}";do
+            # accept diagnostic:id (as is) or commit hash (translated to diagnostic:id)
+            if [[ "${inval%%:*}" != "diagnostic" ]];then
+                if `dbg git log "$inval" --pretty=%s --max-count=1`;then
+                    inval=`git log "$inval" --pretty=%s --max-count=1`
+                else
+                    die "$inval is not the commit hash or the name of existing diagnostic of patient:$PATIENT"
+                fi
             fi
-        fi
 
-        # check if existing diagnostic for this sample
-        if `git log --oneline | grep --fixed-strings $INVALIDATE" --quiet`;then
-            MESSAGE+="$INVALIDATE wasInvalidatedBy method:$METHOD .
+            # check if existing diagnostic for this sample
+            if `git log --oneline | grep --fixed-strings "$inval" --quiet`;then
+                MESSAGE+="$inval wasInvalidatedBy method:$METHOD .
 "
-        else
-            die "$INVALIDATE is not the name of existing diagnostic of patient:$PATIENT"
-        fi
+            else
+                die "$inval is not the name of existing diagnostic of patient:$PATIENT"
+            fi
+        done
     fi
 
     # Add a method PROV triplets if given
@@ -441,7 +451,7 @@ function add
             [[ "$SAMPLE" ]] || die "Please provide a --sample"
 
             # A result needs to use data
-            [[ "$OBJECT" == "result" ]] && [[ "$USE" ]] || die "Please --use data when adding a result"
+            [[ "$OBJECT" == "result" ]] && { [[ "${#USE[@]}" -gt 0 ]] || die "Please --use data when adding a result" ; }
 
             # if [[ -z "$FILES" ]];then
             #     die "Please provide data files to add"

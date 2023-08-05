@@ -31,8 +31,8 @@ PATIENT=
 SAMPLE=
 DATE=`date +%Y-%m-%d`
 ID=`base64 /dev/urandom | tr --delete "/+=" | head --bytes=10`
-INVALIDATE=
-USE=
+INVALIDATE=()
+USE=()
 REVISION_OF=
 MESSAGE2=
 DEBUG=
