@@ -58,7 +58,7 @@ CURRENT_DIR="$PWD"
 [[ ${PIPESTATUS[0]} -eq 4 ]] || die 'I’m sorry, `getopt --test` failed in this environment.'
 
 OPTIONS=p:s:m:d
-LONGOPTS=provider:,method:,patient:,sample:,date:,id:,invalidate:,use:,revision_of:,message:,debug
+LONGOPTS=provider:,method:,patient:,sample:,date:,id:,invalidate:,use:,revision_of:,message:,debug,dry
 
 ! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "git-ommix" -- "$@")
 [[ ${PIPESTATUS[0]} -eq 0 ]] || usage root
@@ -113,7 +113,11 @@ while true; do
             shift 2
             ;;
         -d|--debug)
-            DEBUG="y"
+            DEBUG="debug"
+            shift
+            ;;
+        --dry)
+            DEBUG="dry"
             shift
             ;;
         --)
@@ -130,7 +134,7 @@ done
 FILES=${@:-$FILES}
 
 # Output parameter values for debug
-[[ "$DEBUG" ]] && echo "Verb: $VERB
+[[ "$DEBUG" == "debug" ]] && echo "Verb: $VERB
 Object: $OBJECT
 Provider: $PROVIDER
 Method: $METHOD

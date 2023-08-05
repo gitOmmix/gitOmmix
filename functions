@@ -113,8 +113,10 @@ function die
 # Redirect commands to &>/dev/null if not DEBUGging
 function dbg
 {
-    if [[ "$DEBUG" ]]; then
+    if [[ "$DEBUG" == "debug" ]]; then
         "$@"
+    elif [[ "$DEBUG" == "dry" ]];then
+        echo "$@"
     else
         "$@" &>/dev/null
     fi
@@ -134,11 +136,11 @@ function stash
 function add_patient
 {
     # Create the patient repo dir and data and result subdirs
-    mkdir --parents "$ID/data"
-    mkdir --parents "$ID/result"
+    dbg mkdir --parents "$ID/data"
+    dbg mkdir --parents "$ID/result"
 
     # Go to the patient repo
-    cd "$ID"
+    dbg cd "$ID"
 
     # Init git, git annex
     dbg git init
@@ -213,7 +215,7 @@ $MESSAGE2"
 function add_object
 {
     # Copy all the given files to the $OBJECT folder recursively
-    cp "$CURRENT_DIR/"$FILES "$GIT_OMMIX_REPO_DIR/$PATIENT/$OBJECT" --recursive
+    dbg cp "$CURRENT_DIR/"$FILES "$GIT_OMMIX_REPO_DIR/$PATIENT/$OBJECT" --recursive
 
     # Add the $OBJECT folder to git
     dbg git add "$OBJECT"
@@ -463,7 +465,7 @@ function add
 function list_patient
 {
     # TODO: check if each is a git ommix repo
-    ls * --directory -1
+    dbg ls * --directory -1
 }
 
 # List samples
@@ -471,7 +473,7 @@ function list_patient
 # - PATIENT
 function list_sample
 {
-    git branch --all | grep "sample|"
+    dbg git branch --all | grep "sample|"
 }
 
 # List
