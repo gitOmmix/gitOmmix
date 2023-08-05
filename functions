@@ -325,16 +325,12 @@ function add
 
     case "$OBJECT" in
         patient)
-            add_patient
-            exit 0
-            ;;
+            add_patient ;;
         sample)
             # A sample needs a patient
             [[ "$PATIENT" ]] || die "Please provide a --patient"
 
-            add_sample
-            exit 0
-            ;;
+            add_sample ;;
         data|result)
             # Data and results need a patient
             [[ "$PATIENT" ]] || die "Please provide a --patient"
@@ -349,10 +345,8 @@ function add
             #     die "Please provide data files to add"
             # fi
 
-            add_object
-            exit 0
-            ;;
-        *) usage "add";;
+            add_object ;;
+        *) usage add;;
     esac
 }
 
