@@ -458,11 +458,39 @@ function add
     esac
 }
 
-# Return the list of samples
-function list_samples
+# List patients
+# Uses : nothing
+function list_patient
 {
-    # List all branches but master an git-annex
-    git branch | grep -v 'master' | grep -v 'git-annex'
+    # TODO: check if each is a git ommix repo
+    ls * --directory -1
+}
+
+# List samples
+# Uses :
+# - PATIENT
+function list_sample
+{
+    git branch --all | grep "sample|"
+}
+
+# List
+function list
+{
+    echo "Listing $OBJECT"
+
+    case "$OBJECT" in
+        patient|patients)
+            list_patient ;;
+        sample|samples)
+            [[ "$PATIENT" ]] || die "Please provide a --patient"
+
+            list_sample ;;
+        data) ;;
+        result|results) ;;
+        diagnostic|diagnostics) ;;
+        * ) usage list ;;
+    esac
 }
 
 # Return the provenance in turtle format
