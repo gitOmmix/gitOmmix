@@ -314,6 +314,106 @@ method:$METHOD wasAssociatedWith provider:$PROVIDER .
     dbg git commit \
         --date "$DATE" \
         --author "$PROVIDER" \
+        --message "$MESSAGE
+$MESSAGE2"
+}
+
+# Add diagnostic
+# Uses :
+# - ID
+# - PATIENT
+# - USE result|diagnostic:<id> | <result|diagnostic_hash>
+# - [INVALIDATE diagnostic:<íd> | <diagnostic_hash>]
+# - [REVISION_OF diagnostic:<id> | <diagnostic_hash>]
+function add_diagnostic
+{
+    # commit on diagnostic branch if revision_of a previous diagnostic else create diagnostic branch
+    # can invalidate a diagnostic
+
+    # Check the USEd objects
+    # accept result|diagnostic:id (as is) or commit hash (translated to result|diagnostic:id)
+    # TODO: deal with arrays
+    if [[ "${USE%%:*}" != "result" || "${USE%%:*}" != "diagnostic" ]];then
+        if `dbg git log "$USE" --pretty=%s --max-count=1`;then
+            USE=`git log "$USE" --pretty=%s --max-count=1`
+        else
+            die "$USE is not the commit hash or the name of existing result or diagnostic of patient:$PATIENT"
+        fi
+    fi
+
+    # check if existing $OBJECT for this sample
+    if `git log --oneline | grep --fixed-strings "$USE" --quiet`;then
+        MESSAGE+="diagnostic:$ID used $USE .
+"
+    else
+        die "$USE is not the name of existing diagnostic of patient:$PATIENT"
+    fi
+
+    # Build the PROV message
+    # TODO: revision_of should replace wasDerivedFrom
+    MESSAGE="$OBJECT:$ID
+
+$OBJECT:$ID a prov:Entity .
+$OBJECT:$ID wasDerivedFrom $USE .
+$OBJECT:$ID wasAttributedTo provider:$PROVIDER .
+$OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
+"
+
+    # If the $OBJECT is a REVISION_OF
+    if [[ "$REVISION_OF" ]];then
+        # accept diagnostic:id (as is) or commit hash (translated to diagnostic:id)
+        if [[ "${REVISION_OF%%:*}" != "diagnostic" ]];then
+            if `dbg git log "$REVISION_OF" --pretty=%s --max-count=1`;then
+                REVISION_OF=`git log "$REVISION_OF" --pretty=%s --max-count=1`
+            else
+                die "$REVISION_OF is not the commit hash or the name of existing diagnostic of patient:$PATIENT"
+            fi
+        fi
+
+        # check if existing diagnostic for this sample
+        if `git log --oneline | grep --fixed-strings "$REVISION_OF" --quiet`;then
+            MESSAGE+="$OBJECT:$ID wasRevisionOf $REVISION_OF .
+"
+        else
+            die "$REVISION_OF is not the name of existing diagnostic of patient:$PATIENT"
+        fi
+    fi
+
+    # If the diagnostic INVALIDATEs one or more previous diagnostic commit(s)
+    if [[ "$INVALIDATE" && "$METHOD" ]];then # TODO: deal with arrays!
+        # accept diagnostic:id (as is) or commit hash (translated to diagnostic:id)
+        if [[ "${INVALIDATE%%:*}" != "diagnostic" ]];then
+            if `dbg git log "$INVALIDATE" --pretty=%s --max-count=1`;then
+                INVALIDATE=`git log "$INVALIDATE" --pretty=%s --max-count=1`
+            else
+                die "$INVALIDATE is not the commit hash or the name of existing diagnostic of patient:$PATIENT"
+            fi
+        fi
+
+        # check if existing diagnostic for this sample
+        if `git log --oneline | grep --fixed-strings $INVALIDATE" --quiet`;then
+            MESSAGE+="$INVALIDATE wasInvalidatedBy method:$METHOD .
+"
+        else
+            die "$INVALIDATE is not the name of existing diagnostic of patient:$PATIENT"
+        fi
+    fi
+
+    # Add a method PROV triplets if given
+    if [[ "$METHOD" ]];then
+        MESSAGE+="$OBJECT:$ID wasGeneratedBy method:$METHOD .
+
+method:$METHOD a prov:Activity .
+method:$METHOD used $USE .
+method:$METHOD startedAtTime xsd:dateTime:$DATE .
+method:$METHOD wasAssociatedWith provider:$PROVIDER .
+"
+    fi
+
+    # Create a commit with the PROV message and the added $OBJECT
+    dbg git commit \
+        --date "$DATE" \
+        --author "$PROVIDER" \
         -m "$MESSAGE
 $MESSAGE2"
 }
@@ -346,15 +446,17 @@ function add
             # fi
 
             add_object ;;
+        diagnostic)
+            # A diagnostic needs a patient
+            [[ "$PATIENT" ]] || die "Please provide a --patient"
+
+            # A diagnostic needs to use results or diagonstics
+            [[ "$USE" ]] || die "Please --use result|diagnostic when adding a diagnostic"
+
+            add_diagnostic ;;
         *) usage add;;
     esac
 }
-
-## add diagnostic
-## checkout one of the branches to merge (if a diagnostic exists, pick this one, else pick the first result)
-## create the diagnostic branch
-## git merge diag|1 result|2 result|3 --no-ff -f "diagnostic:1"
-
 
 # Return the list of samples
 function list_samples
