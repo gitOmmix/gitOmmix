@@ -120,6 +120,14 @@ function dbg
     fi
 }
 
+# Stash in place modifications
+function stash
+{
+    git stash push
+    "$@"
+    git stash pop
+}
+
 # Add patient
 # Uses :
 # - ID
@@ -162,11 +170,8 @@ $MESSAGE2"
 # - PATIENT
 function add_sample
 {
-    # Store any changes in the repo in a stash
-    dbg git stash push
     # Create a new sample branch stemming from the patient branch
-    dbg git checkout -b "sample|$ID" "patient|$PATIENT"
-    dbg git stash pop
+    dbg stash git checkout -b "sample|$ID" "patient|$PATIENT"
 
     # Build the PROV message
     MESSAGE="sample:$ID

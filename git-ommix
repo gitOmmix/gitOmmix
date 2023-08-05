@@ -163,9 +163,7 @@ fi
 
 if [[ "$SAMPLE" ]]; then
     if [[ `git rev-parse --verify "sample|$SAMPLE"` ]];then
-        dbg git stash push
-        dbg git checkout "sample|$SAMPLE"
-        dbg git stash pop
+        dbg stash git checkout "sample|$SAMPLE"
     else
         die "sample:$SAMPLE is not a sample of patient:$PATIENT"
     fi
