@@ -30,7 +30,7 @@ METHOD=
 PATIENT=
 SAMPLE=
 DATE=`date +%Y-%m-%d`
-ID=`base64 /dev/urandom | tr -d "/+=" | head -c 10`
+ID=`base64 /dev/urandom | tr --delete "/+=" | head --bytes=10`
 INVALIDATE=
 USE=
 REVISION_OF=

@@ -134,8 +134,8 @@ function stash
 function add_patient
 {
     # Create the patient repo dir and data and result subdirs
-    mkdir -p "$ID/data"
-    mkdir -p "$ID/result"
+    mkdir --parents "$ID/data"
+    mkdir --parents "$ID/result"
 
     # Go to the patient repo
     cd "$ID"
@@ -157,7 +157,7 @@ function add_patient
     dbg git commit --allow-empty \
         --author "$PROVIDER" \
         --date "$DATE" \
-        -m "patient:$ID
+        --message "patient:$ID
 
 patient:$ID a prov:Entity .
 patient:$ID a MSH:Patient .
@@ -198,7 +198,7 @@ method:$METHOD wasAssociatedWith provider:$PROVIDER .
     dbg git commit --allow-empty \
         --author "$PROVIDER" \
         --date "$DATE" \
-        -m "$MESSAGE
+        --message "$MESSAGE
 $MESSAGE2"
 }
 
@@ -213,14 +213,14 @@ $MESSAGE2"
 function add_object
 {
     # Copy all the given files to the $OBJECT folder recursively
-    cp "$CURRENT_DIR/"$FILES "$GIT_OMMIX_REPO_DIR/$PATIENT/$OBJECT" -r
+    cp "$CURRENT_DIR/"$FILES "$GIT_OMMIX_REPO_DIR/$PATIENT/$OBJECT" --recursive
 
     # Add the $OBJECT folder to git
     dbg git add "$OBJECT"
 
     # TODO: detect if modified $OBJECT -> revision_of
     #find commit directly?
-    if `git status --porcelain | grep ^M -q`;then
+    if `git status --porcelain | grep ^M --quiet`;then
         git status --porcelain | grep ^M | \
             (while read line;do
                  REVISION_OF=`git log --pretty=%s --follow --diff-filter=A ${line:3}`
@@ -236,15 +236,15 @@ function add_object
     else
         # accept data:id (as is) or commit hash (translated to data:id)
         if [[ "${USE%%:*}" != "data" ]];then
-            if `dbg git log "$USE" --pretty=%s -1`;then
-                USE=`git log "$USE" --pretty=%s -1`
+            if `dbg git log "$USE" --pretty=%s --max-count=1`;then
+                USE=`git log "$USE" --pretty=%s --max-count=1`
             else
                 die "$USE is not the commit hash or the name of existing data in sample:$SAMPLE of patient:$PATIENT"
             fi
         fi
 
         # check if existing data for this sample
-        if ! `git log --oneline | grep -F "$USE" -q`;then
+        if ! `git log --oneline | grep --fixed-strings "$USE" --quiet`;then
             die "$USE is not the name of existing data in sample:$SAMPLE of patient:$PATIENT"
         fi
     fi
@@ -263,15 +263,15 @@ $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
     if [[ "$REVISION_OF" ]];then
         # accept $OBJECT:id (as is) or commit hash (translated to $OBJECT:id)
         if [[ "${REVISION_OF%%:*}" != "$OBJECT" ]];then
-            if `dbg git log "$REVISION_OF" --pretty=%s -1`;then
-                REVISION_OF=`git log "$REVISION_OF" --pretty=%s -1`
+            if `dbg git log "$REVISION_OF" --pretty=%s --max-count=1`;then
+                REVISION_OF=`git log "$REVISION_OF" --pretty=%s --max-count=1`
             else
                 die "$REVISION_OF is not the commit hash or the name of existing $OBJECT in sample:$SAMPLE of patient:$PATIENT"
             fi
         fi
 
         # check if existing $OBJECT for this sample
-        if `git log --oneline | grep -F "$REVISION_OF" -q`;then
+        if `git log --oneline | grep --fixed-strings "$REVISION_OF" --quiet`;then
             MESSAGE+="$OBJECT:$ID wasRevisionOf $REVISION_OF .
 "
         else
@@ -283,15 +283,15 @@ $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
     if [[ "$INVALIDATE" && "$METHOD" ]];then # TODO: deal with arrays!
         # accept $OBJECT:id (as is) or commit hash (translated to $OBJECT:id)
         if [[ "${INVALIDATE%%:*}" != "$OBJECT" ]];then
-            if `dbg git log "$INVALIDATE" --pretty=%s -1`;then
-                INVALIDATE=`git log "$INVALIDATE" --pretty=%s -1`
+            if `dbg git log "$INVALIDATE" --pretty=%s --max-count=1`;then
+                INVALIDATE=`git log "$INVALIDATE" --pretty=%s --max-count=1`
             else
                 die "$INVALIDATE is not the commit hash or the name of existing $OBJECT in sample:$SAMPLE of patient:$PATIENT"
             fi
         fi
 
         # check if existing $OBJECT for this sample
-        if `git log --oneline | grep -F $INVALIDATE" -q`;then
+        if `git log --oneline | grep --fixed-strings $INVALIDATE" --quiet`;then
             MESSAGE+="$INVALIDATE wasInvalidatedBy method:$METHOD .
 "
         else
