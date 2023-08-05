@@ -1,35 +1,25 @@
 #!/bin/env bash
 
-# Boilerplate bash init
-# Set strict mode
+###############################################################################
+# Use bash "strict mode"
+
 set -uo pipefail
 IFS=$'\n\t'
 
+###############################################################################
 # Load git ommix functions
+# Load global and local settings if they exist
+
 source /usr/share/git-ommix/functions
-
-# Test getopt
-# Allow a command to fail with !’s side effect on errexit
-# Use return value from ${PIPESTATUS[0]}, because ! hosed $?
-! getopt --test > /dev/null 
-[[ ${PIPESTATUS[0]} -eq 4 ]] || die 'I’m sorry, `getopt --test` failed in this environment.'
-
-# Settings
-
-# Global config
 [[ -f "/etc/gitommix.conf" ]] && source "/etc/gitommix.conf"
-
-# Local config
 [[ -f "$HOME/.config/gitommix.conf" ]] && source "$HOME/.config/gitommix.conf"
 
-CURRENT_DIR="$PWD"
-
+###############################################################################
 # Parse arguments
+# There should be at least two arguments (verb + object)
+# Initialize default values
 
-# Test for the number of options, at least two (verb + object)
-[[ $# -gt 1 ]] || usage root
-
-# Get verb and object
+(( $# > 1 )) || usage root
 VERB="$1"
 OBJECT="$2"
 shift 2
@@ -48,20 +38,38 @@ MESSAGE2=
 DEBUG=
 FILES="*"
 
-# getopt options
-OPTIONS=p:s:m:d
-LONGOPTS=provider:,method:,patient:,sample:,date:,id:,invalidate:,use:,revision_of:,message:,debug
+CURRENT_DIR="$PWD"
 
+###############################################################################
+# GETOPT
+#
+# Test getopt
+# Allow a command to fail with !’s side effect on errexit
+# Use return value from ${PIPESTATUS[0]}, because ! hosed $?
+#
+# Set getopt short and long options
 # -temporarily store output to be able to check for errors
 # -activate quoting/enhanced mode (e.g. by writing out “--options”)
 # -pass arguments only via   -- "$@"   to separate them correctly
+#
+# Read getopt’s quoted output
+
+! getopt --test > /dev/null
+[[ ${PIPESTATUS[0]} -eq 4 ]] || die 'I’m sorry, `getopt --test` failed in this environment.'
+
+OPTIONS=p:s:m:d
+LONGOPTS=provider:,method:,patient:,sample:,date:,id:,invalidate:,use:,revision_of:,message:,debug
+
 ! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "git-ommix" -- "$@")
 [[ ${PIPESTATUS[0]} -eq 0 ]] || usage root
 
-# Read getopt’s output this way to handle the quoting right:
 eval set -- "$PARSED"
 
-# Parse options
+###############################################################################
+# Read the options and set the parameters values
+# USE and INVALIDATE can be called multiple times
+# and the values are stored in an array
+
 while true; do
     case "$1" in
         --provider)
@@ -136,20 +144,23 @@ Revision_of: $REVISION_OF
 Message: $MESSAGE2
 Files: $FILES"
 
-# Go to git ommix dir or create if it does not exist
+###############################################################################
+# Setup git ommix :
+# - go to git ommix dir or create if it does not exist
+# - go to the given patient repo dir
+# - go to the given sample branch
+
 mkdir -p "$GIT_OMMIX_REPO_DIR"
 cd "$GIT_OMMIX_REPO_DIR"
 
-# If patient is specified, try to go to the repo
 if [[ "$PATIENT" ]]; then
     if [[ -d "$PATIENT" ]]; then
-       cd "$PATIENT"
+        cd "$PATIENT"
     else
         die "patient:$PATIENT is not a patient"
     fi
 fi
 
-# If specified, try to go to sample branch
 if [[ "$SAMPLE" ]]; then
     if [[ `git rev-parse --verify "sample|$SAMPLE"` ]];then
         dbg git stash push
@@ -159,6 +170,9 @@ if [[ "$SAMPLE" ]]; then
         die "sample:$SAMPLE is not a sample of patient:$PATIENT"
     fi
 fi
+
+###############################################################################
+# Run the given verb
 
 case "$VERB" in
      add) add;;
