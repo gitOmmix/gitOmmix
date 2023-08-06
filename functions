@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# usage function
+###############################################################################
+#
+# Usage
+
 function usage
 {
     case "$1" in
@@ -101,6 +104,10 @@ If stateless, copy the files to the repo." ;;
     exit 0
 }
 
+###############################################################################
+#
+# Utility functions
+
 # Print messages passed as arguments and exit in error
 function die
 {
@@ -127,6 +134,10 @@ function stash
     "$@"
     git stash pop
 }
+
+###############################################################################
+#
+# Add functions
 
 # Add patient
 # Uses :
@@ -471,6 +482,10 @@ Please check your permissions"
     esac
 }
 
+###############################################################################
+#
+# List functions
+
 # List patients
 # Uses : nothing
 function list_patient
@@ -536,6 +551,10 @@ Please check your permissions"
             usage list ;;
     esac
 }
+
+###############################################################################
+#
+# Old functions to rework
 
 # Return the provenance in turtle format
 # It is the concatenation of all commit messages (without the subject line)
