@@ -247,10 +247,10 @@ function add_object
                 die "$use is not the name of existing data in sample:$SAMPLE of patient:$PATIENT"
             fi
 
-            PROV_DERIVE+="$OBJECT:$ID wasDerivedFrom $use .
-"
-            PROV_USE+="method:$METHOD used $use .
-"
+            PROV_DERIVE+="
+$OBJECT:$ID wasDerivedFrom $use ."
+            PROV_USE+="
+method:$METHOD used $use ."
         done
     fi
 
@@ -339,30 +339,33 @@ function add_diagnostic
     # can invalidate a diagnostic
 
     # Check the USEd objects
-    # accept result|diagnostic:id (as is) or commit hash (translated to result|diagnostic:id)
-    # TODO: deal with arrays
-    if [[ "${USE%%:*}" != "result" || "${USE%%:*}" != "diagnostic" ]];then
-        if `dbg git log "$USE" --pretty=%s --max-count=1`;then
-            USE=`git log "$USE" --pretty=%s --max-count=1`
-        else
-            die "$USE is not the commit hash or the name of existing result or diagnostic of patient:$PATIENT"
+    for use in "${USE[@]}";do
+        # accept result|diagnostic:id (as is) or commit hash (translated to result|diagnostic:id)
+        if [[ "${use%%:*}" != "result" || "${use%%:*}" != "diagnostic" ]];then
+            if `dbg git log "$use" --pretty=%s --max-count=1`;then
+                use=`git log "$use" --pretty=%s --max-count=1`
+            else
+                die "$use is not the commit hash or the name of existing result or diagnostic of patient:$PATIENT"
+            fi
         fi
-    fi
 
-    # check if existing $OBJECT for this sample
-    if `git log --oneline | grep --fixed-strings "$USE" --quiet`;then
-        MESSAGE+="diagnostic:$ID used $USE .
+        # check if existing $OBJECT for this sample
+        if `git log --oneline | grep --fixed-strings "$use" --quiet`;then
+            MESSAGE+="diagnostic:$ID used $use .
 "
-    else
-        die "$USE is not the name of existing diagnostic of patient:$PATIENT"
-    fi
+            PROV_DERIVE+="
+$OBJECT:$ID wasDerivedFrom $use ."
+        else
+            die "$use is not the name of existing diagnostic of patient:$PATIENT"
+        fi
+    done
 
     # Build the PROV message
     # TODO: revision_of should replace wasDerivedFrom
     MESSAGE="$OBJECT:$ID
 
 $OBJECT:$ID a prov:Entity .
-$OBJECT:$ID wasDerivedFrom $USE .
+$PROV_DERIVE
 $OBJECT:$ID wasAttributedTo provider:$PROVIDER .
 $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
 "
