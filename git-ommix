@@ -149,29 +149,11 @@ Message: $MESSAGE2
 Files: $FILES"
 
 ###############################################################################
-# Setup git ommix :
-# - go to git ommix dir or create if it does not exist
-# - go to the given patient repo dir
-# - go to the given sample branch
+# Setup git ommix
+# Create the git ommix directory if it doesn't exist yet and cd
 
 mkdir -p "$GIT_OMMIX_REPO_DIR"
 cd "$GIT_OMMIX_REPO_DIR"
-
-if [[ "$PATIENT" ]]; then
-    if [[ -d "$PATIENT" ]]; then
-        cd "$PATIENT"
-    else
-        die "patient:$PATIENT is not a patient"
-    fi
-fi
-
-if [[ "$SAMPLE" ]]; then
-    if [[ `git rev-parse --verify "sample|$SAMPLE"` ]];then
-        dbg stash git checkout "sample|$SAMPLE"
-    else
-        die "sample:$SAMPLE is not a sample of patient:$PATIENT"
-    fi
-fi
 
 ###############################################################################
 # Run the given verb

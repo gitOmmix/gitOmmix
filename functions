@@ -439,35 +439,27 @@ function add
     case "$OBJECT" in
         patient)
             add_patient ;;
+
+        *) # all next operations need a patient, continue matching
+            [[ "$PATIENT" ]] || die "Please provide a --patient"
+            [[ -d "$PATIENT" ]] || die "patient:$PATIENT is not a patient"
+            cd "$PATIENT"
+            ;;&
         sample)
-            # A sample needs a patient
-            [[ "$PATIENT" ]] || die "Please provide a --patient"
-
             add_sample ;;
+
         data|result)
-            # Data and results need a patient
-            [[ "$PATIENT" ]] || die "Please provide a --patient"
-
-            # Data and results need a sample
             [[ "$SAMPLE" ]] || die "Please provide a --sample"
-
-            # A result needs to use data
-            [[ "$OBJECT" == "result" ]] && { [[ "${#USE[@]}" -gt 0 ]] || die "Please --use data when adding a result" ; }
-
-            # if [[ -z "$FILES" ]];then
-            #     die "Please provide data files to add"
-            # fi
+            [[ `git rev-parse --verify "sample|$SAMPLE"` ]] || die "sample:$SAMPLE is not a sample of patient:$PATIENT" && dbg stash git checkout "sample|$SAMPLE"
+            [[ "$OBJECT" != "result" ]] || [[ "${#USE[@]}" -gt 0 ]] || die "Please --use data when adding a result"
 
             add_object ;;
         diagnostic)
-            # A diagnostic needs a patient
-            [[ "$PATIENT" ]] || die "Please provide a --patient"
-
-            # A diagnostic needs to use results or diagonstics
-            [[ "$USE" ]] || die "Please --use result|diagnostic when adding a diagnostic"
-
+            [[ "${#USE[@]}" -gt 0 ]] || die "Please --use result|diagnostic when adding a diagnostic"
             add_diagnostic ;;
-        *) usage add;;
+
+        *)
+            usage add ;;
     esac
 }
 
@@ -495,14 +487,28 @@ function list
     case "$OBJECT" in
         patient|patients)
             list_patient ;;
-        sample|samples)
-            [[ "$PATIENT" ]] || die "Please provide a --patient"
 
+        *) # All next operations need a patient, continue matching
+            [[ "$PATIENT" ]] || die "Please provide a --patient"
+            [[ -d "$PATIENT" ]] || die "patient:$PATIENT is not a patient"
+            cd "$PATIENT"
+            ;;&
+        sample|samples)
             list_sample ;;
-        data) ;;
-        result|results) ;;
-        diagnostic|diagnostics) ;;
-        * ) usage list ;;
+        diagnostic|diagnostics)
+            list_diagnostic ;;
+
+        *) # All next operations need a sample, continue matching
+            [[ "$SAMPLE" ]] || die "Please provide a --sample"
+            [[ `git rev-parse --verify "sample|$SAMPLE"` ]] || die "sample:$SAMPLE is not a sample of patient:$PATIENT" && dbg stash git checkout "sample|$SAMPLE"
+            ;;&
+        data)
+            list_data ;;
+        result|results)
+            list_result ;;
+
+        * )
+            usage list ;;
     esac
 }
 
