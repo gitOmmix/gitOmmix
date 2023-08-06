@@ -426,7 +426,7 @@ method:$METHOD wasAssociatedWith provider:$PROVIDER .
     dbg git commit \
         --date "$DATE" \
         --author "$PROVIDER" \
-        -m "$MESSAGE
+        --message "$MESSAGE
 $MESSAGE2"
 }
 
