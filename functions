@@ -214,7 +214,9 @@ $MESSAGE2"
 function add_object
 {
     # Copy all the given files to the $OBJECT folder recursively
-    dbg cp "$CURRENT_DIR/"$FILES "$GIT_OMMIX_REPO_DIR/$PATIENT/$OBJECT" --recursive
+    # FILES is unquoted to allow * expansion
+    dbg cp ${FILES[@]} "$GIT_OMMIX_REPO_DIR/$PATIENT/$OBJECT" --recursive || die "Unable to copy files to the patient directory at: $GIT_OMMIX_REPO_DIR/$PATIENT/$OBJECT
+Please check your permissions"
 
     # Add the $OBJECT folder to git
     dbg git add "$OBJECT"
@@ -454,6 +456,10 @@ Please check your permissions"
             [[ "$SAMPLE" ]] || die "Please provide a --sample"
             [[ `git rev-parse --verify "sample|$SAMPLE"` ]] || die "sample:$SAMPLE is not a sample of patient:$PATIENT" && dbg stash git checkout "sample|$SAMPLE"
             [[ "$OBJECT" != "result" ]] || [[ "${#USE[@]}" -gt 0 ]] || die "Please --use data when adding a result"
+            [[ "${#FILES[@]}" -gt 0 ]] || die "Please provide data files to add"
+            for ((i = 0; i < ${#FILES[@]}; i++));do
+                FILES[i]="$CURRENT_DIR/${FILES[i]}"
+            done
 
             add_object ;;
         diagnostic)

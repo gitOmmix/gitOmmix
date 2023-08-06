@@ -36,9 +36,6 @@ USE=()
 REVISION_OF=
 MESSAGE2=
 DEBUG=
-FILES="*"
-
-CURRENT_DIR="$PWD"
 
 ###############################################################################
 # GETOPT
@@ -131,7 +128,11 @@ while true; do
     esac
 done
 
-FILES=${@:-$FILES}
+# The remaining arguments will be files when adding data|result
+# or a (list of?) commit hash to start from
+# If no file is given, use '*'
+FILES=("${@:-*}")
+HASHES=("$@")
 
 # Output parameter values for debug
 [[ "$DEBUG" == "debug" ]] && echo "Verb: $VERB
@@ -146,12 +147,15 @@ Use: ${USE[@]}
 Invalidate: ${INVALIDATE[@]}
 Revision_of: $REVISION_OF
 Message: $MESSAGE2
-Files: $FILES"
+Files: ${FILES[@]}
+Hashes: ${HASHES[@]}"
 
 ###############################################################################
 # Setup git ommix
+# Record the current directory for file operations
 # Create the git ommix directory if it doesn't exist yet and cd
 
+CURRENT_DIR="$PWD"
 mkdir -p "$GIT_OMMIX_REPO_DIR" || die "Unable to create the git ommix base directory at: $GIT_OMMIX_REPO_DIR
 Please check your permissions"
 cd "$GIT_OMMIX_REPO_DIR" || die "Unable to access the git ommix base directory at: $GIT_OMMIX_REPO_DIR
