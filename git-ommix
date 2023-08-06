@@ -141,7 +141,7 @@ Method: $METHOD
 Patient: $PATIENT
 Sample: $SAMPLE
 Date: $DATE
-Id: $ID$
+Id: $ID
 Use: ${USE[@]}
 Invalidate: ${INVALIDATE[@]}
 Revision_of: $REVISION_OF

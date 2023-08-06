@@ -36,8 +36,7 @@ Git ommix can be configured with the \$XDG_CONFIG/.gitommix file, or with enviro
 
 Available options are:
 - GIT_OMMIX_REPO_DIR : place to find patient repos
-"
-            ;;
+" ;;
         add)
             echo "git ommix add {patient, sample, data, result, diagnostic} [--options] [--message]
 
@@ -97,8 +96,7 @@ Options :
 [--invalidate]
 
 Add data/result to the current patient and sample if inside a repo, or to the --patient and --sample specified.
-If stateless, copy the files to the repo."
-            ;;
+If stateless, copy the files to the repo." ;;
     esac
     exit 0
 }
@@ -107,7 +105,7 @@ If stateless, copy the files to the repo."
 function die
 {
     echo $@
-    exit 1
+    exit 2
 }
 
 # Redirect commands to &>/dev/null if not DEBUGging
