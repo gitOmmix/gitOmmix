@@ -487,6 +487,24 @@ function list_sample
     git branch --all --list 'sample|*' --format='%(refname:short)'
 }
 
+# List data
+# Uses :
+# - PATIENT
+# - SAMPLE
+function list_data
+{
+    git log --pretty=%s | grep --fixed-strings 'data:'
+}
+
+# List results
+# Uses :
+# - PATIENT
+# - SAMPLE
+function list_result
+{
+    git log --pretty=%s | grep --fixed-strings 'result:'
+}
+
 # List
 function list
 {
