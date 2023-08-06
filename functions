@@ -476,7 +476,7 @@ Please check your permissions"
 function list_patient
 {
     # TODO: check if each is a git ommix repo
-    dbg ls * --directory -1
+    ls * --directory -1
 }
 
 # List samples
@@ -484,14 +484,12 @@ function list_patient
 # - PATIENT
 function list_sample
 {
-    dbg git branch --all | grep "sample|"
+    git branch --all --list 'sample|*' --format='%(refname:short)'
 }
 
 # List
 function list
 {
-    echo "Listing $OBJECT"
-
     case "$OBJECT" in
         patient|patients)
             list_patient ;;
