@@ -134,7 +134,8 @@ function stash
 function add_patient
 {
     # Create the patient repo dir and data and result subdirs
-    dbg mkdir --parents "$ID/data"
+    dbg mkdir --parents "$ID/data" || die "Unable to create a directory in the git ommix base directory at: $GIT_OMMIX_REPO_DIR
+Please check your permissions"
     dbg mkdir --parents "$ID/result"
 
     # Go to the patient repo
@@ -443,7 +444,8 @@ function add
         *) # all next operations need a patient, continue matching
             [[ "$PATIENT" ]] || die "Please provide a --patient"
             [[ -d "$PATIENT" ]] || die "patient:$PATIENT is not a patient"
-            cd "$PATIENT"
+            cd "$PATIENT" || die "Unable to acces $GIT_OMMIX_REPO_DIR/$PATIENT !
+Please check your permissions"
             ;;&
         sample)
             add_sample ;;
@@ -491,7 +493,8 @@ function list
         *) # All next operations need a patient, continue matching
             [[ "$PATIENT" ]] || die "Please provide a --patient"
             [[ -d "$PATIENT" ]] || die "patient:$PATIENT is not a patient"
-            cd "$PATIENT"
+            cd "$PATIENT" || die "Unable to acces the patient directory at: $GIT_OMMIX_REPO_DIR/$PATIENT
+Please check your permissions"
             ;;&
         sample|samples)
             list_sample ;;

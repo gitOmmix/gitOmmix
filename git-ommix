@@ -152,8 +152,10 @@ Files: $FILES"
 # Setup git ommix
 # Create the git ommix directory if it doesn't exist yet and cd
 
-mkdir -p "$GIT_OMMIX_REPO_DIR"
-cd "$GIT_OMMIX_REPO_DIR"
+mkdir -p "$GIT_OMMIX_REPO_DIR" || die "Unable to create the git ommix base directory at: $GIT_OMMIX_REPO_DIR
+Please check your permissions"
+cd "$GIT_OMMIX_REPO_DIR" || die "Unable to access the git ommix base directory at: $GIT_OMMIX_REPO_DIR
+Please check your permissions"
 
 ###############################################################################
 # Run the given verb
