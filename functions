@@ -243,9 +243,10 @@ Please check your permissions"
 
     if [[ "$OBJECT" == "data" ]];then
         # data always derives from the sample
-        PROV_DERIVE="$OBJECT:$ID wasDerivedFrom sample:$SAMPLE ."
-        PROV_USE="method:$METHOD used sample:$SAMPLE ."
+        local PROV_DERIVE="$OBJECT:$ID wasDerivedFrom sample:$SAMPLE ."
+        local PROV_USE="method:$METHOD used sample:$SAMPLE ."
     else
+        local use
         for use in "${USE[@]}";do
             # accept data:id (as is) or commit hash (translated to data:id)
             if [[ "${use%%:*}" != "data" ]];then
@@ -261,9 +262,9 @@ Please check your permissions"
                 die "$use is not the name of existing data in sample:$SAMPLE of patient:$PATIENT"
             fi
 
-            PROV_DERIVE+="
+            local PROV_DERIVE+="
 $OBJECT:$ID wasDerivedFrom $use ."
-            PROV_USE+="
+            local PROV_USE+="
 method:$METHOD used $use ."
         done
     fi
@@ -353,6 +354,7 @@ function add_diagnostic
     # can invalidate a diagnostic
 
     # Check the USEd objects
+    local use
     for use in "${USE[@]}";do
         # accept result|diagnostic:id (as is) or commit hash (translated to result|diagnostic:id)
         if [[ "${use%%:*}" != "result" || "${use%%:*}" != "diagnostic" ]];then
@@ -406,6 +408,7 @@ $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
 
     # If the diagnostic INVALIDATEs one or more previous diagnostic commit(s)
     if [[ "${#INVALIDATE[@]}" -gt 0 && "$METHOD" ]];then
+        local inval
         for inval in "${INVALIDATE[@]}";do
             # accept diagnostic:id (as is) or commit hash (translated to diagnostic:id)
             if [[ "${inval%%:*}" != "diagnostic" ]];then
