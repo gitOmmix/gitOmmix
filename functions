@@ -237,13 +237,20 @@ Please check your permissions"
     # Add the $OBJECT folder to git
     dbg git add "$OBJECT"
 
-    # TODO: detect if modified $OBJECT -> revision_of
-    #find commit directly?
-    if `git status --porcelain | grep ^M --quiet`;then
+    if [[ -z "$REVISION_OF" && `git status --porcelain | grep ^M --quiet` ]];then
+        local revs=()
         git status --porcelain | grep ^M | \
             (while read line;do
-                 REVISION_OF=`git log --pretty=%s --follow --diff-filter=A ${line:3}`
+                 revs+=`git log --pretty=%s --follow --diff-filter=A ${line:3}`
              done)
+        revs=($(printf "%q\n" "${revs[@]}" | sort -u))
+
+        if [[ "${#revs}" -gt 1 ]];then
+            git reset --hard
+            die "The added $OBJECT would be a revision of two $OBJECT objects"
+        fi
+
+        REVISION_OF="$revs"
     fi
 
     if [[ "$OBJECT" == "data" ]];then
