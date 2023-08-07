@@ -186,31 +186,36 @@ function add_sample
     dbg stash git checkout -b "sample|$ID" "patient|$PATIENT"
 
     # Build the PROV message
-    MESSAGE="sample:$ID
-
-provider:$PROVIDER a prov:Agent .
-
+    local MESSAGE_ENTITY="
 sample:$ID a prov:Entity .
 sample:$ID wasDerivedFrom patient:$PATIENT .
 sample:$ID wasAttributedTo provider:$PROVIDER .
-sample:$ID generatedAtTime xsd:dateTime:$DATE .
-"
+sample:$ID generatedAtTime xsd:dateTime:$DATE ."
+
+    local MESSAGE_AGENT="
+provider:$PROVIDER a prov:Agent ."
+
+    local MESSAGE_ACTIVITY=
 
     # Add a method PROV triplets if given
     if [[ "$METHOD" ]];then
-        MESSAGE+="sample:$ID wasGeneratedBy method:$METHOD .
+        MESSAGE_ENTITY+="
+sample:$ID wasGeneratedBy method:$METHOD ."
 
 method:$METHOD a prov:Activity .
 method:$METHOD used patient:$PATIENT .
-method:$METHOD wasAssociatedWith provider:$PROVIDER .
-"
+method:$METHOD wasAssociatedWith provider:$PROVIDER ."
+        MESSAGE_ACTIVITY="
     fi
 
     # Create an empty commit with the PROV message
     dbg git commit --allow-empty \
         --author "$PROVIDER" \
         --date "$DATE" \
-        --message "$MESSAGE
+        --message "sample:$ID
+$MESSAGE_ENTITY
+$MESSAGE_AGENT
+$MESSAGE_ACTIVITY
 $MESSAGE2"
 }
 
@@ -270,14 +275,11 @@ method:$METHOD used $use ."
     fi
 
     # Build the PROV message
-    # TODO: wasRevisionOf should replace wasDerivedFrom
-    MESSAGE="$OBJECT:$ID
-
+    local MESSAGE_ENTITY="
 $OBJECT:$ID a prov:Entity .
 $PROV_DERIVE
 $OBJECT:$ID wasAttributedTo provider:$PROVIDER .
-$OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
-"
+$OBJECT:$ID generatedAtTime xsd:dateTime:$DATE ."
 
     # If the $OBJECT is a REVISION_OF
     if [[ "$REVISION_OF" ]];then
@@ -292,8 +294,8 @@ $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
 
         # check if existing $OBJECT for this sample
         if `git log --oneline | grep --fixed-strings "$REVISION_OF" --quiet`;then
-            MESSAGE+="$OBJECT:$ID wasRevisionOf $REVISION_OF .
-"
+            MESSAGE_ENTITY+="
+$OBJECT:$ID wasRevisionOf $REVISION_OF ."
         else
             die "$REVISION_OF is not the name of existing $OBJECT in sample:$SAMPLE of patient:$PATIENT"
         fi
@@ -314,30 +316,39 @@ $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
 
             # check if existing $OBJECT for this sample
             if `git log --oneline | grep --fixed-strings "$inval" --quiet`;then
-                MESSAGE+="$inval wasInvalidatedBy method:$METHOD .
-"
+                MESSAGE_ENTITY+="
+$inval wasInvalidatedBy method:$METHOD ."
             else
                 die "$inval is not the name of existing $OBJECT in sample:$SAMPLE of patient:$PATIENT"
             fi
         done
     fi
 
+    local MESSAGE_ACTIVITY=
+
     # Add a method PROV triplets if given
     if [[ "$METHOD" ]];then
-        MESSAGE+="$OBJECT:$ID wasGeneratedBy method:$METHOD .
+        MESSAGE_ENTITY+="
+$OBJECT:$ID wasGeneratedBy method:$METHOD ."
 
 method:$METHOD a prov:Activity .
+        MESSAGE_ACTIVITY="
 $PROV_USE
 method:$METHOD startedAtTime xsd:dateTime:$DATE .
-method:$METHOD wasAssociatedWith provider:$PROVIDER .
-"
+method:$METHOD wasAssociatedWith provider:$PROVIDER ."
     fi
+
+    local MESSAGE_AGENT="
+provider:$PROVIDER a prov:Agent ."
 
     # Create a commit with the PROV message and the added $OBJECT
     dbg git commit \
         --date "$DATE" \
         --author "$PROVIDER" \
-        --message "$MESSAGE
+        --message "$OBJECT:$ID
+$MESSAGE_ENTITY
+$MESSAGE_AGENT
+$MESSAGE_ACTIVITY
 $MESSAGE2"
 }
 
@@ -367,8 +378,8 @@ function add_diagnostic
 
         # check if existing $OBJECT for this sample
         if `git log --oneline | grep --fixed-strings "$use" --quiet`;then
-            MESSAGE+="diagnostic:$ID used $use .
-"
+            PROV_USE+="
+method:$METHOD used $use ."
             PROV_DERIVE+="
 $OBJECT:$ID wasDerivedFrom $use ."
         else
@@ -377,14 +388,11 @@ $OBJECT:$ID wasDerivedFrom $use ."
     done
 
     # Build the PROV message
-    # TODO: revision_of should replace wasDerivedFrom
-    MESSAGE="$OBJECT:$ID
-
+    local MESSAGE_ENTITY="
 $OBJECT:$ID a prov:Entity .
 $PROV_DERIVE
 $OBJECT:$ID wasAttributedTo provider:$PROVIDER .
-$OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
-"
+$OBJECT:$ID generatedAtTime xsd:dateTime:$DATE . "
 
     # If the $OBJECT is a REVISION_OF
     if [[ "$REVISION_OF" ]];then
@@ -399,8 +407,8 @@ $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
 
         # check if existing diagnostic for this sample
         if `git log --oneline | grep --fixed-strings "$REVISION_OF" --quiet`;then
-            MESSAGE+="$OBJECT:$ID wasRevisionOf $REVISION_OF .
-"
+            MESSAGE_ENTITY+="
+$OBJECT:$ID wasRevisionOf $REVISION_OF ."
         else
             die "$REVISION_OF is not the name of existing diagnostic of patient:$PATIENT"
         fi
@@ -421,8 +429,8 @@ $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
 
             # check if existing diagnostic for this sample
             if `git log --oneline | grep --fixed-strings "$inval" --quiet`;then
-                MESSAGE+="$inval wasInvalidatedBy method:$METHOD .
-"
+                MESSAGE_ENTITY+="
+$inval wasInvalidatedBy method:$METHOD ."
             else
                 die "$inval is not the name of existing diagnostic of patient:$PATIENT"
             fi
@@ -431,20 +439,23 @@ $OBJECT:$ID generatedAtTime xsd:dateTime:$DATE .
 
     # Add a method PROV triplets if given
     if [[ "$METHOD" ]];then
-        MESSAGE+="$OBJECT:$ID wasGeneratedBy method:$METHOD .
-
+        MESSAGE_ENTITY+="
+$OBJECT:$ID wasGeneratedBy method:$METHOD ."
+        local MESSAGE_ACTIVITY="
 method:$METHOD a prov:Activity .
-method:$METHOD used $USE .
+$PROV_USE
 method:$METHOD startedAtTime xsd:dateTime:$DATE .
-method:$METHOD wasAssociatedWith provider:$PROVIDER .
-"
+method:$METHOD wasAssociatedWith provider:$PROVIDER . "
     fi
 
     # Create a commit with the PROV message and the added $OBJECT
     dbg git commit \
         --date "$DATE" \
         --author "$PROVIDER" \
-        --message "$MESSAGE
+        --message "$OBJECT:$ID
+$MESSAGE_ENTITY
+$MESSAGE_AGENT
+$MESSAGE_ACTIVITY
 $MESSAGE2"
 }
 
