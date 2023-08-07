@@ -448,8 +448,6 @@ $MESSAGE2"
 # Add
 function add
 {
-    echo "Adding $OBJECT:$ID"
-
     case "$OBJECT" in
         patient)
             add_patient ;;
@@ -480,6 +478,8 @@ Please check your permissions"
         *)
             usage add ;;
     esac
+
+    echo "Added $OBJECT:$ID"
 }
 
 ###############################################################################
