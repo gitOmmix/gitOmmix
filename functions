@@ -262,7 +262,7 @@ Please check your permissions"
         for use in "${USE[@]}";do
             # accept data:id (as is) or commit hash (translated to data:id)
             if [[ "${use%%:*}" != "data" ]];then
-                if `dbg git log "$use" --pretty=%s --max-count=1`;then
+                if `git log "$use" --pretty=%s --max-count=1 &>/dev/null`;then
                     use=`git log "$use" --pretty=%s --max-count=1`
                 else
                     die "$use is not the commit hash or the name of existing data in sample:$SAMPLE of patient:$PATIENT"
