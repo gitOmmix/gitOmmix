@@ -486,7 +486,7 @@ Please check your permissions"
             [[ "$SAMPLE" ]] || die "Please provide a --sample"
             [[ `git rev-parse --verify "sample|$SAMPLE"` ]] || die "sample:$SAMPLE is not a sample of patient:$PATIENT" && dbg stash git checkout "sample|$SAMPLE"
             [[ "$OBJECT" != "result" ]] || [[ "${#USE[@]}" -gt 0 ]] || die "Please --use data when adding a result"
-            [[ "${#FILES[@]}" -gt 0 ]] || die "Please provide data files to add"
+            [[ "${#FILES[@]}" -gt 0 ]] || die "Please provide files to add"
             for ((i = 0; i < ${#FILES[@]}; i++));do
                 FILES[i]="$CURRENT_DIR/${FILES[i]}"
             done
