@@ -29,7 +29,7 @@ PROVIDER=$GIT_OMMIX_DEFAULT_PROVIDER
 METHOD=
 PATIENT=
 SAMPLE=
-DATE=`date +%Y-%m-%d`
+DATE=`date +'%Y-%m-%dT%H:%M:%S'`
 ID=`base64 /dev/urandom | tr --delete "/+=" | head --bytes=10`
 INVALIDATE=()
 USE=()
