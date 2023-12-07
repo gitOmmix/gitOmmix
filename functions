@@ -290,31 +290,40 @@ function add
         patient)
             add_patient ;;
 
-        *) # all next operations need a patient, continue matching
-            [[ "$PATIENT" ]] || die "Please provide a --patient"
-            [[ -d "$PATIENT" ]] || die "patient:$PATIENT is not a patient"
-            cd "$PATIENT" || die "Unable to acces $GIT_OMMIX_REPO_DIR/$PATIENT !
-Please check your permissions"
-            ;;&
         sample)
+            validate_patient
+
             add_sample ;;
 
-        data|result)
-            [[ "$SAMPLE" ]] || die "Please provide a --sample"
-            [[ `git rev-parse --verify "sample|$SAMPLE"` ]] || die "sample:$SAMPLE is not a sample of patient:$PATIENT" && dbg stash git checkout "sample|$SAMPLE"
-            [[ "$OBJECT" != "result" ]] || [[ "${#USE[@]}" -gt 0 ]] || die "Please --use data when adding a result"
-            [[ "${#FILES[@]}" -gt 0 ]] || die "Please provide files to add"
-            for ((i = 0; i < ${#FILES[@]}; i++));do
-                FILES[i]="$CURRENT_DIR/${FILES[i]}"
-            done
+        data)
+            validate_patient
+            validate_sample
+            validate_files
 
-            add_object ;;
+            add_data ;;
+
+        result)
+            validate_patient
+            validate_sample
+            validate_files
+
+            # TODO: marche aussi avec juste un revision_of sans sample ?
+            # A result object needs to USE a data object
+            [[ "${#USE[@]}" -gt 0 ]] || die "Please --use data when adding a result"
+
+            add_result ;;
+
         diagnostic)
-            [[ "${#USE[@]}" -gt 0 ]] || die "Please --use result|diagnostic when adding a diagnostic"
+            validate_patient
+            validate_sample
+
+            # A diagnostic needs to be at least revision_of another diagnostic, or use results or diagnostics,
+            # or invalidate ?
+            [[ "${#USE[@]}" -gt 0 ]] || [[ "$REVISION_OF" ]] || die "Please --use result|diagnostic or --revision_of diagnostic when adding a diagnostic"
+
             add_diagnostic ;;
 
-        *)
-            usage add ;;
+        *) usage $VERB ;;
     esac
 
     commit
@@ -367,29 +376,58 @@ function list
         patient|patients)
             list_patient ;;
 
-        *) # All next operations need a patient, continue matching
-            [[ "$PATIENT" ]] || die "Please provide a --patient"
-            [[ -d "$PATIENT" ]] || die "patient:$PATIENT is not a patient"
-            cd "$PATIENT" || die "Unable to acces the patient directory at: $GIT_OMMIX_REPO_DIR/$PATIENT
-Please check your permissions"
-            ;;&
         sample|samples)
+            validate_patient
             list_sample ;;
+
         diagnostic|diagnostics)
+            validate_patient
             list_diagnostic ;;
 
-        *) # All next operations need a sample, continue matching
-            [[ "$SAMPLE" ]] || die "Please provide a --sample"
-            [[ `git rev-parse --verify "sample|$SAMPLE"` ]] || die "sample:$SAMPLE is not a sample of patient:$PATIENT" && dbg stash git checkout "sample|$SAMPLE"
-            ;;&
         data)
+            validate_patient
+            validate_sample
             list_data ;;
+
         result|results)
+            validate_patient
+            validate_sample
             list_result ;;
 
-        * )
-            usage list ;;
+        *) usage $VERB;;
     esac
+}
+
+###############################################################################
+#
+# Validation helpers
+
+# Validate PATIENT and switch to it
+# TODO: validate that it is a git ommix repo
+function validate_patient
+{
+    [[ "$PATIENT" ]] || die "Please provide a --patient"
+    [[ -d "$PATIENT" ]] || die "patient:$PATIENT is not a patient"
+    cd "$PATIENT" || die "Unable to acces the patient directory at: $GIT_OMMIX_REPO_DIR/$PATIENT
+Please check your permissions"
+}
+
+# Validate SAMPLE and switch to it
+function validate_sample
+{
+    [[ "$SAMPLE" ]] || die "Please provide a --sample"
+    # check the sample exists and try to switch to it
+    dbg git rev-parse --verify "sample|$SAMPLE" || die "sample:$SAMPLE is not a sample of patient:$PATIENT" && dbg stash git checkout "sample|$SAMPLE"
+}
+
+# Validate FILES and qualify path
+function validate_files
+{
+    [[ "${#FILES[@]}" -gt 0 ]] || die "Please provide files to add"
+    # Qualify FILES with their full path
+    for ((i = 0; i < ${#FILES[@]}; i++));do
+        FILES[i]="$CURRENT_DIR/${FILES[i]}"
+    done
 }
 
 # Validate a commit given by its hash or id. It must match a type.
