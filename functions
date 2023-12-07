@@ -266,6 +266,7 @@ function add_diagnostic
         hash=$(validate_commit "diagnostic" "$REVISION_OF")
         revision_of
 
+        dbg stash git checkout "$hash"
     fi
 
     # USE
@@ -274,6 +275,10 @@ function add_diagnostic
     # INVALIDATEs
     [[ "${#INVALIDATE[@]}" -gt 0 && "$METHOD" ]] && invalidate
 
+    # TODO: actual git machinery!
+    # If revision_of and use : checkout @ revision_of, merge use(s)
+    # If use(s) : checkout @ first use, create new branch, merge other uses
+    # + invalidate diagnostics
 }
 
 # Add
