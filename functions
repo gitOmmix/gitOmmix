@@ -189,24 +189,23 @@ function add_sample
     dbg stash git checkout -b "sample|$ID" "patient|$PATIENT"
 }
 
-# Add data|result
+# Add data
 # Uses :
-# - ID
 # - PATIENT
 # - SAMPLE
-# - [USE data:<id> | <data_hash>] * n
-# - [REVISION_OF data|result:<id> | <data|result_hash>]
-# - [INVALIDATE data|result:<id> | <data|result_hash>] * n
-function add_object
+# - [ID]
+# - [REVISION_OF data:<id> | <data_hash>]
+# - [INVALIDATE data:<id> | <data_hash>] * n
+function add_data
 {
-    # Copy all the given files to the $OBJECT folder recursively
-    # FILES is unquoted to allow * expansion
-    dbg cp ${FILES[@]} "$GIT_OMMIX_REPO_DIR/$PATIENT/$OBJECT" --recursive || die "Unable to copy files to the patient directory at: $GIT_OMMIX_REPO_DIR/$PATIENT/$OBJECT
-Please check your permissions"
+    # Data always derives from the sample
+    MESSAGE_ENTITY +="
+:$OBJECT:$ID prov:wasDerivedFrom :sample:$SAMPLE ."
 
-    # Add the $OBJECT folder to git
-    dbg git add "$OBJECT"
-
+    if [[ "$METHOD" ]];then
+        MESSAGE_ACTIVITY +="
+:method:$METHOD used :sample:$SAMPLE ."
+    fi
 
     # REVISION_OF
     [[ "$REVISION_OF" ]] && revision_of
@@ -214,18 +213,13 @@ Please check your permissions"
     # INVALIDATEs
     [[ "${#INVALIDATE[@]}" -gt 0 && "$METHOD" ]] && invalidate
 
+    # Copy all the given files to the $OBJECT folder recursively
+    # FILES is unquoted to allow * expansion
+    dbg cp -t "$GIT_OMMIX_REPO_DIR/$PATIENT/$OBJECT" ${FILES[@]} --recursive || die "Unable to copy files to the patient directory at: $GIT_OMMIX_REPO_DIR/$PATIENT/$OBJECT
+Please check your permissions"
 
-            # check if existing data for this sample
-            if ! `git log --oneline | grep --fixed-strings "$use" --quiet`;then
-                die "$use is not the name of existing data in sample:$SAMPLE of patient:$PATIENT"
-            fi
-
-            local PROV_DERIVE+="
-:$OBJECT:$ID prov:wasDerivedFrom :$use ."
-            local PROV_USE+="
-:method:$METHOD used :$use ."
-        done
-    fi
+    # Add the $OBJECT folder to git
+    dbg git add "$OBJECT"
 }
 
 # Add diagnostic
