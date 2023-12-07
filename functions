@@ -479,6 +479,32 @@ Please check your permissions"
     esac
 }
 
+# Validate a commit given by its hash or id. It must match a type.
+# Return the full name of the object
+# $1 : type
+# $2 : hash|id
+# $3 : t to return hash instead of fullname
+function validate_commit
+{
+    local hash
+    local fullname
+
+    # look within the commits of the given type in the current branch
+    if git log --oneline | grep -E "$1:$2" --quiet;then
+        hash=$(git log --oneline | grep -E "$1:$2" | cut -f 1 -d ' ')
+        fullname=$(git log "$hash" --pretty=%s --max-count=1)
+    # FIXME: ? dbg does not work as intended, must redirect manually to /dev/null ?
+    elif dbg git log "$2";then # find commit by its hash
+        fullname=$(git log "$2" --pretty=%s --max-count=1)
+        # check that the commit matches the given type
+        [[ ${fullname%%:*} =~ "$1" ]] || die "$2 is not the commit hash of existing $1 in sample:$SAMPLE of patient:$PATIENT"
+    else
+        die "$2 is not the commit hash or the name of existing $1 in sample:$SAMPLE of patient:$PATIENT"
+    fi
+
+    if (( $# > 2 )) && echo "$hash" || echo "$fullname"
+}
+
 ###############################################################################
 # Helpers
 
