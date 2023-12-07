@@ -201,6 +201,8 @@ Please check your permissions"
     # REVISION_OF
     [[ "$REVISION_OF" ]] && revision_of
 
+    # INVALIDATEs
+    [[ "${#INVALIDATE[@]}" -gt 0 && "$METHOD" ]] && invalidate
 
     if [[ "$OBJECT" == "data" ]];then
         # data always derives from the sample
@@ -227,30 +229,6 @@ Please check your permissions"
 :$OBJECT:$ID prov:wasDerivedFrom :$use ."
             local PROV_USE+="
 :method:$METHOD used :$use ."
-        done
-    fi
-
-
-    # If the $OBJECT INVALIDATEs one or more previous $OBJECT commit(s)
-    if [[ "${#INVALIDATE[@]}" -gt 0 && "$METHOD" ]];then
-        local inval
-        for inval in "${INVALIDATE[@]}";do
-            # accept $OBJECT:id (as is) or commit hash (translated to $OBJECT:id)
-            if [[ "${inval%%:*}" != "$OBJECT" ]];then
-                if `git log "$inval" --pretty=%s --max-count=1`;then
-                    inval=`git log "$inval" --pretty=%s --max-count=1`
-                else
-                    die "$inval is not the commit hash or the name of existing $OBJECT in sample:$SAMPLE of patient:$PATIENT"
-                fi
-            fi
-
-            # check if existing $OBJECT for this sample
-            if `git log --oneline | grep --fixed-strings "$inval" --quiet`;then
-                MESSAGE_ENTITY+="
-:$inval prov:wasInvalidatedBy :method:$METHOD ."
-            else
-                die "$inval is not the name of existing $OBJECT in sample:$SAMPLE of patient:$PATIENT"
-            fi
         done
     fi
 }
@@ -299,29 +277,9 @@ function add_diagnostic
 
     fi
 
-    # If the diagnostic INVALIDATEs one or more previous diagnostic commit(s)
-    if [[ "${#INVALIDATE[@]}" -gt 0 && "$METHOD" ]];then
-        local inval
-        for inval in "${INVALIDATE[@]}";do
-            # accept diagnostic:id (as is) or commit hash (translated to diagnostic:id)
-            if [[ "${inval%%:*}" != "diagnostic" ]];then
-                if `dbg git log "$inval" --pretty=%s --max-count=1`;then
-                    inval=`git log "$inval" --pretty=%s --max-count=1`
-                else
-                    die "$inval is not the commit hash or the name of existing diagnostic of patient:$PATIENT"
-                fi
-            fi
 
-            # check if existing diagnostic for this sample
-            if `git log --oneline | grep --fixed-strings "$inval" --quiet`;then
-                MESSAGE_ENTITY+="
-:$inval prov:wasInvalidatedBy :method:$METHOD ."
-            else
-                die "$inval is not the name of existing diagnostic of patient:$PATIENT"
-            fi
-        done
-    fi
-
+    # INVALIDATEs
+    [[ "${#INVALIDATE[@]}" -gt 0 && "$METHOD" ]] && invalidate
 
 }
 
@@ -531,6 +489,20 @@ function revision_of
 
     MESSAGE_ENTITY+="
 :$OBJECT:$ID prov:wasRevisionOf :$REVISION_OF ."
+}
+
+# Validate and add relevant triplets for wasInvalidated
+# TODO: for all invalidated, add invalidatedAtTime ?
+function invalidate
+{
+    local inval
+    for inval in "${INVALIDATE[@]}";do
+        # TODO: update values in INVALIDATE
+        inval=$(validate_commit "$OBJECT" "$inval")
+
+        MESSAGE_ENTITY+="
+:$inval prov:wasInvalidatedBy :method:$METHOD ."
+    done
 }
 
 ###############################################################################
