@@ -163,16 +163,6 @@ Please check your permissions"
 
     # Rename the default branch to the patient ID
     dbg git checkout -b "patient|$ID"
-
-    # Create an empty commit with the PROV message
-    dbg git commit --allow-empty \
-        --author "$PROVIDER" \
-        --date "$DATE" \
-        --message "patient:$ID
-
-:patient:$ID a prov:Entity .
-:patient:$ID a MSH:Patient .
-$MESSAGE2"
 }
 
 # Add sample
@@ -207,15 +197,6 @@ function add_sample
 :method:$METHOD prov:wasAssociatedWith :provider:$PROVIDER ."
     fi
 
-    # Create an empty commit with the PROV message
-    dbg git commit --allow-empty \
-        --author "$PROVIDER" \
-        --date "$DATE" \
-        --message "sample:$ID
-$MESSAGE_ENTITY
-$MESSAGE_AGENT
-$MESSAGE_ACTIVITY
-$MESSAGE2"
 }
 
 # Add data|result
@@ -347,15 +328,6 @@ $PROV_USE
     local MESSAGE_AGENT="
 :provider:$PROVIDER a prov:Agent ."
 
-    # Create a commit with the PROV message and the added $OBJECT
-    dbg git commit \
-        --date "$DATE" \
-        --author "$PROVIDER" \
-        --message "$OBJECT:$ID
-$MESSAGE_ENTITY
-$MESSAGE_AGENT
-$MESSAGE_ACTIVITY
-$MESSAGE2"
 }
 
 # Add diagnostic
@@ -454,15 +426,6 @@ $PROV_USE
 :method:$METHOD prov:wasAssociatedWith :provider:$PROVIDER . "
     fi
 
-    # Create a commit with the PROV message and the added $OBJECT
-    dbg git commit \
-        --date "$DATE" \
-        --author "$PROVIDER" \
-        --message "$OBJECT:$ID
-$MESSAGE_ENTITY
-$MESSAGE_AGENT
-$MESSAGE_ACTIVITY
-$MESSAGE2"
 }
 
 # Add
@@ -498,6 +461,8 @@ Please check your permissions"
         *)
             usage add ;;
     esac
+
+    commit
 
     echo "Added $OBJECT:$ID"
 }
@@ -570,6 +535,22 @@ Please check your permissions"
         * )
             usage list ;;
     esac
+}
+
+###############################################################################
+# Helpers
+
+# Do the actual git commit with all the parameters set
+function commit
+{
+    dbg git commit --allow-empty \
+        --author "$PROVIDER" \
+        --date "$DATE" \
+        --message "$OBJECT:$ID
+$MESSAGE_ENTITY
+$MESSAGE_AGENT
+$MESSAGE_ACTIVITY
+$MESSAGE2"
 }
 
 ###############################################################################
