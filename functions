@@ -204,21 +204,6 @@ Please check your permissions"
     # INVALIDATEs
     [[ "${#INVALIDATE[@]}" -gt 0 && "$METHOD" ]] && invalidate
 
-    if [[ "$OBJECT" == "data" ]];then
-        # data always derives from the sample
-        local PROV_DERIVE=":$OBJECT:$ID prov:wasDerivedFrom :sample:$SAMPLE ."
-        local PROV_USE=":method:$METHOD used :sample:$SAMPLE ."
-    else
-        local use
-        for use in "${USE[@]}";do
-            # accept data:id (as is) or commit hash (translated to data:id)
-            if [[ "${use%%:*}" != "data" ]];then
-                if `git log "$use" --pretty=%s --max-count=1 &>/dev/null`;then
-                    use=`git log "$use" --pretty=%s --max-count=1`
-                else
-                    die "$use is not the commit hash or the name of existing data in sample:$SAMPLE of patient:$PATIENT"
-                fi
-            fi
 
             # check if existing data for this sample
             if ! `git log --oneline | grep --fixed-strings "$use" --quiet`;then
@@ -242,32 +227,6 @@ Please check your permissions"
 # - [REVISION_OF diagnostic:<id> | <diagnostic_hash>]
 function add_diagnostic
 {
-    # commit on diagnostic branch if revision_of a previous diagnostic else create diagnostic branch
-    # can invalidate a diagnostic
-
-    # Check the USEd objects
-    local use
-    for use in "${USE[@]}";do
-        # accept result|diagnostic:id (as is) or commit hash (translated to result|diagnostic:id)
-        if [[ "${use%%:*}" != "result" || "${use%%:*}" != "diagnostic" ]];then
-            if `dbg git log "$use" --pretty=%s --max-count=1`;then
-                use=`git log "$use" --pretty=%s --max-count=1`
-            else
-                die "$use is not the commit hash or the name of existing result or diagnostic of patient:$PATIENT"
-            fi
-        fi
-
-        # check if existing $OBJECT for this sample
-        if `git log --oneline | grep --fixed-strings "$use" --quiet`;then
-            PROV_USE+="
-:method:$METHOD used :$use ."
-            PROV_DERIVE+="
-:$OBJECT:$ID prov:wasDerivedFrom :$use ."
-        else
-            die "$use is not the name of existing diagnostic of patient:$PATIENT"
-        fi
-    done
-
     # If revision_of : commit must be the head of that branch, commit from that
     # REVISION_OF
     if [[ "$REVISION_OF" ]];then
@@ -277,6 +236,8 @@ function add_diagnostic
 
     fi
 
+    # USE
+    [[ "${#USE[@]}" -gt 0 ]] && use "(result|diagnostic)"
 
     # INVALIDATEs
     [[ "${#INVALIDATE[@]}" -gt 0 && "$METHOD" ]] && invalidate
@@ -502,6 +463,25 @@ function invalidate
 
         MESSAGE_ENTITY+="
 :$inval prov:wasInvalidatedBy :method:$METHOD ."
+    done
+}
+
+# Validate and add relevant triplets for wasDerivedFrom
+# $1 : type
+function use
+{
+    local use
+    # TODO: update values in USE
+    for use in "${USE[@]}";do
+        use=$(validate_commit "$1" "$use" )
+
+        MESSAGE_ENTITY +="
+:$OBJECT:$ID prov:wasDerivedFrom :$use ."
+
+        if [[ "$METHOD" ]];then
+            MESSAGE_ACTIVITY +="
+:method:$METHOD used :$use ."
+        fi
     done
 }
 
