@@ -197,21 +197,10 @@ Please check your permissions"
     # Add the $OBJECT folder to git
     dbg git add "$OBJECT"
 
-    if [[ -z "$REVISION_OF" && `git status --porcelain | grep ^M --quiet` ]];then
-        local revs=()
-        git status --porcelain | grep ^M | \
-            (while read line;do
-                 revs+=`git log --pretty=%s --follow --diff-filter=A ${line:3}`
-             done)
-        revs=($(printf "%q\n" "${revs[@]}" | sort -u))
 
-        if [[ "${#revs}" -gt 1 ]];then
-            git reset --hard
-            die "The added $OBJECT would be a revision of two $OBJECT objects"
-        fi
+    # REVISION_OF
+    [[ "$REVISION_OF" ]] && revision_of
 
-        REVISION_OF="$revs"
-    fi
 
     if [[ "$OBJECT" == "data" ]];then
         # data always derives from the sample
@@ -241,25 +230,6 @@ Please check your permissions"
         done
     fi
 
-    # If the $OBJECT is a REVISION_OF
-    if [[ "$REVISION_OF" ]];then
-        # accept $OBJECT:id (as is) or commit hash (translated to $OBJECT:id)
-        if [[ "${REVISION_OF%%:*}" != "$OBJECT" ]];then
-            if `dbg git log "$REVISION_OF" --pretty=%s --max-count=1`;then
-                REVISION_OF=`git log "$REVISION_OF" --pretty=%s --max-count=1`
-            else
-                die "$REVISION_OF is not the commit hash or the name of existing $OBJECT in sample:$SAMPLE of patient:$PATIENT"
-            fi
-        fi
-
-        # check if existing $OBJECT for this sample
-        if `git log --oneline | grep --fixed-strings "$REVISION_OF" --quiet`;then
-            MESSAGE_ENTITY+="
-:$OBJECT:$ID prov:wasRevisionOf :$REVISION_OF ."
-        else
-            die "$REVISION_OF is not the name of existing $OBJECT in sample:$SAMPLE of patient:$PATIENT"
-        fi
-    fi
 
     # If the $OBJECT INVALIDATEs one or more previous $OBJECT commit(s)
     if [[ "${#INVALIDATE[@]}" -gt 0 && "$METHOD" ]];then
@@ -283,8 +253,6 @@ Please check your permissions"
             fi
         done
     fi
-
-
 }
 
 # Add diagnostic
@@ -322,24 +290,13 @@ function add_diagnostic
         fi
     done
 
-    # If the $OBJECT is a REVISION_OF
+    # If revision_of : commit must be the head of that branch, commit from that
+    # REVISION_OF
     if [[ "$REVISION_OF" ]];then
-        # accept diagnostic:id (as is) or commit hash (translated to diagnostic:id)
-        if [[ "${REVISION_OF%%:*}" != "diagnostic" ]];then
-            if `dbg git log "$REVISION_OF" --pretty=%s --max-count=1`;then
-                REVISION_OF=`git log "$REVISION_OF" --pretty=%s --max-count=1`
-            else
-                die "$REVISION_OF is not the commit hash or the name of existing diagnostic of patient:$PATIENT"
-            fi
-        fi
+        # TODO: validate_branch ?
+        hash=$(validate_commit "diagnostic" "$REVISION_OF")
+        revision_of
 
-        # check if existing diagnostic for this sample
-        if `git log --oneline | grep --fixed-strings "$REVISION_OF" --quiet`;then
-            MESSAGE_ENTITY+="
-:$OBJECT:$ID prov:wasRevisionOf :$REVISION_OF ."
-        else
-            die "$REVISION_OF is not the name of existing diagnostic of patient:$PATIENT"
-        fi
     fi
 
     # If the diagnostic INVALIDATEs one or more previous diagnostic commit(s)
@@ -544,6 +501,36 @@ $MESSAGE_ENTITY
 $MESSAGE_AGENT
 $MESSAGE_ACTIVITY
 $MESSAGE2"
+}
+
+# Validate and add relevant triplets for wasRevisionOf
+# An $OBJECT can only be a revision_of another $OBJECT
+function revision_of
+{
+    # TODO: automatically set a REVISION_OF if modified files from a single commit
+    # TODO: find commit directly? What for?
+    # -> get the used data for a revision of a result
+    # but not necessary, just skip the USE and don't require it…
+    # if [[ -z "$REVISION_OF" && `git status --porcelain | grep ^M --quiet` ]];then
+    #     local revs=()
+    #     git status --porcelain | grep ^M | \
+    #         (while read line;do
+    #              revs+=`git log --pretty=%s --follow --diff-filter=A ${line:3}`
+    #          done)
+    #     revs=($(printf "%q\n" "${revs[@]}" | sort -u))
+
+    #     if [[ "${#revs}" -gt 1 ]];then
+    #         git reset --hard
+    #         die "The added $OBJECT would be a revision of two $OBJECT objects"
+    #     fi
+
+    #     REVISION_OF="$revs"
+    # fi
+
+    REVISION_OF=$(validate_commit "$OBJECT" "$REVISION_OF")
+
+    MESSAGE_ENTITY+="
+:$OBJECT:$ID prov:wasRevisionOf :$REVISION_OF ."
 }
 
 ###############################################################################
