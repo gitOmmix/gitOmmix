@@ -174,27 +174,7 @@ function add_sample
     # Create a new sample branch stemming from the patient branch
     dbg stash git checkout -b "sample|$ID" "patient|$PATIENT"
 
-    # Build the PROV message
-    local MESSAGE_ENTITY="
-:sample:$ID a prov:Entity .
-:sample:$ID prov:wasDerivedFrom :patient:$PATIENT .
-:sample:$ID prov:wasAttributedTo :provider:$PROVIDER .
-:sample:$ID prov:generatedAtTime xsd:dateTime:$DATE ."
-
-    local MESSAGE_AGENT="
-:provider:$PROVIDER a prov:Agent ."
-
-    local MESSAGE_ACTIVITY=
-
-    # Add a method PROV triplets if given
     if [[ "$METHOD" ]];then
-        MESSAGE_ENTITY+="
-:sample:$ID prov:wasGeneratedBy :method:$METHOD ."
-
-        MESSAGE_ACTIVITY="
-:method:$METHOD a prov:Activity .
-:method:$METHOD used :patient:$PATIENT .
-:method:$METHOD prov:wasAssociatedWith :provider:$PROVIDER ."
     fi
 
 }
@@ -261,13 +241,6 @@ Please check your permissions"
         done
     fi
 
-    # Build the PROV message
-    local MESSAGE_ENTITY="
-:$OBJECT:$ID a prov:Entity .
-$PROV_DERIVE
-:$OBJECT:$ID prov:wasAttributedTo :provider:$PROVIDER .
-:$OBJECT:$ID prov:generatedAtTime xsd:dateTime:$DATE ."
-
     # If the $OBJECT is a REVISION_OF
     if [[ "$REVISION_OF" ]];then
         # accept $OBJECT:id (as is) or commit hash (translated to $OBJECT:id)
@@ -311,22 +284,6 @@ $PROV_DERIVE
         done
     fi
 
-    local MESSAGE_ACTIVITY=
-
-    # Add a method PROV triplets if given
-    if [[ "$METHOD" ]];then
-        MESSAGE_ENTITY+="
-:$OBJECT:$ID prov:wasGeneratedBy :method:$METHOD ."
-
-        MESSAGE_ACTIVITY="
-:method:$METHOD a prov:Activity .
-$PROV_USE
-:method:$METHOD startedAtTime xsd:dateTime:$DATE .
-:method:$METHOD prov:wasAssociatedWith :provider:$PROVIDER ."
-    fi
-
-    local MESSAGE_AGENT="
-:provider:$PROVIDER a prov:Agent ."
 
 }
 
@@ -364,13 +321,6 @@ function add_diagnostic
             die "$use is not the name of existing diagnostic of patient:$PATIENT"
         fi
     done
-
-    # Build the PROV message
-    local MESSAGE_ENTITY="
-:$OBJECT:$ID a prov:Entity .
-$PROV_DERIVE
-:$OBJECT:$ID prov:wasAttributedTo :provider:$PROVIDER .
-:$OBJECT:$ID prov:generatedAtTime xsd:dateTime:$DATE . "
 
     # If the $OBJECT is a REVISION_OF
     if [[ "$REVISION_OF" ]];then
@@ -415,22 +365,14 @@ $PROV_DERIVE
         done
     fi
 
-    # Add a method PROV triplets if given
-    if [[ "$METHOD" ]];then
-        MESSAGE_ENTITY+="
-:$OBJECT:$ID prov:wasGeneratedBy :method:$METHOD ."
-        local MESSAGE_ACTIVITY="
-:method:$METHOD a prov:Activity .
-$PROV_USE
-:method:$METHOD startedAtTime xsd:dateTime:$DATE .
-:method:$METHOD prov:wasAssociatedWith :provider:$PROVIDER . "
-    fi
 
 }
 
 # Add
 function add
 {
+    base_prov
+
     case "$OBJECT" in
         patient)
             add_patient ;;
@@ -539,6 +481,31 @@ Please check your permissions"
 
 ###############################################################################
 # Helpers
+
+# Prepare the base components of the PROV message
+function base_prov
+{
+    MESSAGE_ACTIVITY=
+
+    MESSAGE_AGENT="
+:provider:$PROVIDER a prov:Agent ."
+
+    MESSAGE_ENTITY="
+:$OBJECT:$ID a prov:Entity .
+:$OBJECT:$ID prov:wasAttributedTo :provider:$PROVIDER .
+:$OBJECT:$ID prov:generatedAtTime xsd:dateTime:$DATE ."
+
+    # Add a method PROV triplets if given
+    if [[ "$METHOD" ]];then
+        MESSAGE_ACTIVITY="
+:method:$METHOD a prov:Activity .
+:method:$METHOD startedAtTime xsd:dateTime:$DATE .
+:method:$METHOD prov:wasAssociatedWith :provider:$PROVIDER ."
+
+        MESSAGE_ENTITY+="
+:$OBJECT:$ID prov:wasGeneratedBy :method:$METHOD ."
+    fi
+}
 
 # Do the actual git commit with all the parameters set
 function commit
