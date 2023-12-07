@@ -15,6 +15,18 @@ Verbs:
 - list
 - get
 
+Git Ommix options:
+- GIT_OMMIX_REPO_DIR : place to find patient repos
+- GIT_OMMIX_LARGE_FILES : git ommix rules for large files
+- GIT_OMMIX_DEFAULT_PROVIDER : set a default provider
+
+Git ommix can be configured with the \$XDG_CONFIG/.gitommix file, or with environment variables.
+
+Register bash completions with register completions.
+" ;;
+        add)
+            echo "git ommix add {object} [--options] [--message]
+
 Objects:
 - patient
 - sample
@@ -22,33 +34,12 @@ Objects:
 - result
 - diagnostic
 
-Options:
-- --id/-i : object id (default = random base64 10 chars)
-- --date/-D : sampling/analysis date (default = current date)
-- --provider/-P : data/result provider (default = current user)
-- --patient/-p : patient (default = current patient)
-- --sample/-s : sample (default = current sample)
-- --message/-m : add an arbitrary PROV-O RDF triplet to the transaction
-- --debug/-d : debug
-
-Files: files to add (default = all new/modified files)
-
-Register bash completions with register completions
-
-Git ommix can be configured with the \$XDG_CONFIG/.gitommix file, or with environment variables
-
-Available options are:
-- GIT_OMMIX_REPO_DIR : place to find patient repos
-" ;;
-        add)
-            echo "git ommix add {patient, sample, data, result, diagnostic} [--options] [--message]
-
 # Patient 
 
 Create patient repo with the given id.
 Options :
 
--i <id>
+ -i <id>
 
 # Sample
 
@@ -67,22 +58,22 @@ The data that has been revised can also be INVALIDATEd at the same time.
 
 Options :
 
--i <id>
--p <patient>
--s <sample>
-[--revision_of <data_hash>]
-[--invalidate]
+ -i <id>
+ -p <patient>
+ -s <sample>
+ [--revision_of <data_hash>]
+ [--invalidate]
 
 # Result 
 
 Options :
 
--i <id> 
--p <patient> 
--s <sample> 
---use <data_hash> 
-[--revision_of <result_hash>]
-[--invalidate]
+ -i <id> 
+ -p <patient> 
+ -s <sample> 
+ --use <data_hash> 
+ [--revision_of <result_hash>]
+ [--invalidate]
 
 # Diagnostic
 
@@ -92,14 +83,22 @@ The diagnostic branch pointers for the revised diagnostics are destroyed.
 
 Options :
 
--i <id>
--p <patient>
---use <result/diagnostic_hash>
-[--revision_of <diagnostic_hash>]
-[--invalidate]
+ -i <id>
+ -p <patient>
+ --use <result/diagnostic_hash>
+ [--revision_of <diagnostic_hash>]
+ [--invalidate]
+" ;;
+        list)
+            echo "git ommix list {object}
 
-Add data/result to the current patient and sample if inside a repo, or to the --patient and --sample specified.
-If stateless, copy the files to the repo." ;;
+Objects:
+- patient(s)
+- sample(s)
+- data(s)
+- result(s)
+- diagnostic(s)
+" ;;
     esac
     exit 0
 }

@@ -16,11 +16,14 @@ source /usr/share/git-ommix/functions
 
 ###############################################################################
 # Parse arguments
-# There should be at least two arguments (verb + object)
 # Initialize default values
 
-(( $# > 1 )) || usage root
+# If no arg, full help
+(( $# > 0 )) || usage root
 VERB="$1"
+
+# If no object, help for the verb
+(( $# > 1 )) || usage "$VERB"
 OBJECT="$2"
 shift 2
 
@@ -168,5 +171,6 @@ case "$VERB" in
      add) add;;
      list) list;;
      get) get;;
+     # Unknown verb -> usage root
      *) usage root;;
 esac
