@@ -222,6 +222,34 @@ Please check your permissions"
     dbg git add "$OBJECT"
 }
 
+# Add result
+# Uses :
+# - PATIENT
+# - SAMPLE
+# - USE data:<id> | <data_hash> * n
+# - [ID]
+# - [REVISION_OF result:<id> | <result_hash>]
+# - [INVALIDATE result:<id> | <result_hash>] * n
+function add_result
+{
+    # USE
+    use data
+
+    # REVISION_OF
+    [[ "$REVISION_OF" ]] && revision_of
+
+    # INVALIDATEs
+    [[ "${#INVALIDATE[@]}" -gt 0 && "$METHOD" ]] && invalidate
+
+    # Copy all the given files to the $OBJECT folder recursively
+    # FILES is unquoted to allow * expansion
+    dbg cp -t "$GIT_OMMIX_REPO_DIR/$PATIENT/$OBJECT" ${FILES[@]} --recursive || die "Unable to copy files to the patient directory at: $GIT_OMMIX_REPO_DIR/$PATIENT/$OBJECT
+Please check your permissions"
+
+    # Add the $OBJECT folder to git
+    dbg git add "$OBJECT"
+}
+
 # Add diagnostic
 # Uses :
 # - ID
