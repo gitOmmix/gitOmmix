@@ -175,12 +175,18 @@ Please check your permissions"
 # - PATIENT
 function add_sample
 {
-    # Create a new sample branch stemming from the patient branch
-    dbg stash git checkout -b "sample|$ID" "patient|$PATIENT"
+    # A sample always derives from the patient
+    MESSAGE_ENTITY +="
+:$OBJECT:$ID prov:wasDerivedFrom :patient:$PATIENT ."
 
     if [[ "$METHOD" ]];then
+        MESSAGE_ACTIVITY +="
+:method:$METHOD used :patient:$PATIENT ."
     fi
 
+    # Create a new sample branch stemming from the patient branch
+    # Errors out if a sample with the same name already exists
+    dbg stash git checkout -b "sample|$ID" "patient|$PATIENT"
 }
 
 # Add data|result
