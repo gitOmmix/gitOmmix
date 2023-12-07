@@ -143,6 +143,10 @@ function stash
 # - ID
 function add_patient
 {
+    # The patient is a MSH:Patient and derives from nothing
+    MESSAGE_ENTITY+="
+:$OBJECT:$ID a MSH:Patient ."
+
     # Create the patient repo dir and data and result subdirs
     dbg mkdir --parents "$ID/data" || die "Unable to create a directory in the git ommix base directory at: $GIT_OMMIX_REPO_DIR
 Please check your permissions"
