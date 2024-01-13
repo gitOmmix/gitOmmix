@@ -138,7 +138,9 @@ FILES=("${@:-*}")
 HASHES=("$@")
 
 # Output parameter values for debug
-[[ "$DEBUG" == "debug" ]] && echo "Verb: $VERB
+[[ "$DEBUG" == "debug" ]] && echo "
+####################################
+Verb: $VERB
 Object: $OBJECT
 Provider: $PROVIDER
 Method: $METHOD

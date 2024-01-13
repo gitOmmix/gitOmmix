@@ -328,7 +328,9 @@ function add
 
     commit
 
-    echo "Added $OBJECT:$ID"
+    echo "
+Added $OBJECT:$ID
+"
 }
 
 ###############################################################################
