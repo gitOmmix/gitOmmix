@@ -319,10 +319,8 @@ function add
 
         diagnostic)
             validate_patient
-            validate_sample
 
             # A diagnostic needs to be at least revision_of another diagnostic, or use results or diagnostics,
-            # or invalidate ?
             [[ "${#USE[@]}" -gt 0 ]] || [[ "$REVISION_OF" ]] || die "Please --use result|diagnostic or --revision_of diagnostic when adding a diagnostic"
 
             add_diagnostic ;;
