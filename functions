@@ -151,6 +151,8 @@ function add_patient
     dbg mkdir --parents "$ID/data" || die "Unable to create a directory in the git ommix base directory at: $GIT_OMMIX_REPO_DIR
 Please check your permissions"
     dbg mkdir --parents "$ID/result"
+    touch "$ID/data/.empty"
+    touch "$ID/result/.empty"
 
     # Go to the patient repo
     dbg cd "$ID"
@@ -167,6 +169,8 @@ Please check your permissions"
 
     # Rename the default branch to the patient ID
     dbg git checkout -b "patient|$ID"
+
+    dbg git add *
 }
 
 # Add sample
@@ -489,7 +493,7 @@ function base_prov
 # Do the actual git commit with all the parameters set
 function commit
 {
-    dbg git commit --allow-empty \
+    dbg git commit \
         --author "$PROVIDER" \
         --date "$DATE" \
         --message "$OBJECT:$ID
