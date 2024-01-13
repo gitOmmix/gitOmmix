@@ -176,11 +176,11 @@ Please check your permissions"
 function add_sample
 {
     # A sample always derives from the patient
-    MESSAGE_ENTITY +="
+    MESSAGE_ENTITY+="
 :$OBJECT:$ID prov:wasDerivedFrom :patient:$PATIENT ."
 
     if [[ "$METHOD" ]];then
-        MESSAGE_ACTIVITY +="
+        MESSAGE_ACTIVITY+="
 :method:$METHOD used :patient:$PATIENT ."
     fi
 
@@ -199,11 +199,11 @@ function add_sample
 function add_data
 {
     # Data always derives from the sample
-    MESSAGE_ENTITY +="
+    MESSAGE_ENTITY+="
 :$OBJECT:$ID prov:wasDerivedFrom :sample:$SAMPLE ."
 
     if [[ "$METHOD" ]];then
-        MESSAGE_ACTIVITY +="
+        MESSAGE_ACTIVITY+="
 :method:$METHOD used :sample:$SAMPLE ."
     fi
 
@@ -552,12 +552,12 @@ function use
     for use in "${USE[@]}";do
         use=$(validate_commit "$1" "$use" )
 
-        MESSAGE_ENTITY +="
 :$OBJECT:$ID prov:wasDerivedFrom :$use ."
+        MESSAGE_ENTITY+="
 
         if [[ "$METHOD" ]];then
-            MESSAGE_ACTIVITY +="
 :method:$METHOD used :$use ."
+            MESSAGE_ACTIVITY+="
         fi
     done
 }
