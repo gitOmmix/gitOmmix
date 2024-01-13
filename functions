@@ -443,10 +443,10 @@ function validate_commit
     local hash
     local fullname
 
-    # look within the commits of the given type in the current branch
-    if git log --oneline | grep -E "$1:$2" --quiet;then
-        hash=$(git log --oneline | grep -E "$1:$2" | cut -f 1 -d ' ')
         fullname=$(git log "$hash" --pretty=%s --max-count=1)
+    # If the commit is given by its object id,
+    if git log --oneline --all | grep -E "\b$1:$2$" --quiet;then
+        hash="$(git log --oneline --all | grep -E "\b$1:$2$" | cut -f 1 -d ' ')"
     # FIXME: ? dbg does not work as intended, must redirect manually to /dev/null ?
     elif dbg git log "$2";then # find commit by its hash
         fullname=$(git log "$2" --pretty=%s --max-count=1)
