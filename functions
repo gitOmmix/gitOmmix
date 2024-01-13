@@ -440,7 +440,6 @@ function validate_files
 # Return the full name of the object
 # $1 : type
 # $2 : hash|id
-# $3 : t to return hash instead of fullname
 function validate_commit
 {
     local hash
@@ -453,13 +452,15 @@ function validate_commit
     # FIXME: ? dbg does not work as intended, must redirect manually to /dev/null ?
     elif dbg git log "$2";then # find commit by its hash
         fullname=$(git log "$2" --pretty=%s --max-count=1)
+        hash="$2"
         # check that the commit matches the given type
         [[ ${fullname%%:*} =~ "$1" ]] || die "$2 is not the commit hash of existing $1 in sample:$SAMPLE of patient:$PATIENT"
     else
         die "$2 is not the commit hash or the name of existing $1 in sample:$SAMPLE of patient:$PATIENT"
     fi
 
-    if (( $# > 2 )) && echo "$hash" || echo "$fullname"
+    echo "$hash
+$fullname"
 }
 
 ###############################################################################
@@ -527,10 +528,12 @@ function revision_of
     #     REVISION_OF="$revs"
     # fi
 
-    REVISION_OF=$(validate_commit "$OBJECT" "$REVISION_OF")
+    local rev=("$(validate_commit "$OBJECT" "$REVISION_OF")")
+
+    REVISION_OF="${rev[1]}"
 
     MESSAGE_ENTITY+="
-:$OBJECT:$ID prov:wasRevisionOf :$REVISION_OF ."
+:$OBJECT:$ID prov:wasRevisionOf :${rev[2]} ."
 }
 
 # Validate and add relevant triplets for wasInvalidated
@@ -538,13 +541,17 @@ function revision_of
 function invalidate
 {
     local inval
+    local out=()
+
     for inval in "${INVALIDATE[@]}";do
-        # TODO: update values in INVALIDATE
-        inval=$(validate_commit "$OBJECT" "$inval")
+        inval=("$(validate_commit "$OBJECT" "$inval")")
+        out+=("${inval[1]}")
 
         MESSAGE_ENTITY+="
-:$inval prov:wasInvalidatedBy :method:$METHOD ."
+:${inval[2]} prov:wasInvalidatedBy :method:$METHOD ."
     done
+
+    INVALIDATE=("${out[@]}")
 }
 
 # Validate and add relevant triplets for wasDerivedFrom
@@ -552,18 +559,22 @@ function invalidate
 function use
 {
     local use
-    # TODO: update values in USE
-    for use in "${USE[@]}";do
-        use=$(validate_commit "$1" "$use" )
+    local out=()
 
-:$OBJECT:$ID prov:wasDerivedFrom :$use ."
+    for use in "${USE[@]}";do
+        use=("$(validate_commit "$1" "$use")")
+        out+=("${use[1]}")
+
         MESSAGE_ENTITY+="
+:$OBJECT:$ID prov:wasDerivedFrom :${use[2]} ."
 
         if [[ "$METHOD" ]];then
-:method:$METHOD used :$use ."
             MESSAGE_ACTIVITY+="
+:method:$METHOD used :${use[2]} ."
         fi
     done
+
+    USE=("${out[@]}")
 }
 
 ###############################################################################
