@@ -263,26 +263,47 @@ Please check your permissions"
 # - [REVISION_OF diagnostic:<id> | <diagnostic_hash>]
 function add_diagnostic
 {
-    # If revision_of : commit must be the head of that branch, commit from that
-    # REVISION_OF
-    if [[ "$REVISION_OF" ]];then
-        # TODO: validate_branch ?
-        hash=$(validate_commit "diagnostic" "$REVISION_OF")
-        revision_of
+    local merges=()
 
-        dbg stash git checkout "$hash"
+    # INVALIDATEs
+    if [[ "${#INVALIDATE[@]}" -gt 0 && "$METHOD" ]]; then
+        invalidate
+
+        local inval
+
+        for inval in "${INVALIDATE[@]}"; do
+            # Remove the diagnostic branch if it existed
+            dbg stash git checkout "$inval"
+            current_branch="$(git branch --show-current)"
+            [[ "$current_branch" ]] && git checkout --detach && git branch -D "$current_branch"
+        done
     fi
 
     # USE
-    [[ "${#USE[@]}" -gt 0 ]] && use "(result|diagnostic)"
+    if [[ "${#USE[@]}" -gt 0 ]]; then
+        use "(result|diagnostic)"
 
-    # INVALIDATEs
-    [[ "${#INVALIDATE[@]}" -gt 0 && "$METHOD" ]] && invalidate
+        # Start merging from the first object used
+        dbg stash git checkout "${USE[1]}"
 
-    # TODO: actual git machinery!
-    # If revision_of and use : checkout @ revision_of, merge use(s)
-    # If use(s) : checkout @ first use, create new branch, merge other uses
-    # + invalidate diagnostics
+        merges+=("${USE[@]}")
+    fi
+
+    # REVISION_OF
+    if [[ "$REVISION_OF" ]]; then
+        revision_of
+
+        # Start merging from the revision_of
+        dbg stash git checkout "$REVISION_OF"
+
+        # Remove the diagnostic branch if it existed
+        current_branch="$(git branch --show-current)"
+        [[ "$current_branch" ]] && git checkout --detach && git branch -D "$current_branch"
+
+        merges=("$REVISION_OF" "${merges[@]}")
+    fi
+
+    dbg git merge "$merges" --no-commit
 }
 
 # Add
