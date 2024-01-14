@@ -293,21 +293,20 @@ function add_diagnostic
 
         merges=("$HASH" "${merges[@]}")
     fi
+
+    dbg git checkout -b "diagnostic|$ID"
+
     # INVALIDATEs
     if [[ "${#INVALIDATE[@]}" -gt 0 ]]; then
         invalidate
 
         local inval
 
-        for inval in "${INVALIDATE[@]}"; do
-            # Remove the diagnostic branch if it existed
-            dbg stash git checkout "$inval"
-            dbg git branch -D "$OBJECT|$inval"
+        for inval in "${NAME[@]}"; do
+            dbg git branch -D "diagnostic|${inval/diagnostic:}"
         done
     fi
 
-
-    dbg git checkout -b "diagnostic|$ID"
     dbg git merge "${merges[@]}" --no-commit
 }
 
