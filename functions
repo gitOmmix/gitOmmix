@@ -561,7 +561,6 @@ function revision_of
 }
 
 # Validate and add relevant triplets for wasInvalidated
-# TODO: for all invalidated, add invalidatedAtTime ?
 function invalidate
 {
     local inval
