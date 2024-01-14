@@ -536,7 +536,7 @@ function base_prov
 # Do the actual git commit with all the parameters set
 function commit
 {
-    dbg git commit \
+    dbg git commit --allow-empty \
         --author "$PROVIDER" \
         --date "$DATE" \
         --message "$OBJECT:$ID
