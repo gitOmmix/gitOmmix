@@ -474,17 +474,19 @@ function validate_files
 # $2 : hash|id
 function validate_commit
 {
-    local hash
-    local fullname
+    # Remove prefix from names given in full
+    local name=$(echo "$2" | sed -r "s/^$1://")
 
     # If the commit is given by its object id,
-    if git log --format="%s" --all | grep -E "^$1:$2$" --quiet;then
-        ret="$(git log --format="%h %s" --all | grep -E "\b$1:$2$")"
+    if git log --format="%s" --all | grep -E "^$1:$name$" --quiet;then
+        ret="$(git log --format="%h %s" --all | grep -E "\b$1:$name$")"
     # FIXME: ? dbg does not work as intended, must redirect manually to /dev/null ?
-    elif dbg git log "$2";then # find commit by its hash
-        ret="$(git log --format="%h %s" --max-count=1 "$2")"
+    elif dbg git log "$name";then # find commit by its hash
+        ret="$(git log --format="%h %s" --max-count=1 "$name")"
         # check that the commit matches the given type
-        [[ "${${ret##* }%%:*}" =~ "$1" ]] || die "$2 is not the commit hash of existing $1 of patient:$PATIENT"
+        if echo "$ret" | grep -E "^$1:" --quiet;then
+            die "$2 is not the commit hash of existing $1 of patient:$PATIENT"
+        fi
     else
         die "$2 is not the commit hash or the name of existing $1 of patient:$PATIENT"
     fi
