@@ -1,0 +1,48 @@
+#!/bin/env bash
+
+export PATIENT=complex
+export DEBUG=verbose
+export TEST_OMMIX=1
+
+mkdir -p "tests/$PATIENT"
+cd "tests/$PATIENT"
+
+echo "Gastric biopsy" > data_b1
+echo "Lung biopsy" > data_b2
+echo "Blood sample" > data_blood
+echo "Bone biopsy" > data_b3
+
+echo "Malignant epithelial gastric cells" > result_b1
+echo "Malignant epithelial lung cells" > result_b2
+echo "Circulating DNA matching markers from the gastric and lung cells" > result_blood
+echo "Malignant bone cells" > result_b3
+
+rm ~/GitOmmix/$PATIENT -rf
+
+../../git-ommix add patient --id $PATIENT
+
+../../git-ommix add sample --id b1
+../../git-ommix add data -s b1 --id b1 data_b1
+../../git-ommix add result -s b1 --use b1 --id b1 result_b1
+../../git-ommix add diagnostic --use b1 --id GastricT2
+
+../../git-ommix add sample --id b2
+../../git-ommix add data -s b2 --id b2 data_b2
+../../git-ommix add result -s b2 --use b2 --id b2 result_b2
+../../git-ommix add diagnostic --use b2 --id LungT1
+
+../../git-ommix add sample --id b3
+../../git-ommix add data -s b3 --id b3 data_b3
+../../git-ommix add result -s b3 --use b3 --id b3 result_b3
+../../git-ommix add diagnostic --use b3 --id BoneT1
+
+../../git-ommix add sample --id blood
+../../git-ommix add data -s blood --id blood data_blood
+../../git-ommix add result -s blood --use blood --id blood result_blood
+../../git-ommix add diagnostic --revision_of LungT1 --use blood --id LungT1N1
+../../git-ommix add diagnostic --revision_of GastricT2 --use blood --id GastricT2N1
+
+echo "Markers compatible with malignant gastric cells circulating DNA" > result_b3
+../../git-ommix add result -s b3 --use b3 --id b3_ctDNA result_b3
+
+../../git-ommix add diagnostic --revision_of GastricT2N1 --use b3_ctDNA --use BoneT1 --invalidate BoneT1 --id GastricT2N1M1

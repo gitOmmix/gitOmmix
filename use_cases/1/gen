@@ -1,7 +1,0 @@
-#!/bin/bash
-
-base64 /dev/urandom | head -c 10MiB > data
-git ommix add data -p 1 -s 1 data
-
-base64 /dev/urandom | head -c 1MiB > result
-git ommix add result -p 1 -s 1 result

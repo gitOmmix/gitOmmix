@@ -1,0 +1,38 @@
+#!/bin/env bash
+
+export PATIENT=simple
+export DEBUG=verbose
+
+mkdir -p "tests/$PATIENT"
+cd "tests/$PATIENT"
+
+echo "a" > data_a
+echo "b" > data_b
+echo "c" > data_c
+echo "A" > result_a
+echo "B" > result_b
+echo "C" > result_c
+
+rm ~/GitOmmix/$PATIENT -rf
+
+../../git-ommix add patient --id $PATIENT
+
+../../git-ommix add sample --id s_a
+../../git-ommix add sample --id s_b
+../../git-ommix add sample --id s_c
+
+../../git-ommix add data -s s_a --id d_a data_a
+../../git-ommix add data -s s_b --id d_b data_b
+../../git-ommix add data -s s_c --id d_c data_c
+
+../../git-ommix add result -s s_a --use d_a --id r_a result_a
+../../git-ommix add result -s s_b --use d_b --id r_b result_b
+../../git-ommix add result -s s_c --use d_c --id r_c result_c
+
+echo "a2" > data_a
+echo "A2" > result_a
+../../git-ommix add data -s s_a --revision_of d_a --id d_a2 data_a
+../../git-ommix add result -s s_a --revision_of r_a --invalidate r_a --use d_a2 --id r_a2 result_a
+
+../../git-ommix add diagnostic --use r_a2 --use r_b --id diag1
+../../git-ommix add diagnostic --revision_of diag1 --use r_c --id diag1b
