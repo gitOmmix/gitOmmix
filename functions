@@ -392,19 +392,31 @@ function list_diagnostic
 # List data
 # Uses :
 # - PATIENT
-# - SAMPLE
+# - [SAMPLE]
 function list_data
 {
-    git log --format=%s | grep --fixed-strings 'data:'
+    local scope="--all"
+    if [[ "$SAMPLE" ]];then
+        dbg git rev-parse --verify "sample|$SAMPLE" || die "sample:$SAMPLE is not a sample of patient:$PATIENT"
+        scope="sample|$SAMPLE"
+    fi
+
+    git log --format=%s "$scope" | grep --fixed-strings 'data:'
 }
 
 # List results
 # Uses :
 # - PATIENT
-# - SAMPLE
+# - [SAMPLE]
 function list_result
 {
-    git log --format=%s | grep --fixed-strings 'result:'
+    local scope="--all"
+    if [[ "$SAMPLE" ]];then
+        dbg git rev-parse --verify "sample|$SAMPLE" || die "sample:$SAMPLE is not a sample of patient:$PATIENT"
+        scope="sample|$SAMPLE"
+    fi
+
+    git log --format=%s "$scope" | grep --fixed-strings 'result:'
 }
 
 # List
@@ -424,12 +436,10 @@ function list
 
         data)
             validate_patient
-            validate_sample
             list_data ;;
 
         result|results)
             validate_patient
-            validate_sample
             list_result ;;
 
         *) usage $VERB;;
