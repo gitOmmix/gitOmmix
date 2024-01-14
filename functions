@@ -525,26 +525,8 @@ $MESSAGE2"
 # An $OBJECT can only be a revision_of another $OBJECT
 function revision_of
 {
-    # TODO: automatically set a REVISION_OF if modified files from a single commit
-    # TODO: find commit directly? What for?
-    # -> get the used data for a revision of a result
-    # but not necessary, just skip the USE and don't require it…
-    # if [[ -z "$REVISION_OF" && `git status --porcelain | grep ^M --quiet` ]];then
-    #     local revs=()
-    #     git status --porcelain | grep ^M | \
-    #         (while read line;do
-    #              revs+=`git log --pretty=%s --follow --diff-filter=A ${line:3}`
-    #          done)
-    #     revs=($(printf "%q\n" "${revs[@]}" | sort -u))
     local rev=($(validate_commit "$OBJECT" "$REVISION_OF"))
 
-    #     if [[ "${#revs}" -gt 1 ]];then
-    #         git reset --hard
-    #         die "The added $OBJECT would be a revision of two $OBJECT objects"
-    #     fi
-
-    #     REVISION_OF="$revs"
-    # fi
     REVISION_OF="${rev[0]}"
 
     MESSAGE_ENTITY+="
