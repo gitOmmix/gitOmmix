@@ -10,7 +10,13 @@ IFS=$'\n\t'
 # Load git ommix functions
 # Load global and local settings if they exist
 
-source /usr/share/git-ommix/functions
+TEST_OMMIX="${TEST_OMMIX:-}"
+if [[ "$TEST_OMMIX" ]]; then
+    source $(dirname $0)/functions
+else
+    source /usr/share/git-ommix/functions
+fi
+
 [[ -f "/etc/gitommix.conf" ]] && source "/etc/gitommix.conf"
 [[ -f "$HOME/.config/gitommix.conf" ]] && source "$HOME/.config/gitommix.conf"
 
