@@ -110,7 +110,7 @@ Objects:
 # Print messages passed as arguments and exit in error
 function die
 {
-    echo $@
+    echo -e "\033[0;31m$@\033[0m"
     exit 2
 }
 
@@ -121,6 +121,11 @@ function dbg
         "$@"
     elif [[ "$DEBUG" == "dry" ]];then
         echo "$@"
+    elif [[ "$DEBUG" == "verbose" ]];then
+        echo -e "\033[0;34m$@\033[0m"
+        echo -e "\033[0;30m"
+        "$@"
+        echo -e "\033[0m"
     else
         "$@" &>/dev/null
     fi
@@ -352,8 +357,7 @@ function add
 
     commit
 
-    echo "
-Added $OBJECT:$ID
+    echo -e "\033[0;32mAdded $OBJECT:$ID\033[0m
 "
 }
 

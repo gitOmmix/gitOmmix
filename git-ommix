@@ -63,8 +63,8 @@ DEBUG="${DEBUG:-}"
 ! getopt --test > /dev/null
 [[ ${PIPESTATUS[0]} -eq 4 ]] || die 'I’m sorry, `getopt --test` failed in this environment.'
 
-OPTIONS=p:s:m:d
-LONGOPTS=provider:,method:,patient:,sample:,date:,id:,invalidate:,use:,revision_of:,message:,debug,dry
+OPTIONS=p:s:m:dv
+LONGOPTS=provider:,method:,patient:,sample:,date:,id:,invalidate:,use:,revision_of:,message:,debug,dry,verbose
 
 ! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "git-ommix" -- "$@")
 [[ ${PIPESTATUS[0]} -eq 0 ]] || usage root
@@ -124,6 +124,10 @@ while true; do
             ;;
         --dry)
             DEBUG="dry"
+            shift
+            ;;
+        -v|--verbose)
+            DEBUG="verbose"
             shift
             ;;
         --)
