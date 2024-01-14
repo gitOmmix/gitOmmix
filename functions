@@ -302,7 +302,8 @@ function add_diagnostic
         merges=("$REVISION_OF" "${merges[@]}")
     fi
 
-    dbg git merge "$merges" --no-commit
+    dbg git checkout -b "diagnostic|$ID"
+    dbg git merge "${merges[@]}" --no-commit
 }
 
 # Add
