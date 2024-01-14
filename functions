@@ -284,7 +284,7 @@ function add_diagnostic
         use "(result|diagnostic)"
 
         # Start merging from the first object used
-        dbg stash git checkout "${USE[1]}"
+        dbg stash git checkout "${USE[0]}"
 
         merges+=("${USE[@]}")
     fi
@@ -464,22 +464,20 @@ function validate_commit
     local hash
     local fullname
 
-        fullname=$(git log "$hash" --pretty=%s --max-count=1)
     # If the commit is given by its object id,
-    if git log --oneline --all | grep -E "\b$1:$2$" --quiet;then
-        hash="$(git log --oneline --all | grep -E "\b$1:$2$" | cut -f 1 -d ' ')"
+    if git log --format="%s" --all | grep -E "^$1:$2$" --quiet;then
+        ret="$(git log --format="%h %s" --all | grep -E "\b$1:$2$")"
     # FIXME: ? dbg does not work as intended, must redirect manually to /dev/null ?
     elif dbg git log "$2";then # find commit by its hash
-        fullname=$(git log "$2" --pretty=%s --max-count=1)
-        hash="$2"
+        ret="$(git log --format="%h %s" --max-count=1 "$2")"
         # check that the commit matches the given type
-        [[ ${fullname%%:*} =~ "$1" ]] || die "$2 is not the commit hash of existing $1 in sample:$SAMPLE of patient:$PATIENT"
+        [[ "${${ret##* }%%:*}" =~ "$1" ]] || die "$2 is not the commit hash of existing $1 of patient:$PATIENT"
     else
-        die "$2 is not the commit hash or the name of existing $1 in sample:$SAMPLE of patient:$PATIENT"
+        die "$2 is not the commit hash or the name of existing $1 of patient:$PATIENT"
     fi
 
-    echo "$hash
-$fullname"
+    echo "${ret%% *}
+${ret##* }"
 }
 
 ###############################################################################
@@ -538,6 +536,7 @@ function revision_of
     #              revs+=`git log --pretty=%s --follow --diff-filter=A ${line:3}`
     #          done)
     #     revs=($(printf "%q\n" "${revs[@]}" | sort -u))
+    local rev=($(validate_commit "$OBJECT" "$REVISION_OF"))
 
     #     if [[ "${#revs}" -gt 1 ]];then
     #         git reset --hard
@@ -546,13 +545,10 @@ function revision_of
 
     #     REVISION_OF="$revs"
     # fi
-
-    local rev=("$(validate_commit "$OBJECT" "$REVISION_OF")")
-
-    REVISION_OF="${rev[1]}"
+    REVISION_OF="${rev[0]}"
 
     MESSAGE_ENTITY+="
-:$OBJECT:$ID prov:wasRevisionOf :${rev[2]} ."
+:$OBJECT:$ID prov:wasRevisionOf :${rev[1]} ."
 }
 
 # Validate and add relevant triplets for wasInvalidated
@@ -563,11 +559,11 @@ function invalidate
     local out=()
 
     for inval in "${INVALIDATE[@]}";do
-        inval=("$(validate_commit "$OBJECT" "$inval")")
-        out+=("${inval[1]}")
+        local res=($(validate_commit "$OBJECT" "$inval"))
+        out+=("${res[0]}")
 
         MESSAGE_ENTITY+="
-:${inval[2]} prov:wasInvalidatedBy :method:$METHOD ."
+:${res[1]} prov:wasInvalidatedBy :method:$METHOD ."
     done
 
     INVALIDATE=("${out[@]}")
@@ -581,15 +577,15 @@ function use
     local out=()
 
     for use in "${USE[@]}";do
-        use=("$(validate_commit "$1" "$use")")
-        out+=("${use[1]}")
+        local res=($(validate_commit "$1" "$use"))
+        out+=("${res[0]}")
 
         MESSAGE_ENTITY+="
-:$OBJECT:$ID prov:wasDerivedFrom :${use[2]} ."
+:$OBJECT:$ID prov:wasDerivedFrom :${res[1]} ."
 
         if [[ "$METHOD" ]];then
             MESSAGE_ACTIVITY+="
-:method:$METHOD used :${use[2]} ."
+:method:$METHOD used :${res[1]} ."
         fi
     done
 
