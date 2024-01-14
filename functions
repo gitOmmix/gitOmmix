@@ -383,7 +383,7 @@ function list_sample
 # - SAMPLE
 function list_data
 {
-    git log --pretty=%s | grep --fixed-strings 'data:'
+    git log --format=%s | grep --fixed-strings 'data:'
 }
 
 # List results
@@ -392,7 +392,7 @@ function list_data
 # - SAMPLE
 function list_result
 {
-    git log --pretty=%s | grep --fixed-strings 'result:'
+    git log --format=%s | grep --fixed-strings 'result:'
 }
 
 # List
@@ -595,14 +595,14 @@ function prov_all
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix :     <http://gitommix.org/gitommix#> .
 "
-    git log --pretty=format:'# %s%n%b' --author-date-order --reverse
+    git log --format='# %s%n%b' --author-date-order --reverse
 }
 
 # Get up-to-date result of a sample
 # Print the last commit
 function last
 {
-    git log -n 1 --pretty="format:%s"
+    git log --max-count=1 --format=%s
 }
 
 ## Completions
