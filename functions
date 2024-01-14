@@ -215,7 +215,7 @@ function add_data
     [[ "$REVISION_OF" ]] && revision_of
 
     # INVALIDATEs
-    [[ "${#INVALIDATE[@]}" -gt 0 && "$METHOD" ]] && invalidate
+    [[ "${#INVALIDATE[@]}" -gt 0 ]] && invalidate
 
     # Copy all the given files to the $OBJECT folder recursively
     # FILES is unquoted to allow * expansion
@@ -243,7 +243,7 @@ function add_result
     [[ "$REVISION_OF" ]] && revision_of
 
     # INVALIDATEs
-    [[ "${#INVALIDATE[@]}" -gt 0 && "$METHOD" ]] && invalidate
+    [[ "${#INVALIDATE[@]}" -gt 0 ]] && invalidate
 
     # Copy all the given files to the $OBJECT folder recursively
     # FILES is unquoted to allow * expansion
@@ -266,7 +266,7 @@ function add_diagnostic
     local merges=()
 
     # INVALIDATEs
-    if [[ "${#INVALIDATE[@]}" -gt 0 && "$METHOD" ]]; then
+    if [[ "${#INVALIDATE[@]}" -gt 0 ]]; then
         invalidate
 
         local inval
@@ -563,7 +563,12 @@ function invalidate
         out+=("${res[0]}")
 
         MESSAGE_ENTITY+="
+:${res[1]} prov:invalidatedAtTime xsd:dateTime:$DATE ."
+
+        if [[ "$METHOD" ]];then
+            MESSAGE_ENTITY+="
 :${res[1]} prov:wasInvalidatedBy :method:$METHOD ."
+        fi
     done
 
     INVALIDATE=("${out[@]}")
