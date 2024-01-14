@@ -36,15 +36,15 @@ shift 2
 # Default values
 PROVIDER=$GIT_OMMIX_DEFAULT_PROVIDER
 METHOD=
-PATIENT=
-SAMPLE=
+PATIENT="${PATIENT:-}"
+SAMPLE="${SAMPLE:-}"
 DATE=`date +'%Y-%m-%dT%H:%M:%S'`
 ID=`base64 /dev/urandom | tr --delete "/+=" | head --bytes=10`
 INVALIDATE=()
 USE=()
 REVISION_OF=
 MESSAGE2=
-DEBUG=
+DEBUG="${DEBUG:-}"
 
 ###############################################################################
 # GETOPT
