@@ -381,6 +381,14 @@ function list_sample
     git branch --all --list 'sample|*' --format='%(refname:short)'
 }
 
+# List diagnostics
+# Uses :
+# - PATIENT
+function list_diagnostic
+{
+    git branch --all --list 'diagnostic|*' --format='%(refname:short)'
+}
+
 # List data
 # Uses :
 # - PATIENT
