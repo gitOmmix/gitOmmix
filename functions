@@ -274,8 +274,7 @@ function add_diagnostic
         for inval in "${INVALIDATE[@]}"; do
             # Remove the diagnostic branch if it existed
             dbg stash git checkout "$inval"
-            current_branch="$(git branch --show-current)"
-            [[ "$current_branch" ]] && git checkout --detach && git branch -D "$current_branch"
+            dbg git branch -D "$OBJECT|$inval"
         done
     fi
 
@@ -291,14 +290,14 @@ function add_diagnostic
 
     # REVISION_OF
     if [[ "$REVISION_OF" ]]; then
+        local name="$REVISION_OF"
         revision_of
 
         # Start merging from the revision_of
         dbg stash git checkout "$REVISION_OF"
 
         # Remove the diagnostic branch if it existed
-        current_branch="$(git branch --show-current)"
-        [[ "$current_branch" ]] && git checkout --detach && git branch -D "$current_branch"
+        dbg git branch -D "$OBJECT|$name"
 
         merges=("$REVISION_OF" "${merges[@]}")
     fi
