@@ -46,6 +46,10 @@ REVISION_OF=
 MESSAGE2=
 DEBUG="${DEBUG:-}"
 
+# Declare global vars
+HASH=()
+NAME=()
+
 ###############################################################################
 # GETOPT
 #

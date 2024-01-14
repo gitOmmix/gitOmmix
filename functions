@@ -271,6 +271,28 @@ function add_diagnostic
 {
     local merges=()
 
+    # USE
+    if [[ "${#USE[@]}" -gt 0 ]]; then
+        use "(result|diagnostic)"
+
+        # Start merging from the first object used
+        dbg stash git checkout "${HASH[0]}"
+
+        merges+=("${HASH[@]}")
+    fi
+
+    # REVISION_OF
+    if [[ "$REVISION_OF" ]]; then
+        revision_of
+
+        # Start merging from the revision_of
+        dbg stash git checkout "$HASH"
+
+        # Remove the diagnostic branch if it existed
+        dbg git branch -D "diagnostic|${NAME/diagnostic:}"
+
+        merges=("$HASH" "${merges[@]}")
+    fi
     # INVALIDATEs
     if [[ "${#INVALIDATE[@]}" -gt 0 ]]; then
         invalidate
@@ -284,29 +306,6 @@ function add_diagnostic
         done
     fi
 
-    # USE
-    if [[ "${#USE[@]}" -gt 0 ]]; then
-        use "(result|diagnostic)"
-
-        # Start merging from the first object used
-        dbg stash git checkout "${USE[0]}"
-
-        merges+=("${USE[@]}")
-    fi
-
-    # REVISION_OF
-    if [[ "$REVISION_OF" ]]; then
-        local name="$REVISION_OF"
-        revision_of
-
-        # Start merging from the revision_of
-        dbg stash git checkout "$REVISION_OF"
-
-        # Remove the diagnostic branch if it existed
-        dbg git branch -D "$OBJECT|$name"
-
-        merges=("$REVISION_OF" "${merges[@]}")
-    fi
 
     dbg git checkout -b "diagnostic|$ID"
     dbg git merge "${merges[@]}" --no-commit
@@ -485,24 +484,20 @@ function validate_files
 function validate_commit
 {
     # Remove prefix from names given in full
-    local name=$(echo "$2" | sed -r "s/^$1://")
+    HASH="$2"
+    NAME="$(echo "$2" | sed -r "s/^$1://")"
 
     # If the commit is given by its object id,
-    if git log --format="%s" --all | grep -E "^$1:$name$" --quiet;then
-        ret="$(git log --format="%h %s" --all | grep -E "\b$1:$name$")"
-    # FIXME: ? dbg does not work as intended, must redirect manually to /dev/null ?
-    elif dbg git log "$name";then # find commit by its hash
-        ret="$(git log --format="%h %s" --max-count=1 "$name")"
+    if git log --format="%s" --all | grep -E "^$1:$NAME$" --quiet;then
+        HASH="$(git log --format="%h %s" --all | grep -E "\b$1:$NAME$" | cut -d ' ' -f 1)"
+        NAME="$(git log --format=%s --max-count=1 "$HASH")"
+    elif dbg git log "$HASH";then # find commit by its hash
+        NAME="$(git log --format=%s --max-count=1 "$HASH")"
         # check that the commit matches the given type
-        if echo "$ret" | grep -E "^$1:" --quiet;then
-            die "$2 is not the commit hash of existing $1 of patient:$PATIENT"
-        fi
+        echo "$NAME" | grep -E "^$1:" --quiet || die "$HASH is not the commit hash of existing $1 of patient:$PATIENT"
     else
-        die "$2 is not the commit hash or the name of existing $1 of patient:$PATIENT"
+        die "$2 is neither the commit hash nor the name of existing $1 of patient:$PATIENT"
     fi
-
-    echo "${ret%% *}
-${ret##* }"
 }
 
 ###############################################################################
@@ -552,34 +547,35 @@ $MESSAGE2"
 # An $OBJECT can only be a revision_of another $OBJECT
 function revision_of
 {
-    local rev=($(validate_commit "$OBJECT" "$REVISION_OF"))
-
-    REVISION_OF="${rev[0]}"
+    validate_commit "$OBJECT" "$REVISION_OF"
 
     MESSAGE_ENTITY+="
-:$OBJECT:$ID prov:wasRevisionOf :${rev[1]} ."
+:$OBJECT:$ID prov:wasRevisionOf :$NAME ."
 }
 
 # Validate and add relevant triplets for wasInvalidated
 function invalidate
 {
     local inval
-    local out=()
+    local out_hash=()
+    local out_name=()
 
     for inval in "${INVALIDATE[@]}";do
-        local res=($(validate_commit "$OBJECT" "$inval"))
-        out+=("${res[0]}")
+        validate_commit "$OBJECT" "$inval"
+        out_hash+=("$HASH")
+        out_name+=("$NAME")
 
         MESSAGE_ENTITY+="
-:${res[1]} prov:invalidatedAtTime xsd:dateTime:$DATE ."
+:$NAME prov:invalidatedAtTime xsd:dateTime:$DATE ."
 
         if [[ "$METHOD" ]];then
             MESSAGE_ENTITY+="
-:${res[1]} prov:wasInvalidatedBy :method:$METHOD ."
+:$NAME prov:wasInvalidatedBy :method:$METHOD ."
         fi
     done
 
-    INVALIDATE=("${out[@]}")
+    HASH=("${out_hash[@]}")
+    NAME=("${out_name[@]}")
 }
 
 # Validate and add relevant triplets for wasDerivedFrom
@@ -587,22 +583,25 @@ function invalidate
 function use
 {
     local use
-    local out=()
+    local out_hash=()
+    local out_name=()
 
     for use in "${USE[@]}";do
-        local res=($(validate_commit "$1" "$use"))
-        out+=("${res[0]}")
+        validate_commit "$1" "$use"
+        out_hash+=("$HASH")
+        out_name+=("$NAME")
 
         MESSAGE_ENTITY+="
-:$OBJECT:$ID prov:wasDerivedFrom :${res[1]} ."
+:$OBJECT:$ID prov:wasDerivedFrom :$NAME ."
 
         if [[ "$METHOD" ]];then
             MESSAGE_ACTIVITY+="
-:method:$METHOD used :${res[1]} ."
+:method:$METHOD used :$NAME ."
         fi
     done
 
-    USE=("${out[@]}")
+    HASH=("${out_hash[@]}")
+    NAME=("${out_name[@]}")
 }
 
 ###############################################################################
