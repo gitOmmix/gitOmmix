@@ -426,18 +426,22 @@ function list
 
         sample|samples)
             validate_patient
+            validate_hashes
             list_sample ;;
 
         diagnostic|diagnostics)
             validate_patient
+            validate_hashes
             list_diagnostic ;;
 
         data)
             validate_patient
+            validate_hashes
             list_data ;;
 
         result|results)
             validate_patient
+            validate_hashes
             list_result ;;
 
         *) usage $VERB;;
@@ -496,6 +500,28 @@ function validate_commit
         echo "$NAME" | grep -E "^$1:" --quiet || die "$HASH is not the commit hash of existing $1 of patient:$PATIENT"
     else
         die "$2 is neither the commit hash nor the name of existing $1 of patient:$PATIENT"
+    fi
+}
+
+# Validate hashes or resolve and expand names given after a list verb
+function validate_hashes
+{
+    local hash
+    local out=()
+
+    if [[ "${#HASHES[@]}" -gt 0 ]];then
+        for hash in "${HASHES[@]}";do
+            if git log --format="%s" --all | grep -E "$hash$" --quiet;then
+                out+=($(git log --format="%h %s" --all | grep -E "$hash$" | cut -d ' ' -f 1))
+            elif dbg git log "$hash";then
+                out+=("$(git log --format=%h --max-count=1 "$hash")")
+            else
+                die "$hash is neither the commit hash nor the name of an existing object of patient:$PATIENT"
+            fi
+        done
+        HASHES=("${out[@]}")
+    else
+        HASHES="--all"
     fi
 }
 

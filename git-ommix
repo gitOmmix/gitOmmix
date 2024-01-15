@@ -146,7 +146,7 @@ while true; do
 done
 
 # The remaining arguments will be files when adding data|result
-# or a (list of?) commit hash to start from
+# or a list of commit hashes or name when listing
 # If no file is given, use '*'
 FILES=("${@:-*}")
 HASHES=("$@")
