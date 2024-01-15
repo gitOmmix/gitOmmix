@@ -437,6 +437,33 @@ function list
 }
 
 ###############################################################################
+
+# Return the provenance in turtle format
+# It is the concatenation of all commit messages (without the subject line)
+function get_prov
+{
+    echo "@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix :     <http://gitommix.org/gitommix#> .
+"
+    git log --format='# %s%n%b' --author-date-order --reverse "${HASHES[@]}"
+}
+function get
+{
+    validate_patient
+    validate_hashes
+
+    case "$OBJECT" in
+        prov) get_prov ;;
+        last) get_last ;;
+        graph) get_graph ;;
+        timeline) get_timeline ;;
+        *) usage $VERB;;
+    esac
+}
+
+###############################################################################
 #
 # Validation helpers
 
@@ -618,20 +645,6 @@ function use
 }
 
 ###############################################################################
-#
-# Old functions to rework
-
-# Return the provenance in turtle format
-# It is the concatenation of all commit messages (without the subject line)
-function prov_all
-{
-    echo "@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix prov: <http://www.w3.org/ns/prov#> .
-@prefix :     <http://gitommix.org/gitommix#> .
-"
-    git log --format='# %s%n%b' --author-date-order --reverse
-}
 
 # Get up-to-date result of a sample
 # Print the last commit
