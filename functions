@@ -546,14 +546,17 @@ function validate_hashes
 # Prepare the base components of the PROV message
 function base_prov
 {
+    local provider="${PROVIDER%% <*}"
+    provider="${provider/ /_}"
+
     MESSAGE_ACTIVITY=
 
     MESSAGE_AGENT="
-:provider:$PROVIDER a prov:Agent ."
+:provider:$provider a prov:Agent ."
 
     MESSAGE_ENTITY="
 :$OBJECT:$ID a prov:Entity .
-:$OBJECT:$ID prov:wasAttributedTo :provider:$PROVIDER .
+:$OBJECT:$ID prov:wasAttributedTo :provider:$provider .
 :$OBJECT:$ID prov:generatedAtTime xsd:dateTime:$DATE ."
 
     # Add a method PROV triplets if given
@@ -561,7 +564,7 @@ function base_prov
         MESSAGE_ACTIVITY="
 :method:$METHOD a prov:Activity .
 :method:$METHOD startedAtTime xsd:dateTime:$DATE .
-:method:$METHOD prov:wasAssociatedWith :provider:$PROVIDER ."
+:method:$METHOD prov:wasAssociatedWith :provider:$provider ."
 
         MESSAGE_ENTITY+="
 :$OBJECT:$ID prov:wasGeneratedBy :method:$METHOD ."
