@@ -449,6 +449,26 @@ function get_prov
 "
     git log --format='# %s%n%b' --author-date-order --reverse "${HASHES[@]}"
 }
+
+function get_graph
+{
+    get_prov | \
+        rapper -i turtle - ommix -eqo dot | \
+        grep -Ev 'prov:generatedAtTime' | \
+        grep -Ev 'xsd:dateTime' | \
+        grep -Ev 'Rprov:' | \
+        grep -Ev 'Rprovider:' | \
+        grep -Ev '^\s*label=' | \
+        sed -E -e 's/rankdir = LR;/rankdir = BT;\n\tranksep = .3;\n\tnodesep = .8;/' \
+            -e 's/(^\s*"Rpatient:.*color = )blue/\1black/' \
+            -e 's/(^\s*"Rsample:.*color = )blue/\1black/' \
+            -e 's/(^\s*"Rdata:.*color = )blue/\1black, fillcolor = "#9999FF", style = filled/' \
+            -e 's/(^\s*"Rresult:.*color = )blue/\1black, fillcolor = "#99FF99", style = filled/' \
+            -e 's/(^\s*"Rdiagnostic:.*color = )blue/\1black, fillcolor = "#FF9999", style = filled/' \
+            -e 's/prov:wasDerivedFrom//' | \
+        dot -Tpng | \
+        display
+}
 # Get up-to-date result of a sample
 # Print the last commit
 function get_last
