@@ -449,6 +449,13 @@ function get_prov
 "
     git log --format='# %s%n%b' --author-date-order --reverse "${HASHES[@]}"
 }
+# Get up-to-date result of a sample
+# Print the last commit
+function get_last
+{
+    git branch --all --list 'diagnostic|*' --format='%(refname:short)' --contains "${HASHES[@]}"
+}
+
 function get
 {
     validate_patient
@@ -648,13 +655,6 @@ function use
 }
 
 ###############################################################################
-
-# Get up-to-date result of a sample
-# Print the last commit
-function last
-{
-    git log --max-count=1 --format=%s
-}
 
 ## Completions
 function _completions
