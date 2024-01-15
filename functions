@@ -376,7 +376,7 @@ function list_patient
 # - PATIENT
 function list_sample
 {
-    git branch --all --list 'sample|*' --format='%(refname:short)'
+    git log --format=%s --grep='^sample:' "${HASHES[@]}"
 }
 
 # List diagnostics
@@ -384,7 +384,7 @@ function list_sample
 # - PATIENT
 function list_diagnostic
 {
-    git branch --all --list 'diagnostic|*' --format='%(refname:short)'
+    git log --format=%s --graph --grep='^diagnostic:' "${HASHES[@]}"
 }
 
 # List data
@@ -393,13 +393,7 @@ function list_diagnostic
 # - [SAMPLE]
 function list_data
 {
-    local scope="--all"
-    if [[ "$SAMPLE" ]];then
-        dbg git rev-parse --verify "sample|$SAMPLE" || die "sample:$SAMPLE is not a sample of patient:$PATIENT"
-        scope="sample|$SAMPLE"
-    fi
-
-    git log --format=%s "$scope" | grep --fixed-strings 'data:'
+    git log --format=%s --grep='^data:' "${HASHES[@]}"
 }
 
 # List results
@@ -408,13 +402,7 @@ function list_data
 # - [SAMPLE]
 function list_result
 {
-    local scope="--all"
-    if [[ "$SAMPLE" ]];then
-        dbg git rev-parse --verify "sample|$SAMPLE" || die "sample:$SAMPLE is not a sample of patient:$PATIENT"
-        scope="sample|$SAMPLE"
-    fi
-
-    git log --format=%s "$scope" | grep --fixed-strings 'result:'
+    git log --format=%s --grep='^result:' "${HASHES[@]}"
 }
 
 # List
