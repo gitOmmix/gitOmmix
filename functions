@@ -477,13 +477,8 @@ function get
     validate_hashes
 
     case "$OBJECT" in
-        prov) get_prov ;;
-        last) get_last ;;
-        object)
-            get_object ;;
-        graph) get_graph ;;
-        timeline) get_timeline ;;
-        *) usage $VERB;;
+        prov|last|timeline|object|graph|log|file) get_"$OBJECT" ;;
+        *) usage $VERB ;;
     esac
 }
 
