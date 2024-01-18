@@ -154,8 +154,7 @@ HASHES=("${@:-}")
 [[ "$HASHES" == "-" ]] && HASHES="$(cat /dev/stdin)"
 
 # Output parameter values for debug
-[[ "$DEBUG" == "debug" ]] && echo "
-####################################
+[[ "$DEBUG" == "debug" ]] && echo "####################################
 Verb: $VERB
 Object: $OBJECT
 Provider: $PROVIDER
@@ -169,7 +168,8 @@ Invalidate: ${INVALIDATE[@]}
 Revision_of: $REVISION_OF
 Message: $MESSAGE2
 Files: ${FILES[@]}
-Hashes: ${HASHES[@]}"
+Hashes: ${HASHES[@]}
+"
 
 ###############################################################################
 # Setup git ommix

@@ -118,14 +118,16 @@ function die
 function dbg
 {
     if [[ "$DEBUG" == "debug" ]]; then
+        echo -ne "\033[0;30m"
         "$@"
+        echo -ne "\033[0m"
     elif [[ "$DEBUG" == "dry" ]];then
-        echo "$@"
+        echo -e "\033[0;34m$@\033[0m"
     elif [[ "$DEBUG" == "verbose" ]];then
         echo -e "\033[0;34m$@\033[0m"
-        echo -e "\033[0;30m"
+        echo -ne "\033[0;30m"
         "$@"
-        echo -e "\033[0m"
+        echo -ne "\033[0m"
     else
         "$@" &>/dev/null
     fi
@@ -152,8 +154,8 @@ function add_patient
     dbg mkdir --parents "$ID/data" || die "Unable to create a directory in the git ommix base directory at: $GIT_OMMIX_REPO_DIR
 Please check your permissions"
     dbg mkdir --parents "$ID/result"
-    touch "$ID/data/.empty"
-    touch "$ID/result/.empty"
+    dbg touch "$ID/data/.empty"
+    dbg touch "$ID/result/.empty"
 
     # Go to the patient repo
     dbg cd "$ID"
