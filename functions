@@ -697,34 +697,3 @@ function use
     HASH=("${out_hash[@]}")
     NAME=("${out_name[@]}")
 }
-
-###############################################################################
-
-## Completions
-function _completions
-{
-    #COMP_WORDS = array of words typed after the name of the program
-    #COMP_CWORD = index pointing to the word the cursor is at
-    #COMP_LINE = the current command line
-    if [[ $COMP_CWORD -eq 1 ]];then
-        OPTIONS="add invalidate revise query"
-    elif [[ $COMP_CWORD -eq 2 ]];then
-        case ${COMP_WORDS[1]} in
-            query) OPTIONS="list prov";;
-        esac
-    elif [[ $COMP_CWORD -gt 2 ]];then
-        PREV=${COMP_WORDS[$((COMP_CWORD-1))]}
-        case $PREV in
-            -p|--patient) OPTIONS="$(ls ~/GitOmmix/)";;
-            -s|--sample) OPTIONS="sample1 sample2";;
-            -D|--date) OPTIONS="$(date +%Y-%m-%d)";;
-            -P|--provider) OPTIONS="provider1 provider2";;
-            *) OPTIONS="-p --patient -s --sample -D --date -P --provider -m --message -d --debug $(ls)";;
-        esac
-    fi
-
-    COMPREPLY=`compgen -W "$OPTIONS" -- "${COMP_WORDS[$COMP_CWORD]}"`
-}
-
-
-complete -F _completions git-ommix
