@@ -465,6 +465,12 @@ function get_log
     git log --oneline --graph "${HASHES[@]}"
 }
 
+# Print the name of the files added by the objects
+function get_file
+{
+    git diff-tree --no-commit-id --name-only "${HASHES[@]}" -r
+}
+
 function get
 {
     validate_patient
