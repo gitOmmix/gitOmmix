@@ -195,8 +195,7 @@ function add_sample
     fi
 
     # Create a new sample branch stemming from the patient branch
-    # Errors out if a sample with the same name already exists
-    dbg stash git checkout -b "sample|$ID" "patient|$PATIENT"
+    dbg stash git checkout -b "sample|$ID" "patient|$PATIENT" || die "Sample already exists"
 }
 
 # Add data
