@@ -368,68 +368,27 @@ function list_patient
     done
 }
 
-# List samples
+# List objects
 # Uses :
 # - PATIENT
-function list_sample
+# - [HASHES]
+function list_object
 {
-    git log --format=%s --grep='^sample:' "${HASHES[@]}"
-}
-
-# List diagnostics
-# Uses :
-# - PATIENT
-function list_diagnostic
-{
-    git log --format=%s --graph --grep='^diagnostic:' "${HASHES[@]}"
-}
-
-# List data
-# Uses :
-# - PATIENT
-# - [SAMPLE]
-function list_data
-{
-    git log --format=%s --grep='^data:' "${HASHES[@]}"
-}
-
-# List results
-# Uses :
-# - PATIENT
-# - [SAMPLE]
-function list_result
-{
-    git log --format=%s --grep='^result:' "${HASHES[@]}"
+    git log --format=%s --grep="^$OBJECT:" "${HASHES[@]}"
 }
 
 # List
 function list
 {
     case "$OBJECT" in
-        patient|patients)
+        patient)
             list_patient ;;
 
-        sample|samples)
+        sample|data|result|diagnostic)
             validate_patient
             validate_hashes
-            list_sample ;;
-
-        diagnostic|diagnostics)
-            validate_patient
-            validate_hashes
-            list_diagnostic ;;
-
-        data)
-            validate_patient
-            validate_hashes
-            list_data ;;
-
-        result|results)
-            validate_patient
-            validate_hashes
-            list_result ;;
-
-        *) usage $VERB;;
+            list_object ;;
+        *) usage $VERB ;;
     esac
 }
 
