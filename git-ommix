@@ -149,7 +149,9 @@ done
 # or a list of commit hashes or name when listing
 # If no file is given, use '*'
 FILES=("${@:-*}")
-HASHES=("$@")
+HASHES=("${@:-}")
+
+[[ "$HASHES" == "-" ]] && HASHES="$(cat /dev/stdin)"
 
 # Output parameter values for debug
 [[ "$DEBUG" == "debug" ]] && echo "
