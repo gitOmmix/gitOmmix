@@ -7,6 +7,8 @@
 # Add dispatch
 function add
 {
+    echo -e "\033[0;32mAdding $OBJECT:$ID\033[0m"
+
     base_prov
 
     case "$OBJECT" in
@@ -240,7 +242,7 @@ function list_patient
 {
     local pat
     for pat in *; do
-        dbg git -C "$pat" rev-parse && echo "$pat"
+        git -C "$pat" rev-parse && echo "$pat"
     done
 }
 
