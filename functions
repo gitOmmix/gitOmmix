@@ -365,7 +365,7 @@ function add
 function list_patient
 {
     local pat
-    for pat in ls * --directory -1; do
+    for pat in *; do
         dbg git -C "$pat" rev-parse && echo "$pat"
     done
 }
