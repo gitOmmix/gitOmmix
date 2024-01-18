@@ -449,7 +449,7 @@ function get_timeline
 
 function get_object
 {
-    git checkout "$HASHES[1]"
+    git checkout "${HASHES[0]}"
 }
 
 # Get up-to-date result of a sample
