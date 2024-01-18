@@ -386,13 +386,13 @@ function validate_commit
     HASH="$2"
     NAME="$(echo "$2" | sed -r "s/^$1://")"
 
-    # If the commit is given by its object id,
+    # find commit by its id, matching the type in $1
     if git log --format="%s" --all | grep -E "^$1:$NAME$" --quiet;then
         HASH="$(git log --format="%h %s" --all | grep -E "\b$1:$NAME$" | cut -d ' ' -f 1)"
         NAME="$(git log --format=%s --max-count=1 "$HASH")"
     elif dbg git log "$HASH";then # find commit by its hash
         NAME="$(git log --format=%s --max-count=1 "$HASH")"
-        # check that the commit matches the given type
+        # check that the commit matches the given type in $1
         echo "$NAME" | grep -E "^$1:" --quiet || die "$HASH is not the commit hash of existing $1 of patient:$PATIENT"
     else
         die "$2 is neither the commit hash nor the name of existing $1 of patient:$PATIENT"
@@ -422,7 +422,7 @@ function validate_hashes
 }
 
 ###############################################################################
-# Helpers
+# PROV Helpers
 
 # Prepare the base components of the PROV message
 function base_prov
