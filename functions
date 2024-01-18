@@ -2,148 +2,56 @@
 
 ###############################################################################
 #
-# Usage
-
-function usage
-{
-    case "$1" in
-        root) 
-            echo "git ommix {verb} {object} [--options] [files]
-
-Verbs:
-- add
-- list
-- get
-
-Git Ommix options:
-- GIT_OMMIX_REPO_DIR : place to find patient repos
-- GIT_OMMIX_LARGE_FILES : git ommix rules for large files
-- GIT_OMMIX_DEFAULT_PROVIDER : set a default provider
-
-Git ommix can be configured with the \$XDG_CONFIG/.gitommix file, or with environment variables.
-
-Register bash completions with register completions.
-" ;;
-        add)
-            echo "git ommix add {object} [--options] [--message]
-
-Objects:
-- patient
-- sample
-- data
-- result
-- diagnostic
-
-# Patient 
-
-Create patient repo with the given id.
-Options :
-
- -i <id>
-
-# Sample
-
-Create the branch with the given sample id for the current or selected patient.
-
-Options :
-
- -i <id>
- -p <patient>
-
-# Data 
-
-Add the FILES to data, with the given id, for the current or selected sample in the current or selected patient.
-Data are always DERIVED_FROM the sample, but could be also be a REVISION_OF previous data. This can be set by pointing to a data commit to revise.
-The data that has been revised can also be INVALIDATEd at the same time.
-
-Options :
-
- -i <id>
- -p <patient>
- -s <sample>
- [--revision_of <data_hash>]
- [--invalidate]
-
-# Result 
-
-Options :
-
- -i <id> 
- -p <patient> 
- -s <sample> 
- --use <data_hash> 
- [--revision_of <result_hash>]
- [--invalidate]
-
-# Diagnostic
-
-Add a diagnostic with the given id, for the current or selected patient.
-The diagnostic can USE multiple results and diagnostics, be the REVISION_OF multiple diagnostics, which can be INVALIDATEd at the same time.
-The diagnostic branch pointers for the revised diagnostics are destroyed.
-
-Options :
-
- -i <id>
- -p <patient>
- --use <result/diagnostic_hash>
- [--revision_of <diagnostic_hash>]
- [--invalidate]
-" ;;
-        list)
-            echo "git ommix list {object}
-
-Objects:
-- patient(s)
-- sample(s)
-- data(s)
-- result(s)
-- diagnostic(s)
-" ;;
-    esac
-    exit 0
-}
-
-###############################################################################
-#
-# Utility functions
-
-# Print messages passed as arguments and exit in error
-function die
-{
-    echo -e "\033[0;31m$@\033[0m"
-    exit 2
-}
-
-# Redirect commands to &>/dev/null if not DEBUGging
-function dbg
-{
-    if [[ "$DEBUG" == "debug" ]]; then
-        echo -ne "\033[0;30m"
-        "$@"
-        echo -ne "\033[0m"
-    elif [[ "$DEBUG" == "dry" ]];then
-        echo -e "\033[0;34m$@\033[0m"
-    elif [[ "$DEBUG" == "verbose" ]];then
-        echo -e "\033[0;34m$@\033[0m"
-        echo -ne "\033[0;30m"
-        "$@"
-        echo -ne "\033[0m"
-    else
-        "$@" &>/dev/null
-    fi
-}
-
-# Stash in place modifications
-function stash
-{
-    git stash push
-    "$@"
-    git stash pop
-}
-
-###############################################################################
-#
 # Add functions
+
+# Add dispatch
+function add
+{
+    base_prov
+
+    case "$OBJECT" in
+        patient)
+            add_patient ;;
+
+        sample)
+            validate_patient
+
+            add_sample ;;
+
+        data)
+            validate_patient
+            validate_sample
+            validate_files
+
+            add_data ;;
+
+        result)
+            validate_patient
+            validate_sample
+            validate_files
+
+            # TODO: marche aussi avec juste un revision_of sans sample ?
+            # A result object needs to USE a data object
+            [[ "${#USE[@]}" -gt 0 ]] || die "Please --use data when adding a result"
+
+            add_result ;;
+
+        diagnostic)
+            validate_patient
+
+            # A diagnostic needs to be at least revision_of another diagnostic, or use results or diagnostics,
+            [[ "${#USE[@]}" -gt 0 ]] || [[ "$REVISION_OF" ]] || die "Please --use result|diagnostic or --revision_of diagnostic when adding a diagnostic"
+
+            add_diagnostic ;;
+
+        *) usage $VERB ;;
+    esac
+
+    commit
+
+    echo -e "\033[0;32mAdded $OBJECT:$ID\033[0m
+"
+}
 
 # Add patient
 # Uses :
@@ -307,58 +215,24 @@ function add_diagnostic
     dbg git merge "${merges[@]}" --no-commit
 }
 
-# Add
-function add
-{
-    base_prov
-
-    case "$OBJECT" in
-        patient)
-            add_patient ;;
-
-        sample)
-            validate_patient
-
-            add_sample ;;
-
-        data)
-            validate_patient
-            validate_sample
-            validate_files
-
-            add_data ;;
-
-        result)
-            validate_patient
-            validate_sample
-            validate_files
-
-            # TODO: marche aussi avec juste un revision_of sans sample ?
-            # A result object needs to USE a data object
-            [[ "${#USE[@]}" -gt 0 ]] || die "Please --use data when adding a result"
-
-            add_result ;;
-
-        diagnostic)
-            validate_patient
-
-            # A diagnostic needs to be at least revision_of another diagnostic, or use results or diagnostics,
-            [[ "${#USE[@]}" -gt 0 ]] || [[ "$REVISION_OF" ]] || die "Please --use result|diagnostic or --revision_of diagnostic when adding a diagnostic"
-
-            add_diagnostic ;;
-
-        *) usage $VERB ;;
-    esac
-
-    commit
-
-    echo -e "\033[0;32mAdded $OBJECT:$ID\033[0m
-"
-}
-
 ###############################################################################
 #
 # List functions
+
+# List dispatch
+function list
+{
+    case "$OBJECT" in
+        patient)
+            list_patient ;;
+
+        sample|data|result|diagnostic)
+            validate_patient
+            validate_hashes
+            list_object ;;
+        *) usage $VERB ;;
+    esac
+}
 
 # List patients
 # Uses : nothing
@@ -379,22 +253,20 @@ function list_object
     git log --format=%s --grep="^$OBJECT:" "${HASHES[@]}"
 }
 
-# List
-function list
-{
-    case "$OBJECT" in
-        patient)
-            list_patient ;;
+###############################################################################
+# Get functions
 
-        sample|data|result|diagnostic)
-            validate_patient
-            validate_hashes
-            list_object ;;
+# Get dispatch
+function get
+{
+    validate_patient
+    validate_hashes
+
+    case "$OBJECT" in
+        prov|last|timeline|object|graph|log|file) get_"$OBJECT" ;;
         *) usage $VERB ;;
     esac
 }
-
-###############################################################################
 
 # Return the provenance in turtle format
 # It is the concatenation of all commit messages (without the subject line)
@@ -407,23 +279,6 @@ function get_prov
 
     $(git log --format='#%s %h%n%b' --author-date-order --reverse ${HASHES[@]})" | \
         rapper -i turtle - gitommix -eqo turtle
-}
-
-function turtle2dot
-{
-    rapper -i turtle - gitommix -eqo dot | \
-        grep -Ev 'prov:generatedAtTime' | \
-        grep -Ev 'xsd:dateTime' | \
-        grep -Ev 'Rprov:' | \
-        grep -Ev 'Rprovider:' | \
-        grep -Ev '^\s*label=' | \
-        sed -E \
-            -e 's/(^\s*"Rpatient:.*color = )blue/\1black/' \
-            -e 's/(^\s*"Rsample:.*color = )blue/\1black/' \
-            -e 's/(^\s*"Rdata:.*color = )blue/\1black, fillcolor = "#9999FF", style = filled/' \
-            -e 's/(^\s*"Rresult:.*color = )blue/\1black, fillcolor = "#99FF99", style = filled/' \
-            -e 's/(^\s*"Rdiagnostic:.*color = )blue/\1black, fillcolor = "#FF9999", style = filled/' \
-            -e 's/prov:wasDerivedFrom//'
 }
 
 function get_graph
@@ -473,15 +328,21 @@ function get_file
     git diff-tree --no-commit-id --name-only "${HASHES[@]}" -r
 }
 
-function get
+function turtle2dot
 {
-    validate_patient
-    validate_hashes
-
-    case "$OBJECT" in
-        prov|last|timeline|object|graph|log|file) get_"$OBJECT" ;;
-        *) usage $VERB ;;
-    esac
+    rapper -i turtle - gitommix -eqo dot | \
+        grep -Ev 'prov:generatedAtTime' | \
+        grep -Ev 'xsd:dateTime' | \
+        grep -Ev 'Rprov:' | \
+        grep -Ev 'Rprovider:' | \
+        grep -Ev '^\s*label=' | \
+        sed -E \
+            -e 's/(^\s*"Rpatient:.*color = )blue/\1black/' \
+            -e 's/(^\s*"Rsample:.*color = )blue/\1black/' \
+            -e 's/(^\s*"Rdata:.*color = )blue/\1black, fillcolor = "#9999FF", style = filled/' \
+            -e 's/(^\s*"Rresult:.*color = )blue/\1black, fillcolor = "#99FF99", style = filled/' \
+            -e 's/(^\s*"Rdiagnostic:.*color = )blue/\1black, fillcolor = "#FF9999", style = filled/' \
+            -e 's/prov:wasDerivedFrom//'
 }
 
 ###############################################################################
@@ -591,21 +452,6 @@ function base_prov
     fi
 }
 
-# Do the actual git commit with all the parameters set
-function commit
-{
-    dbg git commit --allow-empty \
-        --author "$PROVIDER" \
-        --date "$DATE" \
-        --message "$OBJECT:$ID
-$MESSAGE_ENTITY
-$MESSAGE_AGENT
-$MESSAGE_ACTIVITY
-$MESSAGE2"
-
-    dbg git annex restage
-}
-
 # Validate and add relevant triplets for wasRevisionOf
 # An $OBJECT can only be a revision_of another $OBJECT
 function revision_of
@@ -665,4 +511,160 @@ function use
 
     HASH=("${out_hash[@]}")
     NAME=("${out_name[@]}")
+}
+
+# Do the actual git commit with all the parameters set
+function commit
+{
+    dbg git commit --allow-empty \
+        --author "$PROVIDER" \
+        --date "$DATE" \
+        --message "$OBJECT:$ID
+$MESSAGE_ENTITY
+$MESSAGE_AGENT
+$MESSAGE_ACTIVITY
+$MESSAGE2"
+
+    dbg git annex restage
+}
+
+###############################################################################
+#
+# Utility functions
+
+# Print messages passed as arguments and exit in error
+function die
+{
+    echo -e "\033[0;31m$@\033[0m"
+    exit 2
+}
+
+# Redirect commands to &>/dev/null if not DEBUGging
+function dbg
+{
+    if [[ "$DEBUG" == "debug" ]]; then
+        echo -ne "\033[0;30m"
+        "$@"
+        echo -ne "\033[0m"
+    elif [[ "$DEBUG" == "dry" ]];then
+        echo -e "\033[0;34m$@\033[0m"
+    elif [[ "$DEBUG" == "verbose" ]];then
+        echo -e "\033[0;34m$@\033[0m"
+        echo -ne "\033[0;30m"
+        "$@"
+        echo -ne "\033[0m"
+    else
+        "$@" &>/dev/null
+    fi
+}
+
+# Stash in place modifications
+function stash
+{
+    git stash push
+    "$@"
+    git stash pop
+}
+
+###############################################################################
+#
+# Usage
+
+function usage
+{
+    case "$1" in
+        root) 
+            echo "git ommix {verb} {object} [--options] [files]
+
+Verbs:
+- add
+- list
+- get
+
+Git Ommix options:
+- GIT_OMMIX_REPO_DIR : place to find patient repos
+- GIT_OMMIX_LARGE_FILES : git ommix rules for large files
+- GIT_OMMIX_DEFAULT_PROVIDER : set a default provider
+
+Git ommix can be configured with the \$XDG_CONFIG/.gitommix file, or with environment variables.
+
+Register bash completions with register completions.
+" ;;
+        add)
+            echo "git ommix add {object} [--options] [--message]
+
+Objects:
+- patient
+- sample
+- data
+- result
+- diagnostic
+
+# Patient 
+
+Create patient repo with the given id.
+Options :
+
+ -i <id>
+
+# Sample
+
+Create the branch with the given sample id for the current or selected patient.
+
+Options :
+
+ -i <id>
+ -p <patient>
+
+# Data 
+
+Add the FILES to data, with the given id, for the current or selected sample in the current or selected patient.
+Data are always DERIVED_FROM the sample, but could be also be a REVISION_OF previous data. This can be set by pointing to a data commit to revise.
+The data that has been revised can also be INVALIDATEd at the same time.
+
+Options :
+
+ -i <id>
+ -p <patient>
+ -s <sample>
+ [--revision_of <data_hash>]
+ [--invalidate]
+
+# Result 
+
+Options :
+
+ -i <id> 
+ -p <patient> 
+ -s <sample> 
+ --use <data_hash> 
+ [--revision_of <result_hash>]
+ [--invalidate]
+
+# Diagnostic
+
+Add a diagnostic with the given id, for the current or selected patient.
+The diagnostic can USE multiple results and diagnostics, be the REVISION_OF multiple diagnostics, which can be INVALIDATEd at the same time.
+The diagnostic branch pointers for the revised diagnostics are destroyed.
+
+Options :
+
+ -i <id>
+ -p <patient>
+ --use <result/diagnostic_hash>
+ [--revision_of <diagnostic_hash>]
+ [--invalidate]
+" ;;
+        list)
+            echo "git ommix list {object}
+
+Objects:
+- patient(s)
+- sample(s)
+- data(s)
+- result(s)
+- diagnostic(s)
+" ;;
+    esac
+    exit 0
 }
