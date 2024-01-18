@@ -441,8 +441,9 @@ function get_prov
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix :     <http://gitommix.org/gitommix#> .
-"
-    git log --format='# %s%n%b' --author-date-order --reverse "${HASHES[@]}"
+
+    $(git log --format='#%s %h%n%b' --author-date-order --reverse ${HASHES[@]})" | \
+        rapper -i turtle - gitommix -eqo turtle
 }
 
 function get_graph
