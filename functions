@@ -485,6 +485,10 @@ function get_timeline
             -e 's/(^\s*"Rdiagnostic:.*color = )blue/\1black, fillcolor = "#FF9999", style = filled/' \
             -e 's/prov:wasDerivedFrom//' | \
         dot -Tpng | display
+
+function get_object
+{
+    git checkout "$HASHES[1]"
 }
 
 # Get up-to-date result of a sample
@@ -502,6 +506,8 @@ function get
     case "$OBJECT" in
         prov) get_prov ;;
         last) get_last ;;
+        object)
+            get_object ;;
         graph) get_graph ;;
         timeline) get_timeline ;;
         *) usage $VERB;;
