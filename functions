@@ -459,6 +459,12 @@ function get_last
     git branch --all --list 'diagnostic|*' --format='%(refname:short)' --contains "${HASHES[@]}"
 }
 
+# Print git commit log
+function get_log
+{
+    git log --oneline --graph "${HASHES[@]}"
+}
+
 function get
 {
     validate_patient
