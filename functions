@@ -362,8 +362,10 @@ function add
 # Uses : nothing
 function list_patient
 {
-    # TODO: check if each is a git ommix repo
-    ls * --directory -1
+    local pat
+    for pat in ls * --directory -1; do
+        dbg git -C "$pat" rev-parse && echo "$pat"
+    done
 }
 
 # List samples
@@ -519,11 +521,10 @@ function get
 # Validation helpers
 
 # Validate PATIENT and switch to it
-# TODO: validate that it is a git ommix repo
 function validate_patient
 {
     [[ "$PATIENT" ]] || die "Please provide a --patient"
-    [[ -d "$PATIENT" ]] || die "patient:$PATIENT is not a patient"
+    dbg git -C "$PATIENT" rev-parse || die "patient:$PATIENT is not a patient"
     cd "$PATIENT" || die "Unable to acces the patient directory at: $GIT_OMMIX_REPO_DIR/$PATIENT
 Please check your permissions"
 }
