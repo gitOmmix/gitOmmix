@@ -407,24 +407,29 @@ function get_prov
         rapper -i turtle - gitommix -eqo turtle
 }
 
-function get_graph
+function turtle2dot
 {
-    get_prov | \
-        rapper -i turtle - ommix -eqo dot | \
+    rapper -i turtle - gitommix -eqo dot | \
         grep -Ev 'prov:generatedAtTime' | \
         grep -Ev 'xsd:dateTime' | \
         grep -Ev 'Rprov:' | \
         grep -Ev 'Rprovider:' | \
         grep -Ev '^\s*label=' | \
-        sed -E -e 's/rankdir = LR;/rankdir = BT;\n\tranksep = .3;\n\tnodesep = .8;/' \
+        sed -E \
             -e 's/(^\s*"Rpatient:.*color = )blue/\1black/' \
             -e 's/(^\s*"Rsample:.*color = )blue/\1black/' \
             -e 's/(^\s*"Rdata:.*color = )blue/\1black, fillcolor = "#9999FF", style = filled/' \
             -e 's/(^\s*"Rresult:.*color = )blue/\1black, fillcolor = "#99FF99", style = filled/' \
             -e 's/(^\s*"Rdiagnostic:.*color = )blue/\1black, fillcolor = "#FF9999", style = filled/' \
-            -e 's/prov:wasDerivedFrom//' | \
-        dot -Tpng | \
-        display
+            -e 's/prov:wasDerivedFrom//'
+}
+
+function get_graph
+{
+    get_prov | \
+        turtle2dot | \
+        sed -E -e 's/rankdir = LR;/rankdir = BT;\n\tranksep = .3;\n\tnodesep = .8;/' | \
+        dot -Tpng
 }
 
 function get_timeline
@@ -435,17 +440,12 @@ function get_timeline
 @prefix :     <http://gitommix.org/gitommix#> .
 
     $(git log --grep '^diagnostic:' --format='# %s%n%b' --author-date-order --reverse "${HASHES[@]}")" | \
-        rapper -i turtle - ommix -eqo dot | \
-        grep -Ev 'prov:generatedAtTime' | \
-        grep -Ev 'xsd:dateTime' | \
-        grep -Ev 'Rprov:' | \
-        grep -Ev 'Rprovider:' | \
-        grep -Ev '^\s*label=' | \
-        grep -Ev 'Rresult:' | \
-        sed -E -e 's/rankdir = LR;/rankdir = RL;\n\tranksep = .3;\n\tnodesep = .8;/' \
-            -e 's/(^\s*"Rdiagnostic:.*color = )blue/\1black, fillcolor = "#FF9999", style = filled/' \
-            -e 's/prov:wasDerivedFrom//' | \
-        dot -Tpng | display
+        grep -Ev ':result:' | \
+        rapper -i turtle - gitommix -eqo turtle | \
+        turtle2dot | \
+        sed -E -e 's/rankdir = LR;/rankdir = RL;\n\tranksep = .3;\n\tnodesep = .8;/' | \
+        dot -Tpng
+}
 
 function get_object
 {
@@ -456,7 +456,7 @@ function get_object
 # Print the last commit
 function get_last
 {
-    git branch --all --list 'diagnostic|*' --format='%(refname:short)' --contains "${HASHES[@]}"
+    git branch --list 'diagnostic|*' --list 'sample|*' --format='%(subject)' --contains "${HASHES[@]}"
 }
 
 # Print git commit log
