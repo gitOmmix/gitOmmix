@@ -279,7 +279,7 @@ function get_prov
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix :     <http://gitommix.org/gitommix#> .
 
-    $(git log --format='#%s %h%n%b' --author-date-order --reverse ${HASHES[@]})" | \
+    $(git log --format=%b ${HASHES[@]})" | \
         rapper -i turtle - gitommix -eqo turtle
 }
 
@@ -288,7 +288,7 @@ function get_graph
     get_prov | \
         turtle2dot | \
         sed -E -e 's/rankdir = LR;/rankdir = BT;\n\tranksep = .3;\n\tnodesep = .8;/' | \
-        dot -Tpng
+        dot -Tx11
 }
 
 function get_timeline
@@ -298,12 +298,12 @@ function get_timeline
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix :     <http://gitommix.org/gitommix#> .
 
-    $(git log --grep '^diagnostic:' --format='# %s%n%b' --author-date-order --reverse "${HASHES[@]}")" | \
         grep -Ev ':result:' | \
+    $(git log --grep '^diagnostic:' --format=%b "${HASHES[@]}")" | \
         rapper -i turtle - gitommix -eqo turtle | \
         turtle2dot | \
         sed -E -e 's/rankdir = LR;/rankdir = RL;\n\tranksep = .3;\n\tnodesep = .8;/' | \
-        dot -Tpng
+        dot -Tx11
 }
 
 function get_object
