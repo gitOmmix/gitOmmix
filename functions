@@ -262,10 +262,14 @@ function list_object
 function get
 {
     validate_patient
-    validate_hashes
 
     case "$OBJECT" in
-        prov|last|timeline|object|graph|log|file) get_"$OBJECT" ;;
+        prov|last|timeline|object|graph|log|file)
+            validate_hashes
+            get_"$OBJECT" ;;
+        sparql)
+            HASHES="--all"
+            get_sparql ;;
         *) usage $VERB ;;
     esac
 }
@@ -285,7 +289,39 @@ function get_prov
 
 function get_graph
 {
-    get_prov | \
+    QUERY=" CONSTRUCT {?s ?p ?o} WHERE
+{
+  { # Entities
+    ?s ?p ?o .
+    ?s a prov:Entity .
+    ?o a prov:Entity .
+  }
+UNION
+  { # Providers
+    ?s ?p ?o .
+    ?o a :provider .
+    FILTER (?p = prov:wasAttributedTo)
+  }
+UNION
+  { # Methods
+    ?s ?p ?o .
+    ?o a :method .
+    FILTER (?p = prov:wasGeneratedBy || ?p = prov:wasInvalidatedBy)
+  }
+UNION
+  { # Methods
+    ?s ?p ?o .
+    ?s a :method .
+    FILTER (?p = prov:used)
+  }
+UNION
+  { # Providers with methods
+    ?s ?p ?o .
+    ?o a :provider .
+    FILTER (?p = prov:wasAssociatedWith)
+  }
+}"
+    get_sparql | \
         turtle2dot | \
         sed -E -e 's/rankdir = LR;/rankdir = BT;\n\tranksep = .3;\n\tnodesep = .8;/' | \
         dot -Tx11
@@ -293,14 +329,12 @@ function get_graph
 
 function get_timeline
 {
-    echo "@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix prov: <http://www.w3.org/ns/prov#> .
-@prefix :     <http://gitommix.org/gitommix#> .
+    QUERY="CONSTRUCT {?s ?o ?p} WHERE
+{?s ?o ?p .
+?s a :diagnostic .
+?p a :diagnostic}"
 
-        grep -Ev ':result:' | \
-    $(git log --grep '^diagnostic:' --format=%b "${HASHES[@]}")" | \
-        rapper -i turtle - gitommix -eqo turtle | \
+    get_sparql | \
         turtle2dot | \
         sed -E -e 's/rankdir = LR;/rankdir = RL;\n\tranksep = .3;\n\tnodesep = .8;/' | \
         dot -Tx11
@@ -330,14 +364,17 @@ function get_file
     git diff-tree --no-commit-id --name-only "${HASHES[@]}" -r
 }
 
+function get_sparql
+{
+    local prefix=$(get_prov | grep "^@prefix" | sed -E -e 's/@//' -e 's/ .$//')
+    get_prov | \
+        roqet -e "$prefix
+$QUERY" -D - -r turtle -q
+}
+
 function turtle2dot
 {
     rapper -i turtle - gitommix -eqo dot | \
-        grep -Ev 'prov:generatedAtTime' | \
-        grep -Ev 'xsd:dateTime' | \
-        grep -Ev 'Rprov:' | \
-        grep -Ev 'Rprovider:' | \
-        grep -Ev '^\s*label=' | \
         sed -E \
             -e 's/(^\s*"Rpatient:.*color = )blue/\1black/' \
             -e 's/(^\s*"Rsample:.*color = )blue/\1black/' \
