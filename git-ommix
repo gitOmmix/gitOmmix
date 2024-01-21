@@ -34,7 +34,7 @@ OBJECT="$2"
 shift 2
 
 # Default values
-PROVIDER=$GIT_OMMIX_DEFAULT_PROVIDER
+PROVIDER="${PROVIDER:-}"
 METHOD=
 PATIENT="${PATIENT:-}"
 SAMPLE="${SAMPLE:-}"
@@ -145,6 +145,11 @@ while true; do
     esac
 done
 
+# Replace AUTHOR with PROVIDER if given
+AUTHOR="${PROVIDER:-$GIT_OMMIX_DEFAULT_AUTHOR}"
+PROVIDER="${PROVIDER%% <*}"
+PROVIDER="${PROVIDER/ /_}"
+
 # The remaining arguments will be files when adding data|result
 # or a list of commit hashes or name when listing
 # If no file is given, use '*'
@@ -158,6 +163,7 @@ HASHES=("${@:-}")
 Verb: $VERB
 Object: $OBJECT
 Provider: $PROVIDER
+Author: $AUTHOR
 Method: $METHOD
 Patient: $PATIENT
 Sample: $SAMPLE

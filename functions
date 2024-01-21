@@ -99,7 +99,7 @@ function add_sample
 
     if [[ "$METHOD" ]];then
         MESSAGE_ACTIVITY+="
-:method:$METHOD used :patient:$PATIENT ."
+:method:$METHOD prov:used :patient:$PATIENT ."
     fi
 
     # Create a new sample branch stemming from the patient branch
@@ -121,7 +121,7 @@ function add_data
 
     if [[ "$METHOD" ]];then
         MESSAGE_ACTIVITY+="
-:method:$METHOD used :sample:$SAMPLE ."
+:method:$METHOD prov:used :sample:$SAMPLE ."
     fi
 
     # REVISION_OF
@@ -429,25 +429,33 @@ function validate_hashes
 # Prepare the base components of the PROV message
 function base_prov
 {
-    local provider="${PROVIDER%% <*}"
-    provider="${provider/ /_}"
-
     MESSAGE_ACTIVITY=
-
-    MESSAGE_AGENT="
-:provider:$provider a prov:Agent ."
-
+    MESSAGE_AGENT=
     MESSAGE_ENTITY="
+:$OBJECT:$ID prov:generatedAtTime xsd:dateTime:$DATE .
 :$OBJECT:$ID a prov:Entity .
-:$OBJECT:$ID prov:wasAttributedTo :provider:$provider .
-:$OBJECT:$ID prov:generatedAtTime xsd:dateTime:$DATE ."
+:$OBJECT:$ID a :$OBJECT .
+:$OBJECT:$ID foaf:name \"$ID\" ."
+
+    if [[ "$PROVIDER" ]];then
+        MESSAGE_AGENT+="
+:provider:$PROVIDER a prov:Agent .
+:provider:$PROVIDER a :provider ."
+        MESSAGE_ENTITY+="
+:$OBJECT:$ID prov:wasAttributedTo :provider:$PROVIDER ."
+    fi
 
     # Add a method PROV triplets if given
     if [[ "$METHOD" ]];then
         MESSAGE_ACTIVITY="
 :method:$METHOD a prov:Activity .
-:method:$METHOD startedAtTime xsd:dateTime:$DATE .
-:method:$METHOD prov:wasAssociatedWith :provider:$provider ."
+:method:$METHOD a :method .
+:method:$METHOD prov:startedAtTime xsd:dateTime:$DATE ."
+
+        if [[ "$PROVIDER" ]];then
+            MESSAGE_ACTIVITY+="
+:method:$METHOD prov:wasAssociatedWith :provider:$PROVIDER ."
+        fi
 
         MESSAGE_ENTITY+="
 :$OBJECT:$ID prov:wasGeneratedBy :method:$METHOD ."
@@ -507,7 +515,7 @@ function use
 
         if [[ "$METHOD" ]];then
             MESSAGE_ACTIVITY+="
-:method:$METHOD used :$NAME ."
+:method:$METHOD prov:used :$NAME ."
         fi
     done
 
@@ -519,7 +527,7 @@ function use
 function commit
 {
     dbg git commit --allow-empty \
-        --author "$PROVIDER" \
+        --author "$AUTHOR" \
         --date "$DATE" \
         --message "$OBJECT:$ID
 $MESSAGE_ENTITY
@@ -586,7 +594,7 @@ Verbs:
 Git Ommix options:
 - GIT_OMMIX_REPO_DIR : place to find patient repos
 - GIT_OMMIX_LARGE_FILES : git ommix rules for large files
-- GIT_OMMIX_DEFAULT_PROVIDER : set a default provider
+- GIT_OMMIX_DEFAULT_AUTHOR : set a default commit author
 
 Git ommix can be configured with the \$XDG_CONFIG/.gitommix file, or with environment variables.
 
