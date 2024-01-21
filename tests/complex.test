@@ -38,7 +38,7 @@ rm ~/GitOmmix/$PATIENT -rf
 
 ../../git-ommix add sample --id blood
 ../../git-ommix add data -s blood --id blood data_blood
-../../git-ommix add result -s blood --use blood --id blood result_blood
+../../git-ommix add result -s blood --use blood --id blood --method ddPCR result_blood
 ../../git-ommix add diagnostic --revision_of LungT1 --use blood --id LungT1N1
 ../../git-ommix add diagnostic --revision_of GastricT2 --use blood --id GastricT2N1
 

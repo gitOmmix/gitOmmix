@@ -1,0 +1,28 @@
+#!/bin/env bash
+
+export PATIENT=simple_complete
+export DEBUG=verbose
+
+mkdir -p "tests/$PATIENT"
+cd "tests/$PATIENT"
+
+echo "a" > data
+echo "A" > result
+
+rm ~/GitOmmix/$PATIENT -rf
+
+../../git-ommix add patient --id $PATIENT
+
+../../git-ommix add sample --id sample
+
+../../git-ommix add data -s sample --id data data
+
+../../git-ommix add result -s sample --use data --id result result --provider "Bioinformatician <bioinf@hospital>" --method "Bioinformatics"
+
+echo "a2" > data
+echo "A2" > result
+../../git-ommix add data -s sample --revision_of data --id data2 data
+../../git-ommix add result -s sample --revision_of result --invalidate result --use data2 --id result2 result
+
+../../git-ommix add diagnostic --use result --id diag
+../../git-ommix add diagnostic --revision_of diag --use result2 --id diag2 --provider "MD <md@hospital>" --method "Clinical_acumen"
