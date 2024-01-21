@@ -381,7 +381,11 @@ function turtle2dot
             -e 's/(^\s*"Rdata:.*color = )blue/\1black, fillcolor = "#9999FF", style = filled/' \
             -e 's/(^\s*"Rresult:.*color = )blue/\1black, fillcolor = "#99FF99", style = filled/' \
             -e 's/(^\s*"Rdiagnostic:.*color = )blue/\1black, fillcolor = "#FF9999", style = filled/' \
-            -e 's/prov:wasDerivedFrom//'
+            -e 's/(^\s*"Rmethod:.*shape = )ellipse(, color = )blue/\1rectangle\2black/' \
+            -e 's/(^\s*"Rprovider:.*shape = )ellipse(, color = )blue/\1house\2black, fillcolor = "#FED37F", style = filled/' \
+            -e 's/(^\s*"Rxsd:dateTime.*shape = )ellipse(, color = )blue/\1note\2black/' \
+            -e 's/prov:wasDerivedFrom//' \
+            -e 's/label="\w+:/label="/'
 }
 
 ###############################################################################
