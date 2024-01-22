@@ -625,24 +625,66 @@ function usage
 {
     case "$1" in
         root) 
-            echo "git ommix {verb} {object} [--options] [files]
+            echo "git ommix {verb} {object} [--options] [files]
 
 Verbs:
 - add
 - list
 - get
 
-Git Ommix options:
-- GIT_OMMIX_REPO_DIR : place to find patient repos
-- GIT_OMMIX_LARGE_FILES : git ommix rules for large files
-- GIT_OMMIX_DEFAULT_AUTHOR : set a default commit author
+Type \"git ommix {verb}\" to get help on {verb}
 
-Git ommix can be configured with the \$XDG_CONFIG/.gitommix file, or with environment variables.
+Debugging options:
 
-Register bash completions with register completions.
-" ;;
+-d|--debug : print the raw command output
+--dry : print instead of running any write command
+--verbose : print and run write commands
+
+Git ommix can be configured system-wide with /etc/gitommix.conf,
+per user with \$XDG_CONFIG/.gitommix
+or with environment variables:
+
+- GIT_OMMIX_REPO_DIR : place to find patient repos (default: ~/GitOmmix/)
+- GIT_OMMIX_LARGE_FILES : git ommix rules for large files (default: largerthan=100Mb and (include=data/* or include=results/*))
+- GIT_OMMIX_DEFAULT_AUTHOR : set a default commit author (default: gitommix <gitommix>)" ;;
         add)
-            echo "git ommix add {object} [--options] [--message]
+            echo "git ommix add <object> [--options] [--message] [FILES]
+
+Add a new instance of an object.
+Various options can be associated with an object (id, provider, method, etc.).
+Some options are mandatory depending on the added object.
+Anything other than a new patient has to be associated to a patient.
+Data and results are associated to samples.
+Results use data.
+Diagnoses use results and other diagnoses.
+Data and results add [FILES] to the repo into the respective directory. 
+If [FILES] is not specified, all the files in the current directory are added to the data/result.
+
+Objects:
+- patient
+- sample     -p <patient>
+- data       -p <patient> -s <sample>
+- result     -p <patient> -s <sample> --use <data>
+- diagnostic -p <patient> --use <result|diagnostic>
+
+Options:
+--id (-i) (default: randomly generated string)
+--patient (-p)
+--sample (-s)
+--method
+--date (default: current date)
+--provider
+--use
+--revision_of
+--invalidate
+
+Data, results, and diagnoses can be a revision_of and/or invalidate another object of the same type.
+
+Additional PROV triples further qualifying the objects can be added in the turtle format using --message" ;;
+        list)
+            echo "git ommix list {object} -p <patient> [<object>...]
+
+List all the objects of the given type in the given patient, optionally constrained to the history of one or multiple objects.
 
 Objects:
 - patient
@@ -651,71 +693,20 @@ Objects:
 - result
 - diagnostic
 
-# Patient 
+Optional reference objects can be specified as commit hashes, the full name of the object, or only the name part of the object, matching all the objects with the same name." ;;
+        get)
+            echo "git ommix get {option} -p <patient> [<object>...]
 
-Create patient repo with the given id.
-Options :
+Run queries on the patient's git ommix store, optionally constrained to the history of one or multiple objects.
 
- -i <id>
-
-# Sample
-
-Create the branch with the given sample id for the current or selected patient.
-
-Options :
-
- -i <id>
- -p <patient>
-
-# Data 
-
-Add the FILES to data, with the given id, for the current or selected sample in the current or selected patient.
-Data are always DERIVED_FROM the sample, but could be also be a REVISION_OF previous data. This can be set by pointing to a data commit to revise.
-The data that has been revised can also be INVALIDATEd at the same time.
-
-Options :
-
- -i <id>
- -p <patient>
- -s <sample>
- [--revision_of <data_hash>]
- [--invalidate]
-
-# Result 
-
-Options :
-
- -i <id> 
- -p <patient> 
- -s <sample> 
- --use <data_hash> 
- [--revision_of <result_hash>]
- [--invalidate]
-
-# Diagnostic
-
-Add a diagnostic with the given id, for the current or selected patient.
-The diagnostic can USE multiple results and diagnostics, be the REVISION_OF multiple diagnostics, which can be INVALIDATEd at the same time.
-The diagnostic branch pointers for the revised diagnostics are destroyed.
-
-Options :
-
- -i <id>
- -p <patient>
- --use <result/diagnostic_hash>
- [--revision_of <diagnostic_hash>]
- [--invalidate]
-" ;;
-        list)
-            echo "git ommix list {object}
-
-Objects:
-- patient(s)
-- sample(s)
-- data(s)
-- result(s)
-- diagnostic(s)
-" ;;
+- prov: get the PROV in turtle format
+- graph: get a graphical representation of the PROV
+- last: get the last version of an object
+- timeline: get a timeline of diagnoses
+- object: checkout the patient repo at the time of the addition of the object
+- log: get the git log of the repo
+- file: get the list of files added by an object
+- sparql: execute an arbitrary SPARQL query" ;;
     esac
     exit 0
 }
