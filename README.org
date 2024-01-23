@@ -1,6 +1,3 @@
-
-* Git ommix
-
 Git ommix helps managing high-dimensional data (eg: omics, imagery, pathology) in a longitudinal manner, coupled to a representation of the provenance using the PROV ontology.
 
 Git ommix creates patient-level repositories to store sample references, versionned data obtained from the samples, and the versionned result of the data analysis and ensuing diagnoses.
@@ -14,6 +11,8 @@ Git ommix allows querying the repository structure, implementing multiple useful
 - get the PROV-O prevenance of the target, as turtle triplets or as a visual graph
 - display a timeline of diagnoses
 - execute any sparQL query on a repo
+
+* Installation
 
 ** Requirements
 
@@ -30,4 +29,80 @@ Run ~sudo make install~ to install git ommix on your computer.
 ** Running tests
 
 From the root directory of this repository, run ~tests/<name>.test~ to run test *name*.
+
+* Operations
+
+The git ommix commands all follow the same pattern : git ommix {verb} {object} [--options] [--message] [rest]
+git ommix does not have to and should not be called from the git ommix store
+git ommix can be run from any directory containing files to add to a patient's history
+
+** Add
+
+Group of operations used to create the patients stores.
+
+All operations accept these options:
+
+--id the new object's id if needs to be provided, or a randomly generated id
+--method an optionnal PROV Activity used to generate the new object
+--provider an optionnal PROV Agent involved in generating the new object
+--date the date of creation ef the object, defaults to the current date
+
+*** Patient
+
+git ommix add patient
+
+*** Sample
+
+git ommix add sample -p|--patient <patient>
+
+Add a sample to /<patient>/
+
+*** Data
+
+git ommix add data -p|--patient <patient> -s|--sample <sample> [--revision_of <data>] [--invalidate <data>] [FILES]
+
+Add [FILES] to a data object in /<sample>/ of /<patient>/
+FILES defaults to all the files in the current directory
+All data in a sample *derive from* (use) the /<sample>/
+New data files can be a *revision of* previous /<data>/ in the same /<sample>/, and can also *invalidate* previous /<data>/ in the same /<sample>/
+--invalidate can be specified multiple times to *invalidate* multiple /<data>/ in the same /<sample>/ with the new data
+
+*** Result
+
+git ommix add result -p|--patient <patient> -s|--sample <sample> --use <data> [--revision_of <result>] [--invalidate <result>] [FILES]
+
+Add [FILES] to a result object in /<sample>/ of /<patient>/
+FILES defaults to all the files in the current directory
+A result *derives from* (use) /<data>/ in the same /<sample>/
+--use can be specified multiple times to *derive* the new result *from* multiple /<data>/ in the same /<sample>/
+New result files can be a *revision of* previous /<result>/ in the same /<sample>/, and can also *invalidate* previous /<result>/ in the same /<sample>/
+--invalidate can be specified multiple times to *invalidate* multiple /<result>/ in the same /<sample>/ with the new result
+
+*** Diagnosis
+
+git ommix add diagnostic -p|--patient <patient> --use <result|diagnostic> [--revision_of <diagnostic>] [--invalidate <diagnostic>]
+
+Diagonses live outside of samples and can be used to tie multiple results from diffferent samples into a clinically coherent history
+A diagnosis *derives from* (use) a <result> or a previous <diagnosis>
+--use can be specified multiple times to *derive* the new diagnosis *from* multiple /<result>/ or /<diagnosis>/
+A new diagnosis can be a *revision of* a previous /<diagnosis>/ and can also *invalidate* previous /<diagnosis>/
+--invalidate can be specified multiple times to *invalidate* multiple /<diagnosis>/ with the new diagnosis
+
+** List
+
+*** Patient
+
+git ommix list patient
+
+List all the patients known in the local store
+
+*** Sample/Data/Result/Diagnostic
+
+git ommix list sample|data|result|diagnostic -p|--patient <patient> [ref]
+
+List all the sample|data|result|diagnostic objects in <patient>
+[ref] limits the list to the history of [ref]
+[ref] can be expressed as a commit hash or an object name (type:id or id)
+Multiple [ref] can be provided
+IDs matching multiple objects expand to multiple [ref]
 
