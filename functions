@@ -255,7 +255,7 @@ function list_patient
 {
     local pat
     for pat in *; do
-        git -C "$pat" rev-parse && echo "$pat"
+        dbg git -C "$pat" rev-parse && echo "$pat"
     done
 }
 
