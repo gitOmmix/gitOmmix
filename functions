@@ -241,6 +241,10 @@ function list
             validate_patient
             validate_hashes
             list_object ;;
+        all)
+            validate_patient
+            validate_hashes
+            list_all ;;
         *) usage $VERB ;;
     esac
 }
@@ -262,6 +266,11 @@ function list_patient
 function list_object
 {
     git log --format=%s --grep="^$OBJECT:" "${HASHES[@]}"
+}
+
+function list_all
+{
+    git log --format=%s --grep='^\(patient\|sample\|data\|result\|diagnostic\)' "${HASHES[@]}"
 }
 
 ###############################################################################
