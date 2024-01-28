@@ -341,7 +341,7 @@ UNION
 }"
     get_sparql | \
         turtle2dot | \
-        sed -E -e 's/rankdir = LR;/rankdir = BT;\n\tranksep = .3;\n\tnodesep = .8;/' | \
+        sed -E -e 's/rankdir = LR;/rankdir = BT;/' | \
         dot -Tx11
 }
 
@@ -353,8 +353,8 @@ function get_timeline
 ?p a :diagnostic}"
 
     get_sparql | \
-        turtle2dot | \
-        sed -E -e 's/rankdir = LR;/rankdir = RL;\n\tranksep = .3;\n\tnodesep = .8;/' | \
+        turtle2dottime | \
+        sed -E -e 's/rankdir = LR;/rankdir = RL;/' | \
         dot -Tx11
 }
 
@@ -390,20 +390,82 @@ function get_sparql
 $QUERY" -D - -r turtle -q
 }
 
-function turtle2dot
+function turtle2dottime
 {
+    local HEADS=
+    for branch in $(git for-each-ref --format='%(refname)' 'refs/heads/diagnostic|*'); do
+        HEADS="$HEADS|$(git log --format=%s -1 $branch)"
+    done
+    HEADS="-e s/(^\t\"R(${HEADS:1})\" \[[^]]+)/\1, color = black, style = \"bold, filled\"/"
+
+    local INVALIDATED=
+    for invalid in $(git log --format=%b | grep invalidatedAtTime | cut -f 1 -d ' ');do
+        INVALIDATED="$INVALIDATED|${invalid:1}"
+    done
+    INVALIDATED="-e s/(^\t\"R(${INVALIDATED:1})\" \[[^]]+)/\1, style = \"dashed, filled\"/"
+
     rapper -i turtle - gitommix -eqo dot | \
         sed -E \
-            -e 's/(^\s*"Rpatient:.*color = )blue/\1black/' \
-            -e 's/(^\s*"Rsample:.*color = )blue/\1black/' \
-            -e 's/(^\s*"Rdata:.*color = )blue/\1black, fillcolor = "#9999FF", style = filled/' \
-            -e 's/(^\s*"Rresult:.*color = )blue/\1black, fillcolor = "#99FF99", style = filled/' \
-            -e 's/(^\s*"Rdiagnostic:.*color = )blue/\1black, fillcolor = "#FF9999", style = filled/' \
-            -e 's/(^\s*"Rmethod:.*shape = )ellipse(, color = )blue/\1rectangle\2black/' \
-            -e 's/(^\s*"Rprovider:.*shape = )ellipse(, color = )blue/\1house\2black, fillcolor = "#FED37F", style = filled/' \
-            -e 's/(^\s*"Rxsd:dateTime.*shape = )ellipse(, color = )blue/\1note\2black/' \
-            -e 's/prov:wasDerivedFrom//' \
-            -e 's/label="\w+:/label="/'
+            -e 's/(charset="utf-8";)/\1\n\tnode [ shape = ellipse, color = "#808080", style = filled, fillcolor = white ];/' \
+            -e 's/, shape = ellipse, color = blue//' \
+            -e 's/label="\w+:/label="/' \
+            -e 's/wasDerivedFrom//' \
+            -e 's/(label="wasRevisionOf")/label="", weight = 2, style = dashed/' \
+            -e 's/(^\t"Rdiagnostic:[^"]+" \[[^]]+)/\1, fillcolor = "#FF9999", group = diagnostics/' \
+            $HEADS \
+            $INVALIDATED \
+            -e 's/(^\t"Rdiagnostic:[^"]+") -> ("Rdiagnostic:[^"]+")/\1:w -> \2:e/' \
+            -e 's/^\tlabel=.*//'
+}
+
+function turtle2dot
+{
+    local HEADS=
+    for branch in $(git for-each-ref --format='%(refname)' 'refs/heads/patient|*' 'refs/heads/sample|*' 'refs/heads/diagnostic|*'); do
+        HEADS="$HEADS|$(git log --format=%s -1 $branch)"
+    done
+    HEADS="-e s/(^\t\"R(${HEADS:1})\" \[[^]]+)/\1, color = black, style = \"bold, filled\"/"
+
+    local INVALIDATED=
+    for invalid in $(git log --format=%b | grep invalidatedAtTime | cut -f 1 -d ' ');do
+        INVALIDATED="$INVALIDATED|${invalid:1}"
+    done
+    INVALIDATED="-e s/(^\t\"R(${INVALIDATED:1})\" \[[^]]+)/\1, style = \"dashed, filled\"/"
+
+    local GRPS=()
+    for group in $(git for-each-ref --format='%(refname:short)' 'refs/heads/sample|*'); do
+        local COMMITS=
+        for commit in $(git log --format=%s $group --invert-grep --grep '^patient'); do
+            COMMITS="$COMMITS|$commit"
+        done
+        GRPS+=("-e s/(^\t\"R(${COMMITS:1})\" \[[^]]+)/\1, group = \"$group\"/")
+    done
+
+    rapper -i turtle - gitommix -eqo dot | \
+        sed -E \
+            -e 's/(charset="utf-8";)/\1\n\tnode [ shape = ellipse, color = "#808080", style = filled, fillcolor = white ];/' \
+            -e 's/, shape = ellipse, color = blue//' \
+            -e 's/label="\w+:/label="/' \
+            -e 's/wasDerivedFrom//' \
+            -e 's/(label="wasRevisionOf")/label="", weight = 2, style = dashed/' \
+            -e 's/(label="(wasGeneratedBy|used|wasAttributedTo|wasAssociatedWith)")/label="", weight = 0, color=gray/' \
+            -e 's/(^\t"Rdata:[^"]+" \[[^]]+)/\1, fillcolor = "#9999FF"/' \
+            -e 's/(^\t"Rresult:[^"]+" \[[^]]+)/\1, fillcolor = "#99FF99"/' \
+            -e 's/(^\t"Rdiagnostic:[^"]+" \[[^]]+)/\1, fillcolor = "#FF9999", group = diagnostics/' \
+            ${GRPS[@]} \
+            $HEADS \
+            $INVALIDATED \
+            -e 's/(^\t"Rmethod:[^"]+" \[[^]]+)/\1, shape = rectangle, color = blue, fillcolor = "#9FB1FC"/' \
+            -e 's/(^\t"Rprovider:[^"]+" \[[^]]+)/\1, shape = house, color = black, fillcolor = "#FED37F"/' \
+            -e 's/(^\t"Rdata:[^"]+" -> "Rsample:[^]]+)/\1, weight = 5/' \
+            -e 's/(^\t"Rsample:[^"]+" -> "Rpatient:[^]]+)/\1, weight = 5/' \
+            -e 's/(^\t"Rdiagnostic:[^"]+" -> "Rresult:[^]]+)/\1, minlen = 3/' \
+            -e 's/(^\t"Rdata:[^"]+") -> ("Rsample:[^"]+")/\1:n -> \2:s/' \
+            -e 's/(^\t"Rresult:[^"]+") -> ("Rdata:[^"]+")/\1:n -> \2:s/' \
+            -e 's/(^\t"Rdiagnostic:[^"]+") -> ("Rdiagnostic:[^"]+")/\1:n -> \2:s/' \
+            -e 's/(^\t"Rdiagnostic:[^"]+") -> ("Rresult:[^"]+")/\1 -> \2:s/' \
+            -e 's/(^\t"Rsample:[^"]+") -> ("Rpatient:[^"]+")/\1:n -> \2/' \
+            -e 's/^\tlabel=.*//'
 }
 
 ###############################################################################
