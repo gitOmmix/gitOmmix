@@ -8,39 +8,45 @@ function _completions
     #COMP_WORDS = array of words typed after the name of the program
     #COMP_CWORD = index pointing to the word the cursor is at
     #COMP_LINE = the current command line
+    local cur prev words cword
+    # _get_comp_words_by_ref -n : cur
+    _init_completion -n :
+
     local IFS=$' \t\n'
     local OPTIONS
     local PATIENT
-    if [[ "$COMP_CWORD" -eq 1 ]];then
+    if [[ "$cword" -eq 1 ]];then
         OPTIONS="add list get"
-    elif [[ "$COMP_CWORD" -eq 2 ]];then
-        case "${COMP_WORDS[1]}" in
+    elif [[ "$cword" -eq 2 ]];then
+        local VERB="${words[1]}"
+        case $VERB in
             list) OPTIONS="all " ;&
             add) OPTIONS+="patient sample data result diagnostic" ;;
             get) OPTIONS="prov graph timeline last sparql log file object" ;;
         esac
-    elif [[ "$COMP_CWORD" -gt 2 ]];then
-        if [[ "$COMP_LINE" =~ (-p|--patient)[[:space:]]([^ ]*) ]];then
+    elif [[ "$cword" -gt 2 ]];then
+        local VERB="${words[1]}"
+        local OBJECT="${words[2]}"
+
+        if [[ "$COMP_LINE" =~ (-p|--patient)[[:space:]]+([^ ]*) ]];then
             PATIENT="${BASH_REMATCH[2]}"
         fi
 
-        case "${COMP_WORDS[1]}" in
+        case $VERB in
             add)
-                case "${COMP_WORDS[2]}" in
-                    diagnostic) USE="diagnostic|result" ;&
-                    result) OPTIONS+="--use "
-                            USE="data" ;&
+                case $OBJECT in
+                    diagnostic|result) OPTIONS+="--use " ;&
                     data) OPTIONS+="--revision_of --invalidate " ;&
                     sample) OPTIONS+="--patient " ;&
                     patient) OPTIONS+="--id --method --provider --date --message ";;
                 esac
 
-                if [[ "${COMP_WORDS[2]}" == "data" || "${COMP_WORDS[2]}" == "result" ]];then
+                if [[ $OBJECT == "data" || $OBJECT == "result" ]];then
                     OPTIONS+="--sample $(ls)"
                 fi
                 ;;
             list)
-                if [[ "${COMP_WORDS[2]}" != "patient" ]];then
+                if [[ $OBJECT != "patient" ]];then
                     if [[ "$PATIENT" ]];then
                         OPTIONS="$(git ommix list all --patient $PATIENT)"
                     else
@@ -54,24 +60,25 @@ function _completions
                 else
                     OPTIONS="--patient "
                 fi
-
-                case "$3" in
-                    -p|--patient) OPTIONS=$(git ommix list patient) ;;
-                esac
                 ;;
         esac
 
-        # move only what can be completed to each verb
-        case "$3" in
-            -p|--patient) OPTIONS=$(git ommix list patient) ;;
-            -s|--sample) OPTIONS=$(git ommix list sample --patient "$PATIENT") ;;
-            --use) OPTIONS= ;;
-            --invalidate|--revision_of) OPTIONS=$(git ommix list "${COMP_WORDS[2]}" --patient "$PATIENT") ;;
-            *) OPTIONS+="$REST" ;;
+        case "$prev" in
+            -p|--patient) OPTIONS="$(git ommix list patient)" ;;
+            -s|--sample) OPTIONS="$(git ommix list sample --patient $PATIENT)" ;;
+            --use) if [[ "$OBJECT" == "result" ]];then
+                       OPTIONS="$(git ommix list data --patient $PATIENT)"
+                   elif [[ "$OBJECT" == "diagnostic" ]];then
+                       OPTIONS="$(git ommix list result --patient $PATIENT)
+$(git ommix list diagnostic --patient $PATIENT)"
+                   fi ;;
+            --invalidate|--revision_of) OPTIONS="$(git ommix list $OBJECT --patient $PATIENT)" ;;
         esac
     fi
 
-    COMPREPLY=($(compgen -W "$OPTIONS" -- "$2"))
+    COMPREPLY=($(compgen -W "$OPTIONS" -- "$cur"))
+
+    __ltrim_colon_completions "$cur"
 }
 
 complete -F _completions git-ommix
