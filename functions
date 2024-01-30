@@ -341,7 +341,6 @@ UNION
 }"
     get_sparql | \
         turtle2dot | \
-        sed -E -e 's/rankdir = LR;/rankdir = BT;/' | \
         dot -Tx11
 }
 
@@ -354,7 +353,6 @@ function get_timeline
 
     get_sparql | \
         turtle2dottime | \
-        sed -E -e 's/rankdir = LR;/rankdir = RL;/' | \
         dot -Tx11
 }
 
@@ -406,6 +404,7 @@ function turtle2dottime
 
     rapper -i turtle - gitommix -eqo dot | \
         sed -E \
+            -e 's/rankdir = LR;/rankdir = RL;/' \
             -e 's/(charset="utf-8";)/\1\n\tnode [ shape = ellipse, color = "#808080", style = filled, fillcolor = white ];/' \
             -e 's/, shape = ellipse, color = blue//' \
             -e 's/label="\w+:/label="/' \
@@ -443,6 +442,7 @@ function turtle2dot
 
     rapper -i turtle - gitommix -eqo dot | \
         sed -E \
+            -e 's/rankdir = LR;/rankdir = BT;/' \
             -e 's/(charset="utf-8";)/\1\n\tnode [ shape = ellipse, color = "#808080", style = filled, fillcolor = white ];/' \
             -e 's/, shape = ellipse, color = blue//' \
             -e 's/label="\w+:/label="/' \
@@ -460,11 +460,11 @@ function turtle2dot
             -e 's/(^\t"Rdata:[^"]+" -> "Rsample:[^]]+)/\1, weight = 5/' \
             -e 's/(^\t"Rsample:[^"]+" -> "Rpatient:[^]]+)/\1, weight = 5/' \
             -e 's/(^\t"Rdiagnostic:[^"]+" -> "Rresult:[^]]+)/\1, minlen = 3/' \
+            -e 's/(^\t"Rsample:[^"]+") -> ("Rpatient:[^"]+")/\1:n -> \2/' \
             -e 's/(^\t"Rdata:[^"]+") -> ("Rsample:[^"]+")/\1:n -> \2:s/' \
             -e 's/(^\t"Rresult:[^"]+") -> ("Rdata:[^"]+")/\1:n -> \2:s/' \
             -e 's/(^\t"Rdiagnostic:[^"]+") -> ("Rdiagnostic:[^"]+")/\1:n -> \2:s/' \
             -e 's/(^\t"Rdiagnostic:[^"]+") -> ("Rresult:[^"]+")/\1 -> \2:s/' \
-            -e 's/(^\t"Rsample:[^"]+") -> ("Rpatient:[^"]+")/\1:n -> \2/' \
             -e 's/^\tlabel=.*//'
 }
 
