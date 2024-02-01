@@ -23,11 +23,11 @@ git-ommix add patient --id $PATIENT
 git-ommix add sample --id Anal_biopsy
 git-ommix add data -s Anal_biopsy --id Anal_pathology data_anal_path
 git-ommix add result -s Anal_biopsy --use Anal_pathology --method pathology --provider "Badoual <cecile.badoual@aphp.fr>" --id Anal_pathology result_anal_path
-git-ommix add diagnostic --use Anal_pathology --id Anal_carcinoma_T2
+git-ommix add diagnosis --use Anal_pathology --id Anal_carcinoma_T2
 
 git-ommix add data -s Anal_biopsy --id Anal_NGS data_anal_NGS
 git-ommix add result -s Anal_biopsy --use Anal_NGS --method HPV_capture --provider "Veyer <david.veyer@aphp.fr>" --id Anal_NGS result_anal_ngs
-git-ommix add diagnostic --use Anal_NGS --id Anal_carcinoma_T2_HPV --revision_of Anal_carcinoma_T2
+git-ommix add diagnosis --use Anal_NGS --id Anal_carcinoma_T2_HPV --revision_of Anal_carcinoma_T2
 
 git-ommix add sample --id blood1
 git-ommix add data -s blood1 --id blood1 data_blood1
@@ -44,10 +44,10 @@ git-ommix add result -s blood3 --use blood3 --method HPV_capture --provider "Vey
 git-ommix add sample --id Bone_biopsy
 git-ommix add data -s Bone_biopsy --id Bone_pathology data_bone_path
 git-ommix add result -s Bone_biopsy --use Bone_pathology --method pathology --provider "Badoual <cecile.badoual@aphp.fr>" --id Bone_pathology result_bone_path
-git-ommix add diagnostic --use Bone_pathology --id Bone_carcinoma_T1
+git-ommix add diagnosis --use Bone_pathology --id Bone_carcinoma_T1
 
 git-ommix add data -s Bone_biopsy --id Bone_NGS data_bone_NGS
 git-ommix add result -s Bone_biopsy --use Bone_NGS --method HPV_capture --provider "Veyer <david.veyer@aphp.fr>" --id Bone_NGS result_bone_ngs
-git-ommix add diagnostic --use Bone_NGS --use Bone_carcinoma_T1 --revision_of Bone_carcinoma_T1 --revision_of Anal_carcinoma_T2_HPV --invalidate Bone_carcinoma_T1 --id Anal_metastasis_T2M1_HPV 
+git-ommix add diagnosis --use Bone_NGS --use Bone_carcinoma_T1 --revision_of Bone_carcinoma_T1 --revision_of Anal_carcinoma_T2_HPV --invalidate Bone_carcinoma_T1 --id Anal_metastasis_T2M1_HPV 
 
-git-ommix add diagnostic --revision_of Anal_metastasis_T2M1_HPV --use blood1 --use blood2 --use blood3 --id HPV_HGAIN_T2N1M1
+git-ommix add diagnosis --revision_of Anal_metastasis_T2M1_HPV --use blood1 --use blood2 --use blood3 --id HPV_HGAIN_T2N1M1

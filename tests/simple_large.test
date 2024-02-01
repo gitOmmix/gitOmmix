@@ -36,5 +36,5 @@ echo "A2" > result_a
 ../../git-ommix add data -s s_a --revision_of d_a --id d_a2 data_a
 ../../git-ommix add result -s s_a --revision_of r_a --invalidate r_a --use d_a2 --id r_a2 result_a
 
-../../git-ommix add diagnostic --use r_a2 --use r_b --id diag1
-../../git-ommix add diagnostic --revision_of diag1 --use r_c --id diag1b
+../../git-ommix add diagnosis --use r_a2 --use r_b --id diag1
+../../git-ommix add diagnosis --revision_of diag1 --use r_c --id diag1b

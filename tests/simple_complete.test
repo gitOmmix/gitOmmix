@@ -24,5 +24,5 @@ echo "A2" > result
 ../../git-ommix add data -s sample --revision_of data --id data2 data
 ../../git-ommix add result -s sample --revision_of result --invalidate result --use data2 --id result2 result
 
-../../git-ommix add diagnostic --use result --id diag
-../../git-ommix add diagnostic --revision_of diag --use result2 --id diag2 --provider "MD <md@hospital>" --method "Clinical_acumen"
+../../git-ommix add diagnosis --use result --id diag
+../../git-ommix add diagnosis --revision_of diag --use result2 --id diag2 --provider "MD <md@hospital>" --method "Clinical_acumen"

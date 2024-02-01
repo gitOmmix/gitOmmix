@@ -21,7 +21,7 @@ function _completions
         local VERB="${words[1]}"
         case $VERB in
             list) OPTIONS="all " ;&
-            add) OPTIONS+="patient sample data result diagnostic" ;;
+            add) OPTIONS+="patient sample data result diagnosis" ;;
             get) OPTIONS="prov graph timeline last sparql log file object" ;;
         esac
     elif [[ "$cword" -gt 2 ]];then
@@ -35,7 +35,7 @@ function _completions
         case $VERB in
             add)
                 case $OBJECT in
-                    diagnostic|result) OPTIONS+="--use " ;&
+                    diagnosis|result) OPTIONS+="--use " ;&
                     data) OPTIONS+="--revision_of --invalidate " ;&
                     sample) OPTIONS+="--patient " ;&
                     patient) OPTIONS+="--id --method --provider --date --message ";;
@@ -68,9 +68,9 @@ function _completions
             -s|--sample) OPTIONS="$(git ommix list sample --patient $PATIENT)" ;;
             --use) if [[ "$OBJECT" == "result" ]];then
                        OPTIONS="$(git ommix list data --patient $PATIENT)"
-                   elif [[ "$OBJECT" == "diagnostic" ]];then
+                   elif [[ "$OBJECT" == "diagnosis" ]];then
                        OPTIONS="$(git ommix list result --patient $PATIENT)
-$(git ommix list diagnostic --patient $PATIENT)"
+$(git ommix list diagnosis --patient $PATIENT)"
                    fi ;;
             --invalidate|--revision_of) OPTIONS="$(git ommix list $OBJECT --patient $PATIENT)" ;;
         esac

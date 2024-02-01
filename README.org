@@ -5,8 +5,8 @@ Git ommix creates patient-level repositories to store sample references, version
 Large files are only retrieved on demand thanks to *git annex*, decorrelating navigating the history from actually downloading all of it.
 
 Git ommix also stores a representation of the provenance of each of those entities using the PROV ontology.
-Git ommix allows querying the repository structure, implementing multiple useful operations. These operations can apply to the whole patient's history or be constrained to one or multiple specific objects (sample/data/result/diagnostic)
-- list the objects contributing to the target (the data contributing to a result or to a diagnostic, samples contributing to diagnostics)
+Git ommix allows querying the repository structure, implementing multiple useful operations. These operations can apply to the whole patient's history or be constrained to one or multiple specific objects (sample/data/result/diagnosis)
+- list the objects contributing to the target (the data contributing to a result or to a diagnosis, samples contributing to diagnosiss)
 - get the most recent version of the target
 - get the PROV-O prevenance of the target, as turtle triplets or as a visual graph
 - display a timeline of diagnoses
@@ -80,7 +80,7 @@ New result files can be a *revision of* previous /<result>/ in the same /<sample
 
 *** Diagnosis
 
-git ommix add diagnostic -p|--patient <patient> --use <result|diagnostic> [--revision_of <diagnostic>] [--invalidate <diagnostic>]
+git ommix add diagnosis -p|--patient <patient> --use <result|diagnosis> [--revision_of <diagnosis>] [--invalidate <diagnosis>]
 
 Diagonses live outside of samples and can be used to tie multiple results from diffferent samples into a clinically coherent history
 A diagnosis *derives from* (use) a <result> or a previous <diagnosis>
@@ -96,11 +96,11 @@ git ommix list patient
 
 List all the patients known in the local store
 
-*** Sample/Data/Result/Diagnostic
+*** Sample/Data/Result/Diagnosis
 
-git ommix list sample|data|result|diagnostic -p|--patient <patient> [ref]
+git ommix list sample|data|result|diagnosis -p|--patient <patient> [ref]
 
-List all the sample|data|result|diagnostic objects in <patient>
+List all the sample|data|result|diagnosis objects in <patient>
 [ref] limits the list to the history of [ref]
 [ref] can be expressed as a commit hash or an object name (type:id or id)
 Multiple [ref] can be provided

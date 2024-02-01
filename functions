@@ -47,13 +47,13 @@ function add
 
             add_result ;;
 
-        diagnostic)
+        diagnosis)
             validate_patient
 
-            # A diagnostic needs to be at least revision_of another diagnostic, or use results or diagnostics,
-            [[ "${#USE[@]}" -gt 0 ]] || [[ "$REVISION_OF" ]] || die "Please --use result|diagnostic or --revision_of diagnostic when adding a diagnostic"
+            # A diagnosis needs to be at least revision_of another diagnosis, or use results or diagnosis,
+            [[ "${#USE[@]}" -gt 0 ]] || [[ "$REVISION_OF" ]] || die "Please --use result|diagnosis or --revision_of diagnosis when adding a diagnosis"
 
-            add_diagnostic ;;
+            add_diagnosis ;;
 
         *) usage $VERB ;;
     esac
@@ -176,20 +176,20 @@ Please check your permissions"
     dbg git add "$OBJECT"
 }
 
-# Add diagnostic
+# Add diagnosis
 # Uses :
 # - ID
 # - PATIENT
-# - USE result|diagnostic:<id> | <result|diagnostic_hash>
-# - [INVALIDATE diagnostic:<íd> | <diagnostic_hash>]
-# - [REVISION_OF diagnostic:<id> | <diagnostic_hash>]
-function add_diagnostic
+# - USE result|diagnosis:<id> | <result|diagnosis_hash>
+# - [INVALIDATE diagnosis:<íd> | <diagnosis_hash>]
+# - [REVISION_OF diagnosis:<id> | <diagnosis_hash>]
+function add_diagnosis
 {
     local merges=()
 
     # USE
     if [[ "${#USE[@]}" -gt 0 ]]; then
-        use "(result|diagnostic)"
+        use "(result|diagnosis)"
 
         # Start merging from the first object used
         dbg stash git checkout "${HASH[0]}"
@@ -204,13 +204,13 @@ function add_diagnostic
         # Start merging from the revision_of
         dbg stash git checkout "$HASH"
 
-        # Remove the diagnostic branch if it existed
-        dbg git branch -D "diagnostic|${NAME/diagnostic:}"
+        # Remove the diagnosis branch if it existed
+        dbg git branch -D "diagnosis|${NAME/diagnosis:}"
 
         merges=("$HASH" "${merges[@]}")
     fi
 
-    dbg git checkout -b "diagnostic|$ID"
+    dbg git checkout -b "diagnosis|$ID"
 
     # INVALIDATEs
     if [[ "${#INVALIDATE[@]}" -gt 0 ]]; then
@@ -219,7 +219,7 @@ function add_diagnostic
         local inval
 
         for inval in "${NAME[@]}"; do
-            dbg git branch -D "diagnostic|${inval/diagnostic:}"
+            dbg git branch -D "diagnosis|${inval/diagnosis:}"
         done
     fi
 
@@ -237,7 +237,7 @@ function list
         patient)
             list_patient ;;
 
-        sample|data|result|diagnostic)
+        sample|data|result|diagnosis)
             validate_patient
             validate_hashes
             list_object ;;
@@ -270,7 +270,7 @@ function list_object
 
 function list_all
 {
-    git log --format=%s --grep='^\(patient\|sample\|data\|result\|diagnostic\)' "${HASHES[@]}"
+    git log --format=%s --grep='^\(patient\|sample\|data\|result\|diagnosis\)' "${HASHES[@]}"
 }
 
 ###############################################################################
@@ -348,8 +348,8 @@ function get_timeline
 {
     QUERY="CONSTRUCT {?s ?o ?p} WHERE
 {?s ?o ?p .
-?s a :diagnostic .
-?p a :diagnostic}"
+?s a :diagnosis .
+?p a :diagnosis}"
 
     get_sparql | \
         turtle2dottime | \
@@ -365,7 +365,7 @@ function get_object
 # Print the last commit
 function get_last
 {
-    git branch --list 'diagnostic|*' --list 'sample|*' --format='%(subject)' --contains "${HASHES[@]}"
+    git branch --list 'diagnosis|*' --list 'sample|*' --format='%(subject)' --contains "${HASHES[@]}"
 }
 
 # Print git commit log
@@ -391,7 +391,7 @@ $QUERY" -D - -r turtle -q
 function turtle2dottime
 {
     local HEADS=
-    for branch in $(git for-each-ref --format='%(refname)' 'refs/heads/diagnostic|*'); do
+    for branch in $(git for-each-ref --format='%(refname)' 'refs/heads/diagnosis|*'); do
         HEADS="$HEADS|$(git log --format=%s -1 $branch)"
     done
     HEADS="-e s/(^\t\"R(${HEADS:1})\" \[[^]]+)/\1, color = black, style = \"bold, filled\"/"
@@ -410,17 +410,17 @@ function turtle2dottime
             -e 's/label="\w+:/label="/' \
             -e 's/wasDerivedFrom//' \
             -e 's/(label="wasRevisionOf")/label="", weight = 2, style = dashed/' \
-            -e 's/(^\t"Rdiagnostic:[^"]+" \[[^]]+)/\1, fillcolor = "#FF9999", group = diagnostics/' \
+            -e 's/(^\t"Rdiagnosis:[^"]+" \[[^]]+)/\1, fillcolor = "#FF9999", group = diagnosis/' \
             $HEADS \
             $INVALIDATED \
-            -e 's/(^\t"Rdiagnostic:[^"]+") -> ("Rdiagnostic:[^"]+")/\1:w -> \2:e/' \
+            -e 's/(^\t"Rdiagnosis:[^"]+") -> ("Rdiagnosis:[^"]+")/\1:w -> \2:e/' \
             -e 's/^\tlabel=.*//'
 }
 
 function turtle2dot
 {
     local HEADS=
-    for branch in $(git for-each-ref --format='%(refname)' 'refs/heads/patient|*' 'refs/heads/sample|*' 'refs/heads/diagnostic|*'); do
+    for branch in $(git for-each-ref --format='%(refname)' 'refs/heads/patient|*' 'refs/heads/sample|*' 'refs/heads/diagnosis|*'); do
         HEADS="$HEADS|$(git log --format=%s -1 $branch)"
     done
     HEADS="-e s/(^\t\"R(${HEADS:1})\" \[[^]]+)/\1, color = black, style = \"bold, filled\"/"
@@ -451,7 +451,7 @@ function turtle2dot
             -e 's/(label="(wasGeneratedBy|used|wasAttributedTo|wasAssociatedWith)")/label="", weight = 0, color=gray/' \
             -e 's/(^\t"Rdata:[^"]+" \[[^]]+)/\1, fillcolor = "#9999FF"/' \
             -e 's/(^\t"Rresult:[^"]+" \[[^]]+)/\1, fillcolor = "#99FF99"/' \
-            -e 's/(^\t"Rdiagnostic:[^"]+" \[[^]]+)/\1, fillcolor = "#FF9999", group = diagnostics/' \
+            -e 's/(^\t"Rdiagnosis:[^"]+" \[[^]]+)/\1, fillcolor = "#FF9999", group = diagnosis/' \
             ${GRPS[@]} \
             $HEADS \
             $INVALIDATED \
@@ -459,12 +459,12 @@ function turtle2dot
             -e 's/(^\t"Rprovider:[^"]+" \[[^]]+)/\1, shape = house, color = black, fillcolor = "#FED37F"/' \
             -e 's/(^\t"Rdata:[^"]+" -> "Rsample:[^]]+)/\1, weight = 5/' \
             -e 's/(^\t"Rsample:[^"]+" -> "Rpatient:[^]]+)/\1, weight = 5/' \
-            -e 's/(^\t"Rdiagnostic:[^"]+" -> "Rresult:[^]]+)/\1, minlen = 3/' \
+            -e 's/(^\t"Rdiagnosis:[^"]+" -> "Rresult:[^]]+)/\1, minlen = 3/' \
             -e 's/(^\t"Rsample:[^"]+") -> ("Rpatient:[^"]+")/\1:n -> \2/' \
             -e 's/(^\t"Rdata:[^"]+") -> ("Rsample:[^"]+")/\1:n -> \2:s/' \
             -e 's/(^\t"Rresult:[^"]+") -> ("Rdata:[^"]+")/\1:n -> \2:s/' \
-            -e 's/(^\t"Rdiagnostic:[^"]+") -> ("Rdiagnostic:[^"]+")/\1:n -> \2:s/' \
-            -e 's/(^\t"Rdiagnostic:[^"]+") -> ("Rresult:[^"]+")/\1 -> \2:s/' \
+            -e 's/(^\t"Rdiagnosis:[^"]+") -> ("Rdiagnosis:[^"]+")/\1:n -> \2:s/' \
+            -e 's/(^\t"Rdiagnosis:[^"]+") -> ("Rresult:[^"]+")/\1 -> \2:s/' \
             -e 's/^\tlabel=.*//'
 }
 
@@ -745,7 +745,7 @@ Objects:
 - sample     -p <patient>
 - data       -p <patient> -s <sample>
 - result     -p <patient> -s <sample> --use <data>
-- diagnostic -p <patient> --use <result|diagnostic>
+- diagnosis -p <patient> --use <result|diagnosis>
 
 Options:
 --id (-i) (default: randomly generated string)
@@ -771,7 +771,7 @@ Objects:
 - sample
 - data
 - result
-- diagnostic
+- diagnosis
 
 Optional reference objects can be specified as commit hashes, the full name of the object, or only the name part of the object, matching all the objects with the same name." ;;
         get)
