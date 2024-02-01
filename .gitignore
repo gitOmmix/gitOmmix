@@ -1,2 +1,6 @@
 *.png
-/test_*
+*.dot
+*.prov
+tests/*/
+docs/cite/
+docs/logos/
