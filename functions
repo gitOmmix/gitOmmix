@@ -347,9 +347,17 @@ UNION
 function get_timeline
 {
     QUERY="CONSTRUCT {?s ?o ?p} WHERE
-{?s ?o ?p .
-?s a :diagnosis .
-?p a :diagnosis}"
+{
+  { ?s ?o ?p .
+    ?s a :diagnosis .
+    ?p a :diagnosis
+  }
+  UNION
+  { ?s ?o ?p .
+    ?s a :diagnosis .
+    FILTER (?o = rdf:type && ?p = :diagnosis)
+  }
+}"
 
     get_sparql | \
         turtle2dottime | \
@@ -404,6 +412,8 @@ function turtle2dottime
 
     rapper -i turtle - gitommix -eqo dot | \
         sed -E \
+            -e 's/^.*rdf:type.*$//' \
+            -e 's/^\t"Rdiagnosis".*$//' \
             -e 's/rankdir = LR;/rankdir = RL;/' \
             -e 's/(charset="utf-8";)/\1\n\tnode [ shape = ellipse, color = "#808080", style = filled, fillcolor = white ];/' \
             -e 's/, shape = ellipse, color = blue//' \
