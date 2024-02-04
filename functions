@@ -397,7 +397,7 @@ function turtle2dottime
     HEADS="-e s/(^\t\"R(${HEADS:1})\" \[[^]]+)/\1, color = black, style = \"bold, filled\"/"
 
     local INVALIDATED=
-    for invalid in $(git log --format=%b | grep invalidatedAtTime | cut -f 1 -d ' ');do
+    for invalid in $(git log --format=%b --all | grep invalidatedAtTime | cut -f 1 -d ' ');do
         INVALIDATED="$INVALIDATED|${invalid:1}"
     done
     INVALIDATED="-e s/(^\t\"R(${INVALIDATED:1})\" \[[^]]+)/\1, style = \"dashed, filled\"/"
@@ -426,7 +426,7 @@ function turtle2dot
     HEADS="-e s/(^\t\"R(${HEADS:1})\" \[[^]]+)/\1, color = black, style = \"bold, filled\"/"
 
     local INVALIDATED=
-    for invalid in $(git log --format=%b | grep invalidatedAtTime | cut -f 1 -d ' ');do
+    for invalid in $(git log --format=%b --all | grep invalidatedAtTime | cut -f 1 -d ' ');do
         INVALIDATED="$INVALIDATED|${invalid:1}"
     done
     INVALIDATED="-e s/(^\t\"R(${INVALIDATED:1})\" \[[^]]+)/\1, style = \"dashed, filled\"/"
@@ -452,6 +452,7 @@ function turtle2dot
             -e 's/(^\t"Rdata:[^"]+" \[[^]]+)/\1, fillcolor = "#9999FF"/' \
             -e 's/(^\t"Rresult:[^"]+" \[[^]]+)/\1, fillcolor = "#99FF99"/' \
             -e 's/(^\t"Rdiagnosis:[^"]+" \[[^]]+)/\1, fillcolor = "#FF9999", group = diagnosis/' \
+            -e 's/(label="wasInvalidatedBy")/label="", weight = 0, style = dashed, color=gray/' \
             ${GRPS[@]} \
             $HEADS \
             $INVALIDATED \
