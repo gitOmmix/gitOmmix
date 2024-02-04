@@ -87,8 +87,8 @@ Please check your permissions"
     # - make `cat` the default pager makes it easier to parse outputs
     # - set rule for annex usage
     dbg git config core.pager cat
-    dbg git config annex.largefiles "$GIT_OMMIX_LARGE_FILES"
     dbg git config advice.detachedHead false
+    dbg git annex config --set annex.largefiles "$GIT_OMMIX_LARGE_FILES"
 
     # Rename the default branch to the patient ID
     dbg git checkout -b "patient|$ID"
