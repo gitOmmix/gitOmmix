@@ -6,9 +6,9 @@ Large files are only retrieved on demand thanks to *git annex*, decorrelating na
 
 Git ommix also stores a representation of the provenance of each of those entities using the PROV ontology.
 Git ommix allows querying the repository structure, implementing multiple useful operations. These operations can apply to the whole patient's history or be constrained to one or multiple specific objects (sample/data/result/diagnosis)
-- list the objects contributing to the target (the data contributing to a result or to a diagnosis, samples contributing to diagnosiss)
+- list the objects contributing to the target (the data contributing to a result or to a diagnosis, samples contributing to diagnosis)
 - get the most recent version of the target
-- get the PROV-O prevenance of the target, as turtle triplets or as a visual graph
+- get the PROV-O provenance of the target, as turtle triplets or as a visual graph
 - display a timeline of diagnoses
 - execute any sparQL query on a repo
 
@@ -18,9 +18,19 @@ Git ommix allows querying the repository structure, implementing multiple useful
 
 GitOmmix is implemented as a bash script.
 It relies mostly on *git*, but also uses:
-- git annex (https://git-annex.branchable.com/) to handle large files
-- rapper (https://librdf.org/raptor/rapper.html) to manage RDF stores
-- graphviz (https://graphviz.org/) to generate visual representations
+- git annex (https://git-annex.branchable.com/) to handle large files (10.20230926)
+- rapper (https://librdf.org/raptor/rapper.html) to manage RDF stores (2.0.15)
+- roqet (https://librdf.org/rasqal/roqet.html) to query RDF stores (0.9.33)
+- graphviz (https://graphviz.org/) to generate visual representations (2.42.2)
+- bash-completion (https://github.com/scop/bash-completion/) to benefit from autocompletions in bash (2.11)
+
+Git ommix has been tested on ubuntu 22.04.3 LTS (Jammy).  
+Install *raptor2-utils* and *rasqal-utils* to get rapper and roqet.  
+Bash-completion should already be installed, and *graphviz* can also be found on the official repos.  
+However, the version of *git-annex* provided by ubuntu is too old (8) and version 10 should be installed.
+The latest version can be obtained from this repo : http://neuro.debian.net/pkgs/git-annex-standalone.html
+
+OSX users can find all the required dependencies on *homebrew*.
 
 ** Installation
 
