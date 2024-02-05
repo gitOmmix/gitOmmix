@@ -92,7 +92,7 @@ New result files can be a *revision of* previous /<result>/ in the same /<sample
 
 git ommix add diagnosis -p|--patient <patient> --use <result|diagnosis> [--revision_of <diagnosis>] [--invalidate <diagnosis>]
 
-Diagonses live outside of samples and can be used to tie multiple results from diffferent samples into a clinically coherent history
+Diagnoses live outside of samples and can be used to tie multiple results from different samples into a clinically coherent history
 A diagnosis *derives from* (use) a <result> or a previous <diagnosis>
 --use can be specified multiple times to *derive* the new diagnosis *from* multiple /<result>/ or /<diagnosis>/
 A new diagnosis can be a *revision of* a previous /<diagnosis>/ and can also *invalidate* previous /<diagnosis>/
@@ -116,3 +116,59 @@ List all the sample|data|result|diagnosis objects in <patient>
 Multiple [ref] can be provided
 IDs matching multiple objects expand to multiple [ref]
 
+** Get
+
+(nearly) All the get commands accept or even require a [ref]
+As previously, [ref] constrains the result to the context of [ref]
+[ref] can be expressed as a commit hash or an object name (type:id or id)
+Multiple [ref] can be provided
+IDs matching multiple objects expand to multiple [ref]
+
+*** PROV
+
+git ommix get prov -p|--patient <patient> [ref]
+
+Output the RDF graph as turtle triplets
+
+*** Graph
+
+git ommix get graph -p|--patient <patient> [ref]
+
+Output a graphical representation of the RDF graph
+
+*** Timeline
+
+git ommix get timeline -p|--patient <patient> [ref]
+
+Output a graphical representation of clinical history of the patient, omitting samples, data, and results
+
+*** Last
+
+git ommix get last -p|--patient <patient> <ref>
+
+Get the up to date version of the pointed ref, as well as the most recent diagnosis it participates to
+
+*** Object
+
+git ommix get object -p|--patient <patient> <ref>
+
+Checkout the patients' repo at the given object
+
+*** File
+
+git ommix get file -p|--patient <patient> [ref]
+
+List the files added by the given object
+
+*** Log
+
+git ommix get log -p|--patient <patient> [ref]
+
+Print the git log of the patients' repo
+
+*** SPARQL
+
+git ommix get sparql -p|--patient <patient> "SPARQL query"
+
+
+Output the result of the sparql query as turtle triplets
