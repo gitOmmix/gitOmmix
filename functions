@@ -91,7 +91,7 @@ Please check your permissions"
     dbg git annex config --set annex.largefiles "$GIT_OMMIX_LARGE_FILES"
 
     # Rename the default branch to the patient ID
-    dbg git checkout -b "patient|$ID"
+    dbg git checkout -b "patient/$ID"
 
     dbg git add *
 }
@@ -112,7 +112,7 @@ function add_sample
     fi
 
     # Create a new sample branch stemming from the patient branch
-    dbg stash git checkout -b "sample|$ID" "patient|$PATIENT" || die "Sample already exists"
+    dbg stash git checkout -b "sample/$ID" "patient/$PATIENT" || die "Sample already exists"
 }
 
 # Add data
@@ -205,12 +205,12 @@ function add_diagnosis
         dbg stash git checkout "$HASH"
 
         # Remove the diagnosis branch if it existed
-        dbg git branch -D "diagnosis|${NAME/diagnosis:}"
+        dbg git branch -D "diagnosis/${NAME/diagnosis:}"
 
         merges=("$HASH" "${merges[@]}")
     fi
 
-    dbg git checkout -b "diagnosis|$ID"
+    dbg git checkout -b "diagnosis/$ID"
 
     # INVALIDATEs
     if [[ "${#INVALIDATE[@]}" -gt 0 ]]; then
@@ -219,7 +219,7 @@ function add_diagnosis
         local inval
 
         for inval in "${NAME[@]}"; do
-            dbg git branch -D "diagnosis|${inval/diagnosis:}"
+            dbg git branch -D "diagnosis/${inval/diagnosis:}"
         done
     fi
 
@@ -373,13 +373,13 @@ function get_object
 # Print the last commit
 function get_last
 {
-    git branch --list 'diagnosis|*' --list 'sample|*' --format='%(subject)' --contains "${HASHES[@]}"
+    git branch --list 'diagnosis/*' --list 'sample/*' --format='%(subject)' --contains "${HASHES[@]}"
 }
 
 # Print git commit log
 function get_log
 {
-    git log --oneline --graph "${HASHES[@]}"
+    git log --oneline --graph --grep='^\(patient\|sample\|data\|result\|diagnosis\)' "${HASHES[@]}"
 }
 
 # Print the name of the files added by the objects
@@ -399,7 +399,7 @@ $QUERY" -D - -r turtle -q
 function turtle2dottime
 {
     local HEADS=
-    for branch in $(git for-each-ref --format='%(refname)' 'refs/heads/diagnosis|*'); do
+    for branch in $(git for-each-ref --format='%(refname)' 'refs/heads/diagnosis/*'); do
         HEADS="$HEADS|$(git log --format=%s -1 $branch)"
     done
     HEADS="-e s/(^\t\"R(${HEADS:1})\" \[[^]]+)/\1, color = black, style = \"bold, filled\"/"
@@ -430,7 +430,7 @@ function turtle2dottime
 function turtle2dot
 {
     local HEADS=
-    for branch in $(git for-each-ref --format='%(refname)' 'refs/heads/patient|*' 'refs/heads/sample|*' 'refs/heads/diagnosis|*'); do
+    for branch in $(git for-each-ref --format='%(refname)' 'refs/heads/patient/*' 'refs/heads/sample/*' 'refs/heads/diagnosis/*'); do
         HEADS="$HEADS|$(git log --format=%s -1 $branch)"
     done
     HEADS="-e s/(^\t\"R(${HEADS:1})\" \[[^]]+)/\1, color = black, style = \"bold, filled\"/"
@@ -442,12 +442,12 @@ function turtle2dot
     INVALIDATED="-e s/(^\t\"R(${INVALIDATED:1})\" \[[^]]+)/\1, style = \"dashed, filled\"/"
 
     local GRPS=()
-    for group in $(git for-each-ref --format='%(refname:short)' 'refs/heads/sample|*'); do
+    for group in $(git for-each-ref --format='%(refname:short)' 'refs/heads/sample/*'); do
         local COMMITS=
         for commit in $(git log --format=%s $group --invert-grep --grep '^patient'); do
             COMMITS="$COMMITS|$commit"
         done
-        GRPS+=("-e s/(^\t\"R(${COMMITS:1})\" \[[^]]+)/\1, group = \"$group\"/")
+        GRPS+=("-e s/(^\t\"R(${COMMITS:1})\" \[[^]]+)/\1, group = \"${group/sample\/}\"/")
     done
 
     rapper -i turtle - gitommix -eqo dot | \
@@ -496,8 +496,8 @@ Please check your permissions"
 function validate_sample
 {
     [[ "$SAMPLE" ]] || die "Please provide a --sample"
-    dbg git rev-parse --verify "sample|$SAMPLE" || die "sample:$SAMPLE is not a sample of patient:$PATIENT"
-    dbg stash git checkout "sample|$SAMPLE" || die "Something wrong happened, unable to checkout sample|$SAMPLE of patient:$PATIENT"
+    dbg git rev-parse --verify "sample/$SAMPLE" || die "sample:$SAMPLE is not a sample of patient:$PATIENT"
+    dbg stash git checkout "sample/$SAMPLE" || die "Something wrong happened, unable to checkout sample/$SAMPLE of patient:$PATIENT"
 }
 
 # Validate FILES and qualify path
