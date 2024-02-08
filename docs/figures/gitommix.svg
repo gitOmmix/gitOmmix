@@ -1046,7 +1046,8 @@
      inkscape:showpageshadow="2"
      inkscape:deskcolor="#d1d1d1"
      shape-rendering="auto"
-     inkscape:lockguides="false" />
+     inkscape:lockguides="false"
+     inkscape:export-bgcolor="#ffffffff" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -1069,7 +1070,7 @@
        id="path2497"
        d="m 405.60714,61.042167 v 16.612111 m 0,4.028699 v 8.65145"
        style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker2761)"
-       inkscape:export-filename="/home/maxx/Projects/Thèse/Poster StMalo 2020/example.png"
+       inkscape:export-filename="gitommix_use_cases.png"
        inkscape:export-xdpi="90.039284"
        inkscape:export-ydpi="90.039284" />
     <path
