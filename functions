@@ -50,8 +50,8 @@ function add
         diagnosis)
             validate_patient
 
-            # A diagnosis needs to be at least revision_of another diagnosis, or use results or diagnosis,
-            [[ "${#USE[@]}" -gt 0 ]] || [[ "$REVISION_OF" ]] || die "Please --use result|diagnosis or --revision_of diagnosis when adding a diagnosis"
+            # A diagnosis needs to be at least revision_of or invalidate another diagnosis, or use results or diagnosis,
+            [[ "${#USE[@]}" -gt 0 ]] || [[ "$REVISION_OF" ]] || [[ "${#INVALIDATE[@]}" -gt 0 ]] || die "Please --use result|diagnosis or --revision_of|--invalidate diagnosis when adding a diagnosis"
 
             add_diagnosis ;;
 
@@ -217,6 +217,10 @@ function add_diagnosis
         invalidate
 
         local inval
+
+        for inval in "${HASH[@]}"; do
+            merges+=("$inval")
+        done
 
         for inval in "${NAME[@]}"; do
             dbg git branch -D "diagnosis/${inval/diagnosis:}"
@@ -627,6 +631,7 @@ function invalidate
         out_name+=("$NAME")
 
         MESSAGE_ENTITY+="
+:$OBJECT:$ID prov:wasRevisionOf :$NAME .
 :$NAME prov:invalidatedAtTime xsd:dateTime:$DATE ."
 
         if [[ "$METHOD" ]];then
