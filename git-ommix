@@ -12,7 +12,7 @@
 ###############################################################################
 # Use bash "strict mode"
 
-set -uo pipefail
+set -euo pipefail
 IFS=$'\n\t'
 
 ###############################################################################
@@ -20,7 +20,6 @@ IFS=$'\n\t'
 # Load global and local settings if they exist
 
 # Save env variables
-envs=$(env | grep ^GIT_OMMIX)
 
 TEST_OMMIX="${TEST_OMMIX:-}"
 if [[ "$TEST_OMMIX" ]]; then
@@ -28,6 +27,7 @@ if [[ "$TEST_OMMIX" ]]; then
 else
     source /usr/share/git-ommix/functions
 fi
+! envs=$(env | grep ^GIT_OMMIX)
 
 [[ -f "/etc/gitommix.conf" ]] && source "/etc/gitommix.conf"
 [[ -f "$HOME/.config/gitommix.conf" ]] && source "$HOME/.config/gitommix.conf"
@@ -54,7 +54,7 @@ METHOD=
 PATIENT="${PATIENT:-}"
 SAMPLE="${SAMPLE:-}"
 DATE="${DATE:-$(date +'%Y-%m-%dT%H:%M:%S')}"
-ID=$(base64 /dev/urandom | tr --delete "/+=" | head --bytes=10)
+! ID=$(base64 /dev/urandom | tr -d "/+=" | head --bytes=10)
 INVALIDATE=()
 USE=()
 REVISION_OF=

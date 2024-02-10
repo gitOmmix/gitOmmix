@@ -720,7 +720,7 @@ function stash
 {
     git stash push
     "$@"
-    git stash pop
+    ! git stash pop
 }
 
 # Echo colored text
