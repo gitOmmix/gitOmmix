@@ -461,7 +461,7 @@ function turtle2dot
             -e 's/, shape = ellipse, color = blue//' \
             -e 's/label="\w+:/label="/' \
             -e 's/wasDerivedFrom//' \
-            -e 's/(label="wasRevisionOf")/label="", weight = 2, style = dashed/' \
+            -e 's/(label="wasRevisionOf")/label="", weight = 2/' \
             -e 's/(label="(wasGeneratedBy|used|wasAttributedTo|wasAssociatedWith)")/label="", weight = 0, color=gray/' \
             -e 's/(^\t"Rdata:[^"]+" \[[^]]+)/\1, fillcolor = "#9999FF"/' \
             -e 's/(^\t"Rresult:[^"]+" \[[^]]+)/\1, fillcolor = "#99FF99"/' \
