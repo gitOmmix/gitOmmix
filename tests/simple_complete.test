@@ -14,16 +14,16 @@ rm ~/GitOmmix/$PATIENT -rf
 
 git-ommix add patient --id $PATIENT
 
-git-ommix add sample --id sample
-
-git-ommix add data -s sample --id data data
-
-git-ommix add result -s sample --use data --id result result --provider "Bioinformatician <bioinf@hospital>" --method "Bioinformatics"
+export SAMPLE=sample
+git-ommix add sample --id $SAMPLE
+git-ommix add data   --id data data
+git-ommix add result --id result --use data --provider "Bioinformatician <bioinf@hospital>" --method "Bioinformatics" result
 
 echo "a2" > data
 echo "A2" > result
-git-ommix add data -s sample --revision_of data --id data2 data
-git-ommix add result -s sample --revision_of result --invalidate result --use data2 --id result2 result
 
-git-ommix add diagnosis --use result --id diag
-git-ommix add diagnosis --revision_of diag --use result2 --id diag2 --provider "MD <md@hospital>" --method "Clinical_acumen"
+git-ommix add data   --id data2 data     --revision_of data 
+git-ommix add result --id result2 result --revision_of result --invalidate result --use data2 
+
+git-ommix add diagnosis --id diag  --use result 
+git-ommix add diagnosis --id diag2 --revision_of diag --use result2 --provider "MD <md@hospital>" --method "Clinical_acumen"

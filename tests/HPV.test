@@ -21,34 +21,39 @@ rm ~/GitOmmix/$PATIENT -rf
 
 git-ommix add patient --id $PATIENT
 
-git-ommix add sample --id Anal_biopsy
-git-ommix add data -s Anal_biopsy --id Anal_pathology data_anal_path
-git-ommix add result -s Anal_biopsy --use Anal_pathology --method pathology --provider "Badoual <cecile.badoual@aphp.fr>" --id Anal_pathology result_anal_path
-git-ommix add diagnosis --use Anal_pathology --id Anal_carcinoma_T2
+export SAMPLE=Anal_biopsy
+git-ommix add sample    --id $SAMPLE
+git-ommix add data      --id ${SAMPLE}_pathology data_anal_path
+git-ommix add result    --id ${SAMPLE}_pathology --use ${SAMPLE}_pathology --method pathology --provider "Badoual <cecile.badoual@aphp.fr>" result_anal_path
+git-ommix add diagnosis --id Anal_carcinoma_T2   --use ${SAMPLE}_pathology 
 
-git-ommix add data -s Anal_biopsy --id Anal_NGS data_anal_NGS
-git-ommix add result -s Anal_biopsy --use Anal_NGS --method HPV_capture --provider "Veyer <david.veyer@aphp.fr>" --id Anal_NGS result_anal_ngs
-git-ommix add diagnosis --use Anal_NGS --id Anal_carcinoma_T2_HPV --revision_of Anal_carcinoma_T2
+git-ommix add data      --id ${SAMPLE}_NGS data_anal_NGS
+git-ommix add result    --id ${SAMPLE}_NGS         --use ${SAMPLE}_NGS             --method HPV_capture --provider "Veyer <david.veyer@aphp.fr>" result_anal_ngs
+git-ommix add diagnosis --id Anal_carcinoma_T2_HPV --revision_of Anal_carcinoma_T2 --use ${SAMPLE}_NGS 
 
-git-ommix add sample --id blood1
-git-ommix add data -s blood1 --id blood1 data_blood1
-git-ommix add result -s blood1 --use blood1 --method HPV_capture --provider "Veyer <david.veyer@aphp.fr>" --id blood1 result_blood1_HPV
+export SAMPLE=blood1
+git-ommix add sample --id $SAMPLE
+git-ommix add data   --id $SAMPLE data_blood1
+git-ommix add result --id $SAMPLE --use $SAMPLE --method HPV_capture --provider "Veyer <david.veyer@aphp.fr>" result_blood1_HPV
 
-git-ommix add sample --id blood2
-git-ommix add data -s blood2 --id blood2 data_blood2
-git-ommix add result -s blood2 --use blood2 --method HPV_capture --provider "Veyer <david.veyer@aphp.fr>" --id blood2 result_blood2_HPV
+export SAMPLE=blood2
+git-ommix add sample --id $SAMPLE
+git-ommix add data   --id $SAMPLE data_blood2
+git-ommix add result --id $SAMPLE --use $SAMPLE --method HPV_capture --provider "Veyer <david.veyer@aphp.fr>" result_blood2_HPV
 
-git-ommix add sample --id blood3
-git-ommix add data -s blood3 --id blood3 data_blood3
-git-ommix add result -s blood3 --use blood3 --method HPV_capture --provider "Veyer <david.veyer@aphp.fr>" --id blood3 result_blood3_HPV
+export SAMPLE=blood3
+git-ommix add sample --id $SAMPLE
+git-ommix add data   --id $SAMPLE data_blood3
+git-ommix add result --id $SAMPLE --use $SAMPLE --method HPV_capture --provider "Veyer <david.veyer@aphp.fr>" result_blood3_HPV
 
-git-ommix add sample --id Bone_biopsy
-git-ommix add data -s Bone_biopsy --id Bone_pathology data_bone_path
-git-ommix add result -s Bone_biopsy --use Bone_pathology --method pathology --provider "Badoual <cecile.badoual@aphp.fr>" --id Bone_pathology result_bone_path
-git-ommix add diagnosis --use Bone_pathology --id Bone_carcinoma_T1
+export SAMPLE=Bone_biopsy
+git-ommix add sample    --id $SAMPLE
+git-ommix add data      --id ${SAMPLE}_pathology data_bone_path
+git-ommix add result    --id ${SAMPLE}_pathology --use ${SAMPLE}_pathology --method pathology --provider "Badoual <cecile.badoual@aphp.fr>" result_bone_path
+git-ommix add diagnosis --id Bone_carcinoma_T1   --use ${SAMPLE}_pathology 
 
-git-ommix add data -s Bone_biopsy --id Bone_NGS data_bone_NGS
-git-ommix add result -s Bone_biopsy --use Bone_NGS --method HPV_capture --provider "Veyer <david.veyer@aphp.fr>" --id Bone_NGS result_bone_ngs
-git-ommix add diagnosis --use Bone_NGS --use Bone_carcinoma_T1 --revision_of Bone_carcinoma_T1 --revision_of Anal_carcinoma_T2_HPV --invalidate Bone_carcinoma_T1 --id Anal_metastasis_T2M1_HPV 
+git-ommix add data      --id ${SAMPLE}_NGS data_bone_NGS
+git-ommix add result    --id ${SAMPLE}_NGS            --use ${SAMPLE}_NGS                 --method HPV_capture           --provider "Veyer <david.veyer@aphp.fr>" result_bone_ngs
+git-ommix add diagnosis --id Anal_metastasis_T2M1_HPV --revision_of Anal_carcinoma_T2_HPV --invalidate Bone_carcinoma_T1 --use ${SAMPLE}_NGS 
 
-git-ommix add diagnosis --revision_of Anal_metastasis_T2M1_HPV --use blood1 --use blood2 --use blood3 --id HPV_HGAIN_T2N1M1
+git-ommix add diagnosis --id HPV_HGAIN_T2N1M1 --revision_of Anal_metastasis_T2M1_HPV --use blood1 --use blood2 --use blood3 

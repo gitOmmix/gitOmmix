@@ -21,28 +21,32 @@ rm ~/GitOmmix/$PATIENT -rf
 
 git-ommix add patient --id $PATIENT
 
-git-ommix add sample --id b1
-git-ommix add data -s b1 --id b1 data_b1
-git-ommix add result -s b1 --use b1 --id b1 result_b1
-git-ommix add diagnosis --use b1 --id GastricT2
+export SAMPLE=b1
+git-ommix add sample    --id $SAMPLE
+git-ommix add data      --id $SAMPLE data_$SAMPLE
+git-ommix add result    --id $SAMPLE   --use $SAMPLE result_$SAMPLE
+git-ommix add diagnosis --id GastricT2 --use $SAMPLE 
 
-git-ommix add sample --id b2
-git-ommix add data -s b2 --id b2 data_b2
-git-ommix add result -s b2 --use b2 --id b2 result_b2
-git-ommix add diagnosis --use b2 --id LungT1
+export SAMPLE=b2
+git-ommix add sample    --id $SAMPLE
+git-ommix add data      --id $SAMPLE data_$SAMPLE
+git-ommix add result    --id $SAMPLE --use $SAMPLE result_$SAMPLE
+git-ommix add diagnosis --id LungT1  --use $SAMPLE 
 
-git-ommix add sample --id b3
-git-ommix add data -s b3 --id b3 data_b3
-git-ommix add result -s b3 --use b3 --id b3 result_b3
-git-ommix add diagnosis --use b3 --id BoneT1
+export SAMPLE=b3
+git-ommix add sample    --id $SAMPLE
+git-ommix add data      --id $SAMPLE data_$SAMPLE
+git-ommix add result    --id $SAMPLE --use $SAMPLE result_$SAMPLE
+git-ommix add diagnosis --id BoneT1  --use $SAMPLE 
 
-git-ommix add sample --id blood
-git-ommix add data -s blood --id blood data_blood
-git-ommix add result -s blood --use blood --id blood --method ddPCR result_blood
-git-ommix add diagnosis --revision_of LungT1 --use blood --id LungT1N1
-git-ommix add diagnosis --revision_of GastricT2 --use blood --id GastricT2N1
+export SAMPLE=blood
+git-ommix add sample    --id $SAMPLE
+git-ommix add data      --id $SAMPLE data_$SAMPLE
+git-ommix add result    --id $SAMPLE     --use $SAMPLE           --method ddPCR result_$SAMPLE
+git-ommix add diagnosis --id LungT1N1    --revision_of LungT1    --use $SAMPLE 
+git-ommix add diagnosis --id GastricT2N1 --revision_of GastricT2 --use $SAMPLE 
 
 echo "Markers compatible with malignant gastric cells circulating DNA" > result_b3
-git-ommix add result -s b3 --use b3 --id b3_ctDNA result_b3
+git-ommix add result    --id b3_ctDNA --sample b3 --use b3 result_b3
 
-git-ommix add diagnosis --revision_of GastricT2N1 --use b3_ctDNA --use BoneT1 --invalidate BoneT1 --id GastricT2N1M1
+git-ommix add diagnosis --id GastricT2N1M1 --revision_of GastricT2N1 --invalidate BoneT1 --use b3_ctDNA

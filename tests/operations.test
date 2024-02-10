@@ -13,56 +13,56 @@ git-ommix add patient --id $PATIENT
 
 export SAMPLE=simple
 echo "$SAMPLE" > $SAMPLE
-git-ommix add sample --id $SAMPLE
-git-ommix add data --id $SAMPLE $SAMPLE
-git-ommix add result --use $SAMPLE --id $SAMPLE $SAMPLE
-git-ommix add diagnosis --use $SAMPLE --id $SAMPLE
+git-ommix add sample    --id $SAMPLE
+git-ommix add data      --id $SAMPLE $SAMPLE
+git-ommix add result    --id $SAMPLE --use $SAMPLE $SAMPLE
+git-ommix add diagnosis --id $SAMPLE --use $SAMPLE 
 
 export SAMPLE=more
 echo "$SAMPLE" > $SAMPLE
-git-ommix add sample --id $SAMPLE
-git-ommix add data --id $SAMPLE $SAMPLE
-git-ommix add result --use $SAMPLE --id $SAMPLE $SAMPLE
-echo $SAMPLE"2" > $SAMPLE"2"
-git-ommix add data --id $SAMPLE"2" $SAMPLE"2"
-git-ommix add result --use $SAMPLE"2" --id $SAMPLE"2" $SAMPLE"2"
-git-ommix add diagnosis --use $SAMPLE --use $SAMPLE"2" --id $SAMPLE
+git-ommix add sample    --id $SAMPLE
+git-ommix add data      --id $SAMPLE $SAMPLE
+git-ommix add result    --id $SAMPLE      --use $SAMPLE $SAMPLE
+echo "${SAMPLE}2" > "${SAMPLE}2"
+git-ommix add data      --id "${SAMPLE}2" "${SAMPLE}2"
+git-ommix add result    --id "${SAMPLE}2" --use "${SAMPLE}2" "${SAMPLE}2"
+git-ommix add diagnosis --id $SAMPLE      --use $SAMPLE --use "${SAMPLE}2" 
 
 export SAMPLE=update
 echo "$SAMPLE" > $SAMPLE
-git-ommix add sample --id $SAMPLE
-git-ommix add data --id $SAMPLE $SAMPLE
-git-ommix add result --use $SAMPLE --id $SAMPLE $SAMPLE
-echo $SAMPLE"2" > $SAMPLE"2"
-git-ommix add result --use $SAMPLE --revision_of $SAMPLE --invalidate $SAMPLE --method new_analysis --id $SAMPLE"2" $SAMPLE"2"
-git-ommix add diagnosis --use $SAMPLE"2" --id $SAMPLE
+git-ommix add sample    --id $SAMPLE
+git-ommix add data      --id $SAMPLE $SAMPLE
+git-ommix add result    --id $SAMPLE      --use $SAMPLE $SAMPLE
+echo "${SAMPLE}2" > "${SAMPLE}2"
+git-ommix add result    --id "${SAMPLE}2" --invalidate $SAMPLE --use $SAMPLE --method new_analysis "${SAMPLE}2"
+git-ommix add diagnosis --id $SAMPLE      --use "${SAMPLE}2" 
 
 export SAMPLE=original
 echo "$SAMPLE" > $SAMPLE
-git-ommix add sample --id $SAMPLE
-git-ommix add data --id $SAMPLE $SAMPLE
-git-ommix add result --use $SAMPLE --id $SAMPLE $SAMPLE
-git-ommix add diagnosis --use $SAMPLE --id $SAMPLE
+git-ommix add sample    --id $SAMPLE
+git-ommix add data      --id $SAMPLE $SAMPLE
+git-ommix add result    --id $SAMPLE --use $SAMPLE $SAMPLE
+git-ommix add diagnosis --id $SAMPLE --use $SAMPLE 
 
 export SAMPLE=updated
 echo "$SAMPLE" > $SAMPLE
-git-ommix add sample --id $SAMPLE
-git-ommix add data --id $SAMPLE $SAMPLE
-git-ommix add result --use $SAMPLE --id $SAMPLE $SAMPLE
-git-ommix add diagnosis --use $SAMPLE --revision_of original --invalidate original --method updated_interpretation --id $SAMPLE 
+git-ommix add sample    --id $SAMPLE
+git-ommix add data      --id $SAMPLE $SAMPLE
+git-ommix add result    --id $SAMPLE --use $SAMPLE $SAMPLE
+git-ommix add diagnosis --id $SAMPLE --revision_of original --use $SAMPLE --method updated_interpretation 
 
 export SAMPLE=first
 echo "$SAMPLE" > $SAMPLE
-git-ommix add sample --id $SAMPLE
-git-ommix add data --id $SAMPLE $SAMPLE
-git-ommix add result --use $SAMPLE --id $SAMPLE $SAMPLE
-git-ommix add diagnosis --use $SAMPLE --id $SAMPLE
+git-ommix add sample    --id $SAMPLE
+git-ommix add data      --id $SAMPLE $SAMPLE
+git-ommix add result    --id $SAMPLE --use $SAMPLE $SAMPLE
+git-ommix add diagnosis --id $SAMPLE --use $SAMPLE 
 
 export SAMPLE=second
 echo "$SAMPLE" > $SAMPLE
-git-ommix add sample --id $SAMPLE
-git-ommix add data --id $SAMPLE $SAMPLE
-git-ommix add result --use $SAMPLE --id $SAMPLE $SAMPLE
-git-ommix add diagnosis --use $SAMPLE --id $SAMPLE
+git-ommix add sample    --id $SAMPLE
+git-ommix add data      --id $SAMPLE $SAMPLE
+git-ommix add result    --id $SAMPLE --use $SAMPLE $SAMPLE
+git-ommix add diagnosis --id $SAMPLE --use $SAMPLE 
 
-git-ommix add diagnosis --use diagnosis:first --use diagnosis:second --id combined
+git-ommix add diagnosis --id combined --use diagnosis:first --use diagnosis:second 
