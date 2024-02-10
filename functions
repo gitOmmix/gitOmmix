@@ -16,7 +16,7 @@
 # Add dispatch
 function add
 {
-    echo -e "\033[0;32mAdding $OBJECT:$ID\033[0m"
+    clr green "Adding $OBJECT:$ID"
 
     base_prov
 
@@ -60,7 +60,7 @@ function add
 
     commit
 
-    echo -e "\033[0;32mAdded $OBJECT:$ID\033[0m
+    clr green "Added $OBJECT:$ID
 "
 }
 
@@ -687,7 +687,7 @@ $MESSAGE2"
 # Print messages passed as arguments and exit in error
 function die
 {
-    echo -e "\033[0;31m$@\033[0m"
+    clr red "$@"
     exit 2
 }
 
@@ -699,9 +699,9 @@ function dbg
         "$@"
         echo -ne "\033[0m"
     elif [[ "$DEBUG" == "dry" ]];then
-        echo -e "\033[0;34m$@\033[0m"
+        clr blue "$@"
     elif [[ "$DEBUG" == "verbose" ]];then
-        echo -e "\033[0;34m$@\033[0m"
+        clr blue "$@"
         echo -ne "\033[0;30m"
         "$@"
         echo -ne "\033[0m"
@@ -716,6 +716,24 @@ function stash
     git stash push
     "$@"
     git stash pop
+}
+
+# Echo colored text
+function clr
+{
+    local col
+
+    case "$1" in
+        grey) col="30m";;
+        red) col="31m";;
+        green) col="32m";;
+        blue) col="34m";;
+        *) col="m";;
+    esac
+
+    shift
+
+    echo -e "\033[0;$col$@\033[0m"
 }
 
 ###############################################################################
@@ -811,3 +829,4 @@ Run queries on the patient's git ommix store, optionally constrained to the hist
     esac
     exit 0
 }
+
