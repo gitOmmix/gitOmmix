@@ -194,7 +194,7 @@ function add_diagnosis
         # Start merging from the first object used
         dbg stash git checkout "${HASH[0]}"
 
-        merges+=("${HASH[@]}")
+        merges=("${HASH[@]}")
     fi
 
     # REVISION_OF
@@ -385,7 +385,7 @@ function get_log
 # Print the name of the files added by the objects
 function get_file
 {
-    git diff-tree --no-commit-id --name-only "${HASHES[@]}" -r
+    git diff-tree --no-commit-id --name-only -r "${HASHES[@]}"
 }
 
 function get_sparql
@@ -552,9 +552,9 @@ function validate_hashes
     if [[ "${#HASHES[@]}" -gt 0 && "$HASHES" ]];then
         for hash in "${HASHES[@]}";do
             if git log --format=%s --all | grep -E "$hash$" --quiet;then
-                out+=("$(git log --format=%h --all --grep "$hash$")")
+                out+=($(git log --format=%h --all --grep "$hash$"))
             elif git log "$hash" &> /dev/null;then
-                out+=("$(git log --format=%h --max-count=1 "$hash")")
+                out+=($(git log --format=%h --max-count=1 "$hash"))
             else
                 die "$hash is neither the commit hash nor the name of an existing object of patient:$PATIENT"
             fi
