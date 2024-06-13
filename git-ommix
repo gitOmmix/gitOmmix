@@ -306,7 +306,6 @@ function get
 function get_prov
 {
     echo "@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix :     <http://gitommix.org/gitommix#> .
 
@@ -586,7 +585,7 @@ function base_prov
 :$OBJECT:$ID prov:generatedAtTime xsd:dateTime:$DATE .
 :$OBJECT:$ID a prov:Entity .
 :$OBJECT:$ID a :$OBJECT .
-:$OBJECT:$ID foaf:name \"$ID\" ."
+:$OBJECT:$ID rdf:label \"$ID\" ."
 
     if [[ "$PROVIDER" ]];then
         MESSAGE_AGENT+="
