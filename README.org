@@ -18,11 +18,11 @@ Git ommix allows querying the repository structure, implementing multiple useful
 
 GitOmmix is implemented as a bash script.
 It relies mostly on *git*, but also uses:
-- git annex (https://git-annex.branchable.com/) to handle large files (10.20230926)
-- rapper (https://librdf.org/raptor/rapper.html) to manage RDF stores (2.0.15)
-- roqet (https://librdf.org/rasqal/roqet.html) to query RDF stores (0.9.33)
-- graphviz (https://graphviz.org/) to generate visual representations (2.42.2)
-- bash-completion (https://github.com/scop/bash-completion/) to benefit from autocompletions in bash (2.11)
+- [[https://git-annex.branchable.com][git annex]] to handle large files (10.20230926)
+- [[https://librdf.org/raptor/rapper.html][rapper]] to manage RDF stores (2.0.15)
+- [[https://librdf.org/rasqal/roqet.html][roqet]] to query RDF stores (0.9.33)
+- [[https://graphviz.org/][graphviz]] to generate visual representations (2.42.2)
+- [[https://github.com/scop/bash-completion/][bash-completion]] to benefit from autocompletions in bash (2.11)
 
 Git ommix has been tested on ubuntu 22.04.3 LTS (Jammy).  
 Install *raptor2-utils* and *rasqal-utils* to get rapper and roqet.  
@@ -31,14 +31,15 @@ However, the version of *git-annex* provided by ubuntu is too old (8) and versio
 The latest version can be obtained from this repo : http://neuro.debian.net/pkgs/git-annex-standalone.html
 
 OSX users can find all the required dependencies on *homebrew*.
+*gnu-getopt* is an additionnal requirement on OSX as the version of getopt provided by the system is broken.
 
 ** Installation
 
-Run ~sudo make install~ to install git ommix on your computer.
+Run ~install.sh~ to install git ommix on your computer.
 
 ** Running tests
 
-From the root directory of this repository, run ~tests/<name>.test~ to run test *name*.
+Run any of the tests in ~tests/*.test~.
 
 * Operations
 
