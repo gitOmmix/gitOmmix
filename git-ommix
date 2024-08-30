@@ -560,12 +560,13 @@ function validate_hashes
 
     if [[ "${#HASHES[@]}" -gt 0 && "$HASHES" ]];then
         for hash in "${HASHES[@]}";do
-            if git log --format=%s --all | grep -E "$hash$" --quiet;then
-                out+=($(git log --format=%h --all --grep "$hash$"))
+            local name="$(git log --format=%s --all | grep -E ${hash}$)"
+            if [[ $name ]];then
+                out+=($(git log --format=%h --all --grep "${hash}$"))
             elif git log "$hash" &> /dev/null;then
-                out+=($(git log --format=%h --max-count=1 "$hash"))
+                out+=($(git log --format=%h --max-count=1 "${hash}"))
             else
-                die "$hash is neither the commit hash nor the name of an existing object of patient:$PATIENT"
+                die "${hash} is neither the commit hash nor the name of an existing object of patient:$PATIENT"
             fi
         done
         HASHES=("${out[@]}")
