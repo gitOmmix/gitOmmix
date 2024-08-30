@@ -5,3 +5,4 @@ tests/*/
 docs/cite/
 docs/logos/
 docs/supp_data/
+*.docx
