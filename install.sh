@@ -95,8 +95,8 @@ function check_dep_ver
 {
     local version
     if [[ "$3" ]];then
-        # version="$($3 | grep -Pom1 '\d+\.\d+(\.\d+)?')" || return 2
-        echo "$($3 | grep -Pom1 '\d+\.\d+(\.\d+)?')"
+        command -v $1 &>/dev/null || return 1
+        version="$($3 &>/dev/stdout | grep -Pom1 '\d+\.\d+(\.\d+)?')" || return 2
     else
         command -v "$1" &>/dev/null || return 1
         version="$($1 --version | grep -Pom1 '\d+\.\d+(\.\d+)?')" || return 2
