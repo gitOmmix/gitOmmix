@@ -981,7 +981,7 @@ done
 # Replace AUTHOR with PROVIDER if given
 AUTHOR="${PROVIDER:-$GIT_OMMIX_DEFAULT_AUTHOR}"
 PROVIDER="${PROVIDER%% <*}"
-PROVIDER="${PROVIDER/ /_}"
+PROVIDER="${PROVIDER// /_}"
 
 # The remaining arguments will be files when adding data|result
 # or a list of commit hashes or name when listing
