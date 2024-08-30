@@ -17,7 +17,7 @@ echo "Malignant epithelial lung cells" > result_b2
 echo "Circulating DNA matching markers from the gastric and lung cells" > result_blood
 echo "Malignant bone cells" > result_b3
 
-rm ~/GitOmmix/$PATIENT -rf
+rm -rf ~/GitOmmix/$PATIENT
 
 git-ommix add patient --id $PATIENT
 

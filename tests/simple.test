@@ -14,7 +14,7 @@ echo "A" > result_a
 echo "B" > result_b
 echo "C" > result_c
 
-rm ~/GitOmmix/$PATIENT -rf
+rm -rf ~/GitOmmix/$PATIENT
 
 git-ommix add patient --id $PATIENT
 

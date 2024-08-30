@@ -10,7 +10,7 @@ cd "tests/$PATIENT"
 echo "a" > data
 echo "A" > result
 
-rm ~/GitOmmix/$PATIENT -rf
+rm -rf ~/GitOmmix/$PATIENT
 
 git-ommix add patient --id $PATIENT
 

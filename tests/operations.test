@@ -7,7 +7,7 @@ export DEBUG=verbose
 mkdir -p "tests/$PATIENT"
 cd "tests/$PATIENT"
 
-rm ~/GitOmmix/$PATIENT -rf
+rm -rf ~/GitOmmix/$PATIENT
 
 git-ommix add patient --id $PATIENT
 
