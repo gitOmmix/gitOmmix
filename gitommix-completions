@@ -1,32 +1,41 @@
-#!/bin/bash
-
-function _completions
+_git_ommix()
 {
+    # Variables in vanilla bash completion
     #1 : command
     #2 : current word
     #3 : previous word
     #COMP_WORDS = array of words typed after the name of the program
     #COMP_CWORD = index pointing to the word the cursor is at
     #COMP_LINE = the current command line
-    local cur prev words cword
+
+    # helpers to populate cur, prev, words, cword in bash-completion
     # _get_comp_words_by_ref -n : cur
-    _init_completion -n :
+    # _init_completion -n :
+
+    local words cur cword prev
+    words=("${COMP_WORDS[@]}")
+    cur=${words[$COMP_CWORD]}
+    cword=$(( $COMP_CWORD - 1 ))
+    prev=${words[$cword]}
 
     local IFS=$' \t\n'
     local OPTIONS
     local PATIENT
+
     if [[ "$cword" -eq 1 ]];then
         OPTIONS="add list get"
+
     elif [[ "$cword" -eq 2 ]];then
-        local VERB="${words[1]}"
+        local VERB="${words[2]}"
         case $VERB in
             list) OPTIONS="all " ;&
             add) OPTIONS+="patient sample data result diagnosis" ;;
             get) OPTIONS="prov graph timeline last sparql log file object" ;;
         esac
+
     elif [[ "$cword" -gt 2 ]];then
-        local VERB="${words[1]}"
-        local OBJECT="${words[2]}"
+        local VERB="${words[2]}"
+        local OBJECT="${words[3]}"
 
         if [[ "$COMP_LINE" =~ (-p|--patient)[[:space:]]+([^ ]*) ]];then
             PATIENT="${BASH_REMATCH[2]}"
@@ -79,6 +88,8 @@ $(git ommix list diagnosis --patient $PATIENT)"
     COMPREPLY=($(compgen -W "$OPTIONS" -- "$cur"))
 
     __ltrim_colon_completions "$cur"
-}
 
-complete -F _completions git-ommix
+    compopt -o filenames +o nospace ||
+    compgen -f /non-existing-dir/ >/dev/null ||
+    true
+}
