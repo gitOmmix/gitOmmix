@@ -53,26 +53,32 @@ function check_os
 
 function check_deps
 {
+    echo
+    echo "Checking dependencies… "
+
+    local fails=0
     # bash --version : GNU bash, version 5.1.16(1)-release (x86_64-linux-gnu) + lines
-    check_dep bash "5.1.16"
+    check_dep bash "5.1.16" || let fails+=1
     # bash-completion : ${BASH_COMPLETION_VERSINFO[@]} = (2 11)
-    check_dep bash-completion "2.11" "echo ${BASH_COMPLETION_VERSINFO[0]}.${BASH_COMPLETION_VERSINFO[1]}"
+    check_dep "bash completion" "2.11" "echo ${BASH_COMPLETION_VERSINFO[0]}.${BASH_COMPLETION_VERSINFO[1]}" || let fails+=1
     # getopt --version : getopt from|de util-linux 2.37.2
-    check_dep getopt "2.37.2"
+    check_dep getopt "2.37.2" || let fails+=1
     # grep --version : grep (GNU grep) 3.7 + lines
-    check_dep grep "3.7"
+    check_dep grep "3.7" || let fails+=1
     # sed --version : sed (GNU sed) 4.8 + lines
-    check_dep sed "4.8"
+    check_dep sed "4.8" || let fails+=1
     # git --version : git version 2.34.1
-    check_dep git "2.34.1"
+    check_dep git "2.34.1" || let fails+=1
     # git-annex version : git-annex version: 10.20231227-...... + lines
-    check_dep git-annex "10.20231227" "git-annex version"
+    check_dep git-annex "10.20231227" "git-annex version" || let fails+=1
     # rapper --version : 2.0.15
-    check_dep rapper "2.0.15"
+    check_dep rapper "2.0.15" || let fails+=1
     # roqet --version : 0.9.33
-    check_dep roqet "0.9.33"
+    check_dep roqet "0.9.33" || let fails+=1
     # dot -V : dot - graphviz version 2.43.0 (0)
-    check_dep dot "2.43.0" "dot -V 2&>/dev/stdout"
+    check_dep dot "2.43.0" "dot -V" || let fails+=1
+
+    (( $fails == 0 )) || exit 1
 }
 
 # program verson_arg version_pattern
