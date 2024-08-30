@@ -138,18 +138,24 @@ function semver
     return 0
 }
 
-function install
+function install_gitommix
 {
-	@echo "Installing git ommix !"
-	install -m755 git-ommix /usr/local/bin/git-ommix
-	install -m644 example.conf /etc/gitommix.conf
+    echo
+    echo "Installing git ommix !"
 
-	[ -d /usr/local/share/bash-completion/completions ] && install -m644 gitommix-completions /usr/local/share/bash-completion/completions/git-ommix
+    install -m755 git-ommix /usr/local/bin/git-ommix
+    install -m644 example.conf /etc/gitommix.conf
+
+    [ -d /usr/local/share/bash-completion/completions ] && install -m644 gitommix-completions /usr/local/share/bash-completion/completions/git-ommix
+    [ -d /usr/share/bash-completion/completions ] && install -m644 gitommix-completions /usr/share/bash-completion/completions/git-ommix
 }
 
-function uninstall
+function uninstall_gitommix
 {
-	@echo "Uninstalling…"
-	rm -rf /usr/local/bin/git-ommix
-	[ -d /usr/local/share/bash-completion/completions ] && rm -rf /usr/local/share/bash-completion/completions/git-ommix
+    echo
+    echo "Uninstalling…"
+
+    rm -rf /usr/local/bin/git-ommix
+    [ -d /usr/local/share/bash-completion/completions ] && rm -rf /usr/local/share/bash-completion/completions/git-ommix
+    [ -d /usr/share/bash-completion/completions ] && rm -rf /usr/share/bash-completion/completions/git-ommix
 }
