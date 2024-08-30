@@ -111,9 +111,9 @@ function check_dep_ver
 function semver
 {
     local major1
-    local major1
     local minor1
-    local patch2
+    local patch1
+    local major2
     local minor2
     local patch2
 
