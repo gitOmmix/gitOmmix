@@ -1,50 +1,64 @@
-Git ommix helps managing high-dimensional data (eg: omics, imagery, pathology) in a longitudinal manner, coupled to a representation of the provenance using the PROV ontology.
+git ommix helps managing large data (eg: omics, imagery, pathology) in a longitudinal manner, coupled to a representation of the provenance using the PROV ontology.
 
-Git ommix creates patient-level repositories to store sample references, versionned data obtained from the samples, and the versionned result of the data analysis and ensuing diagnoses.
+git ommix creates patient-level repositories to store sample references, versionned data obtained from the samples, and the versionned result of the data analysis and ensuing diagnoses.
 
 Large files are only retrieved on demand thanks to *git annex*, decorrelating navigating the history from actually downloading all of it.
 
-Git ommix also stores a representation of the provenance of each of those entities using the PROV ontology.
-Git ommix allows querying the repository structure, implementing multiple useful operations. These operations can apply to the whole patient's history or be constrained to one or multiple specific objects (sample/data/result/diagnosis)
+git ommix also stores a representation of the provenance of each of those entities using the PROV ontology.\\
+git ommix allows querying the repository structure, implementing multiple useful operations. These operations can apply to the whole patient's history or be constrained to one or multiple specific objects (sample/data/result/diagnosis)
 - list the objects contributing to the target (the data contributing to a result or to a diagnosis, samples contributing to diagnosis)
 - get the most recent version of the target
-- get the PROV-O provenance of the target, as turtle triplets or as a visual graph
+- get the PROV-O provenance of the target, as turtle triples or as a visual graph
 - display a timeline of diagnoses
-- execute any sparQL query on a repo
+- execute any SPARQL query on a repo
+
 
 * Installation
 
 ** Requirements
 
-GitOmmix is implemented as a bash script.
+git ommix is implemented as a bash script.\\
 It relies mostly on *git*, but also uses:
 - [[https://git-annex.branchable.com][git annex]] to handle large files (10.20230926)
 - [[https://librdf.org/raptor/rapper.html][rapper]] to manage RDF stores (2.0.15)
 - [[https://librdf.org/rasqal/roqet.html][roqet]] to query RDF stores (0.9.33)
 - [[https://graphviz.org/][graphviz]] to generate visual representations (2.42.2)
-- [[https://github.com/scop/bash-completion/][bash-completion]] to benefit from autocompletions in bash (2.11)
+- [[https://github.com/scop/bash-completion/][bash-completion]] to benefit from auto-completions in bash (2.11)
 
-Git ommix has been tested on ubuntu 22.04.3 LTS (Jammy).  
-Install *raptor2-utils* and *rasqal-utils* to get rapper and roqet.  
-Bash-completion should already be installed, and *graphviz* can also be found on the official repos.  
-However, the version of *git-annex* provided by ubuntu is too old (8) and version 10 should be installed.
-The latest version can be obtained from this repo : http://neuro.debian.net/pkgs/git-annex-standalone.html
+git ommix has been tested on ubuntu 24.04.1 LTS.
 
-OSX users can find all the required dependencies on *homebrew*.
-*gnu-getopt* is an additionnal requirement on OSX as the version of getopt provided by the system is broken.
+#+begin_src sh
+sudo apt-get install git-annex graphviz raptor2-utils rasqal-utils
+#+end_src
+
+OSX users can find all the required dependencies on *homebrew*.\\
+*gnu-getopt* is an additional requirement on OSX as the version of getopt provided by the system is broken.
+
+#+begin_src sh
+brew install git-annex graphviz raptor rasqal gnu-getopt
+#+end_src
 
 ** Installation
 
-Run ~install.sh~ to install git ommix on your computer.
+~./install.sh~ checks all dependencies and installs git ommix\\
+Admin privileges are required
+
+~./install.sh uninstall~ uninstalls git ommix
 
 ** Running tests
 
-Run any of the tests in ~tests/*.test~.
+git ommix comes with test examples, implemented as sequences of git ommix calls.\\
+Execute any of the ~*.test~ files in ~tests/~ to generate the git ommix repository for that example.
 
 * Operations
 
-The git ommix commands all follow the same pattern : git ommix {verb} {object} [--options] [--message] [rest]
-git ommix does not have to and should not be called from the git ommix store
+The git ommix commands all follow the same pattern:
+
+#+begin_src sh
+git ommix {verb} {object} [--options] [--message] [rest]
+#+end_src
+
+git ommix does not have to and should not be called from the git ommix store\\
 git ommix can be run from any directory containing files to add to a patient's history
 
 ** Add
@@ -52,124 +66,165 @@ git ommix can be run from any directory containing files to add to a patient's h
 Group of operations used to create the patients stores.
 
 All operations accept these options:
+- ~--id~ the new object's id if needs to be provided, or a randomly generated id
+- ~--method~ an optionnal PROV Activity used to generate the new object
+- ~--provider~ an optionnal PROV Agent involved in generating the new object
+- ~--date~ the date of creation of the object, defaults to the current date
 
---id the new object's id if needs to be provided, or a randomly generated id
---method an optionnal PROV Activity used to generate the new object
---provider an optionnal PROV Agent involved in generating the new object
---date the date of creation ef the object, defaults to the current date
 
 *** Patient
 
+#+begin_src sh
 git ommix add patient
+#+end_src
 
 *** Sample
 
+#+begin_src sh
 git ommix add sample -p|--patient <patient>
+#+end_src
 
 Add a sample to /<patient>/
 
 *** Data
 
+#+begin_src sh
 git ommix add data -p|--patient <patient> -s|--sample <sample> [--revision_of <data>] [--invalidate <data>] [FILES]
+#+end_src
 
-Add [FILES] to a data object in /<sample>/ of /<patient>/
-FILES defaults to all the files in the current directory
-All data in a sample *derive from* (use) the /<sample>/
-New data files can be a *revision of* previous /<data>/ in the same /<sample>/, and can also *invalidate* previous /<data>/ in the same /<sample>/
---invalidate can be specified multiple times to *invalidate* multiple /<data>/ in the same /<sample>/ with the new data
+Add [FILES] to a data object in /<sample>/ of /<patient>/ \\
+FILES defaults to all the files in the current directory\\
+All data in a sample *derive from* (use) the /<sample>/ \\
+New data files can be a *revision of* previous /<data>/ in the same /<sample>/, and can also *invalidate* previous /<data>/ in the same /<sample>/ \\
+~--invalidate~ can be specified multiple times to *invalidate* multiple /<data>/ in the same /<sample>/ with the new data
 
 *** Result
 
+#+begin_src sh
 git ommix add result -p|--patient <patient> -s|--sample <sample> --use <data> [--revision_of <result>] [--invalidate <result>] [FILES]
+#+end_src
 
-Add [FILES] to a result object in /<sample>/ of /<patient>/
-FILES defaults to all the files in the current directory
-A result *derives from* (use) /<data>/ in the same /<sample>/
---use can be specified multiple times to *derive* the new result *from* multiple /<data>/ in the same /<sample>/
-New result files can be a *revision of* previous /<result>/ in the same /<sample>/, and can also *invalidate* previous /<result>/ in the same /<sample>/
---invalidate can be specified multiple times to *invalidate* multiple /<result>/ in the same /<sample>/ with the new result
+Add [FILES] to a result object in /<sample>/ of /<patient>/ \\
+FILES defaults to all the files in the current directory\\
+A result *derives from* (~--use~) /<data>/ in the same /<sample>/ \\
+~--use~ can be specified multiple times to *derive* the new result *from* multiple /<data>/ in the same /<sample>/ \\
+New result files can be a *revision of* (~--revision_of~) previous /<result>/ in the same /<sample>/, and can also *invalidate* previous /<result>/ in the same /<sample>/ \\
+~--invalidate~ can be specified multiple times to *invalidate* multiple /<result>/ in the same /<sample>/ with the new result
 
 *** Diagnosis
 
+#+begin_src sh
 git ommix add diagnosis -p|--patient <patient> --use <result|diagnosis> [--revision_of <diagnosis>] [--invalidate <diagnosis>]
+#+end_src
 
-Diagnoses live outside of samples and can be used to tie multiple results from different samples into a clinically coherent history
-A diagnosis *derives from* (use) a <result> or a previous <diagnosis>
---use can be specified multiple times to *derive* the new diagnosis *from* multiple /<result>/ or /<diagnosis>/
-A new diagnosis can be a *revision of* a previous /<diagnosis>/ and can also *invalidate* previous /<diagnosis>/
---invalidate can be specified multiple times to *invalidate* multiple /<diagnosis>/ with the new diagnosis
+Diagnoses live outside of samples and can be used to tie multiple results from different samples into a clinically coherent history\\
+A diagnosis *derives from* (~--use~) a /<result>/ or a previous /<diagnosis>/ \\
+~--use~ can be specified multiple times to *derive* the new diagnosis *from* multiple /<result>/ or /<diagnosis>/ \\
+A new diagnosis can be a *revision of* (~--revision_of~) a previous /<diagnosis>/ and can also *invalidate* previous /<diagnosis>/ \\
+~--invalidate~ can be specified multiple times to *invalidate* multiple /<diagnosis>/ with the new diagnosis
 
 ** List
 
 *** Patient
 
+#+begin_src sh
 git ommix list patient
+#+end_src
 
 List all the patients known in the local store
 
 *** Sample/Data/Result/Diagnosis
 
+#+begin_src sh
 git ommix list sample|data|result|diagnosis -p|--patient <patient> [ref]
+#+end_src
 
-List all the sample|data|result|diagnosis objects in <patient>
-[ref] limits the list to the history of [ref]
-[ref] can be expressed as a commit hash or an object name (type:id or id)
-Multiple [ref] can be provided
+List all the sample|data|result|diagnosis objects in /<patient>/ \\
+[ref] limits the list to the history of [ref] \\
+[ref] can be expressed as a commit hash or an object name (type:id or id) \\
+Multiple [ref] can be provided\\
 IDs matching multiple objects expand to multiple [ref]
 
 ** Get
 
-(nearly) All the get commands accept or even require a [ref]
-As previously, [ref] constrains the result to the context of [ref]
-[ref] can be expressed as a commit hash or an object name (type:id or id)
-Multiple [ref] can be provided
+(nearly) All the get commands accept or even require a [ref] \\
+As previously, [ref] constrains the result to the context of [ref] \\
+[ref] can be expressed as a commit hash or an object name (type:id or id) \\
+Multiple [ref] can be provided\\
 IDs matching multiple objects expand to multiple [ref]
 
 *** PROV
 
+#+begin_src sh
 git ommix get prov -p|--patient <patient> [ref]
+#+end_src
 
-Output the RDF graph as turtle triplets
+Output the RDF graph as turtle triples
 
 *** Graph
 
+#+begin_src sh
 git ommix get graph -p|--patient <patient> [ref]
+#+end_src
 
 Output a graphical representation of the RDF graph
 
+By default this command and the next output directly on screen on x11 systems. This can be configured with the ~GIT_OMMIX_DEFAULT_DOT_OUTPUT~ variable in *gitommix.conf*.
+
+The output type (see https://graphviz.org/docs/outputs for the complete list) can also be set with the ~-o~ option.
+
+Note that if the format is a file format, the output has to be redirected to a file, or piped to a display or editor program.
+
+#+begin_src sh
+git ommix get graph -p|--patient <patient> -o png [ref] > graph.png
+git ommix get graph -p|--patient <patient> -o png [ref] | display
+#+end_src
+
 *** Timeline
 
+#+begin_src sh
 git ommix get timeline -p|--patient <patient> [ref]
+#+end_src
 
 Output a graphical representation of clinical history of the patient, omitting samples, data, and results
 
 *** Last
 
+#+begin_src sh
 git ommix get last -p|--patient <patient> <ref>
+#+end_src
 
 Get the up to date version of the pointed ref, as well as the most recent diagnosis it participates to
 
 *** Object
 
+#+begin_src sh
 git ommix get object -p|--patient <patient> <ref>
+#+end_src
 
-Checkout the patients' repo at the given object
+Checkout the patient's repo at the given ref
 
 *** File
 
-git ommix get file -p|--patient <patient> [ref]
+#+begin_src sh
+git ommix get file -p|--patient <patient> <ref>
+#+end_src
 
-List the files added by the given object
+List the files added by the given ref
 
 *** Log
 
+#+begin_src sh
 git ommix get log -p|--patient <patient> [ref]
+#+end_src
 
 Print the git log of the patients' repo
 
 *** SPARQL
 
+#+begin_src sh
 git ommix get sparql -p|--patient <patient> "SPARQL query"
+#+end_src
 
 
-Output the result of the sparql query as turtle triplets
+Output the result of the SPARQL query as turtle triples
