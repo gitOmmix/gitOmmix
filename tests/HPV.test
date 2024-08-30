@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-export PATIENT=HPV
+export PATIENT=clinical_case
 export DEBUG=verbose
 
 mkdir -p "tests/$PATIENT"
@@ -24,36 +24,55 @@ git-ommix add patient --id $PATIENT
 export SAMPLE=Anal_biopsy
 git-ommix add sample    --id $SAMPLE
 git-ommix add data      --id ${SAMPLE}_pathology data_anal_path
-git-ommix add result    --id ${SAMPLE}_pathology --use ${SAMPLE}_pathology --method pathology --provider "Badoual <cecile.badoual@aphp.fr>" result_anal_path
-git-ommix add diagnosis --id Anal_carcinoma_T2   --use ${SAMPLE}_pathology 
+git-ommix add result    --id ${SAMPLE}_pathology --use ${SAMPLE}_pathology --method pathology   --provider "Dept of Pathology <pathology@aphp.fr>" result_anal_path
 
-git-ommix add data      --id ${SAMPLE}_NGS data_anal_NGS
-git-ommix add result    --id ${SAMPLE}_NGS         --use ${SAMPLE}_NGS             --method HPV_capture --provider "Veyer <david.veyer@aphp.fr>" result_anal_ngs
-git-ommix add diagnosis --id Anal_carcinoma_T2_HPV --revision_of Anal_carcinoma_T2 --use ${SAMPLE}_NGS 
+git-ommix add data      --id ${SAMPLE}_PCR data_anal_PCR
+git-ommix add result    --id ${SAMPLE}_PCR       --use ${SAMPLE}_PCR       --method HPV_PCR --provider "Dept of Virology <virology@aphp.fr>" result_anal_pcr
+git-ommix add diagnosis --id HPV_HGAIN --use ${SAMPLE}_pathology --use ${SAMPLE}_PCR
+
+export SAMPLE=HGAIN_resection
+git-ommix add sample --id $SAMPLE
+git-ommix add data   --id ${SAMPLE}_pathology
+git-ommix add result --id ${SAMPLE}_pathology --use ${SAMPLE}_pathology --method pathology --provider "Dept of Pathology <pathology@aphp.fr>" 
+git-ommix add diagnosis --id HPV_HGAIN_T1N0M0 --revision_of HPV_HGAIN --use ${SAMPLE}_pathology 
 
 export SAMPLE=blood1
 git-ommix add sample --id $SAMPLE
 git-ommix add data   --id $SAMPLE data_blood1
-git-ommix add result --id $SAMPLE --use $SAMPLE --method HPV_capture --provider "Veyer <david.veyer@aphp.fr>" result_blood1_HPV
+git-ommix add result --id $SAMPLE --use $SAMPLE --method HPV16_ddPCR --provider "Dept of Virology <virology@aphp.fr>" result_blood1_HPV
 
 export SAMPLE=blood2
 git-ommix add sample --id $SAMPLE
 git-ommix add data   --id $SAMPLE data_blood2
-git-ommix add result --id $SAMPLE --use $SAMPLE --method HPV_capture --provider "Veyer <david.veyer@aphp.fr>" result_blood2_HPV
+git-ommix add result --id $SAMPLE --use $SAMPLE --method HPV16_ddPCR --provider "Dept of Virology <virology@aphp.fr>" result_blood2_HPV
 
 export SAMPLE=blood3
 git-ommix add sample --id $SAMPLE
 git-ommix add data   --id $SAMPLE data_blood3
-git-ommix add result --id $SAMPLE --use $SAMPLE --method HPV_capture --provider "Veyer <david.veyer@aphp.fr>" result_blood3_HPV
+git-ommix add result --id $SAMPLE --use $SAMPLE --method HPV16_ddPCR --provider "Dept of Virology <virology@aphp.fr>" result_blood3_HPV
 
 export SAMPLE=Bone_biopsy
 git-ommix add sample    --id $SAMPLE
 git-ommix add data      --id ${SAMPLE}_pathology data_bone_path
-git-ommix add result    --id ${SAMPLE}_pathology --use ${SAMPLE}_pathology --method pathology --provider "Badoual <cecile.badoual@aphp.fr>" result_bone_path
-git-ommix add diagnosis --id Bone_carcinoma_T1   --use ${SAMPLE}_pathology 
+git-ommix add result    --id ${SAMPLE}_pathology --use ${SAMPLE}_pathology --method pathology --provider "Dept of Pathology <pathology@aphp.fr>" result_bone_path
+git-ommix add diagnosis --id "SCC_T_N_M1" --use ${SAMPLE}_pathology
 
-git-ommix add data      --id ${SAMPLE}_NGS data_bone_NGS
-git-ommix add result    --id ${SAMPLE}_NGS            --use ${SAMPLE}_NGS                 --method HPV_capture           --provider "Veyer <david.veyer@aphp.fr>" result_bone_ngs
-git-ommix add diagnosis --id Anal_metastasis_T2M1_HPV --revision_of Anal_carcinoma_T2_HPV --invalidate Bone_carcinoma_T1 --use ${SAMPLE}_NGS 
+git-ommix add data      --id ${SAMPLE}_PCR data_bone_PCR
+git-ommix add result    --id ${SAMPLE}_PCR            --use ${SAMPLE}_PCR                 --method HPV_PCR           --provider "Dept of Virology <virology@aphp.fr>" result_bone_pcr
+git-ommix add diagnosis --id "HPV_SCC_T1N0M1" --revision_of "HPV_HGAIN_T1N0M0" --invalidate "SCC_T_N_M1" --use ${SAMPLE}_PCR 
 
-git-ommix add diagnosis --id HPV_HGAIN_T2N1M1 --revision_of Anal_metastasis_T2M1_HPV --use blood1 --use blood2 --use blood3 
+git-ommix add diagnosis --id "HPV_SCC_T1N1M1" --revision_of "HPV_SCC_T1N0M1" --use blood1 --use blood2 --use blood3
+
+export SAMPLE=Anal_biopsy
+git-ommix add data      --id ${SAMPLE}_capture data_anal_capture
+git-ommix add result    --id ${SAMPLE}_capture   --use ${SAMPLE}_capture --method HPV_capture --provider "Dept of Virology <virology@aphp.fr>" result_anal_capture
+
+export SAMPLE=blood3
+git-ommix add data   --id ${SAMPLE}_capture data_capture_blood3
+git-ommix add result --id ${SAMPLE}_capture --use ${SAMPLE}_capture --method HPV_capture --provider "Dept of Virology <virology@aphp.fr>" result_capture_blood3
+
+export SAMPLE=Bone_biopsy
+git-ommix add data   --id ${SAMPLE}_capture data_capture_bone
+git-ommix add result --id ${SAMPLE}_capture --use ${SAMPLE}_capture --method HPV_capture --provider "Dept of Virology <virology@aphp.fr>" result_capture_bone
+
+git-ommix add diagnosis --id "HPV16_Qv18158E_SCC_T1N1M1" --revision_of "HPV_SCC_T1N1M1" --use Anal_biopsy_capture --use blood3_capture --use Bone_biopsy_capture 
