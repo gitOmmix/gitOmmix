@@ -165,3 +165,10 @@ function uninstall_gitommix
     [ -d /usr/local/share/bash-completion/completions ] && rm -rf /usr/local/share/bash-completion/completions/git-ommix
     [ -d /usr/share/bash-completion/completions ] && rm -rf /usr/share/bash-completion/completions/git-ommix
 }
+
+if [[ "$1" = "uninstall" ]]; then
+    uninstall_gitommix
+else
+    check
+    install_gitommix
+fi
