@@ -2,12 +2,7 @@
 
 # set -euo pipefail
 
-function die
-{
-    clr red "$@"
-    exit 2
-}
-
+# {grey|red|green|blue}
 function clr
 {
     local col
@@ -22,19 +17,19 @@ function clr
 
     shift
 
-    echo -e "\033[0;$col$@\033[0m"
+    echo -ne "\033[0;$col$@\033[0m"
 }
 
-# status_code {0=pass,1=fail} text
+# {0=pass|1=fail, text}
 function status
 {
     echo -n "[ "
-    if [[ "$1" == "0" ]];then
-        echo -ne "\033[0;32mPASS" 
+    if [[ "$1" == "pass" ]];then
+        clr green "PASS"
     else
-        echo -ne "\033[0;31mFAIL" 
+        clr red "FAIL"
     fi
-    echo -e "\0033[0m ] $2"
+    echo " ] $2"
 }
 
 function check
@@ -45,12 +40,14 @@ function check
 
 function check_os
 {
-    echo -n "Checking system… "
-    localos=$(uname -s)
+    echo
+    echo "Checking system… "
+
+    local localos=$(uname -s)
     case $localos in
-        Linux*) clr green "Linux";;
-        Darwin*) clr green "OSX";;
-        *) clr red "$localos is not supported"; exit 2 ;;
+        Linux*) status pass "Linux";;
+        Darwin*) status pass "OSX";;
+        *) status fail "$localos is not supported"; exit 1;;
     esac
 }
 
@@ -82,13 +79,14 @@ function check_deps
 function check_dep
 {
     if check_dep_ver $1 $2 "$3";then
-        status 0 "$1 version $2"
+        status pass "$1 version $2"
     else
         case $? in
-            1) status 1 "$1 not found"; return 1 ;;
-            2) status 1 "$1 seems to exist but did not behave as excepted"; return 1;;
-            3) status 1 "$1 needs to be at least version $2"; return 1;;
+            1) status fail "$1 not found";;
+            2) status fail "$1 seems to exist but did not behave as excepted";;
+            3) status fail "$1 needs to be at least version $2";;
         esac
+        return 1
     fi
 }
 
