@@ -305,7 +305,8 @@ function get
 # It is the concatenation of all commit messages (without the subject line)
 function get_prov
 {
-    echo "@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+    echo "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix :     <http://gitommix.org/gitommix#> .
 
@@ -585,7 +586,7 @@ function base_prov
 :$OBJECT:$ID prov:generatedAtTime xsd:dateTime:$DATE .
 :$OBJECT:$ID a prov:Entity .
 :$OBJECT:$ID a :$OBJECT .
-:$OBJECT:$ID rdf:label \"$ID\" ."
+:$OBJECT:$ID rdfs:label \"$ID\" ."
 
     if [[ "$PROVIDER" ]];then
         MESSAGE_AGENT+="
