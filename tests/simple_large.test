@@ -8,8 +8,8 @@ export GIT_OMMIX_LARGE_FILES='largerthan=1Mb'
 mkdir -p "tests/$PATIENT"
 cd "tests/$PATIENT"
 
-base64 /dev/urandom | head -c 10MiB > data_a
-base64 /dev/urandom | head -c 10MiB > data_b
+base64 -i /dev/urandom | head -c 10MiB > data_a
+base64 -i /dev/urandom | head -c 10MiB > data_b
 echo "c" > data_c
 echo "A" > result_a
 echo "B" > result_b
@@ -34,7 +34,7 @@ git-ommix add sample --id $SAMPLE
 git-ommix add data   --id $SAMPLE data_$SAMPLE
 git-ommix add result --id $SAMPLE --use $SAMPLE result_$SAMPLE
 
-base64 /dev/urandom | head -c 10MiB > data_a
+base64 -i /dev/urandom | head -c 10MiB > data_a
 echo "A2" > result_a
 
 git-ommix add data   --id a2 --sample a --revision_of a data_a
