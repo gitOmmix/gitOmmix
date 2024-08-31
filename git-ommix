@@ -350,7 +350,7 @@ UNION
 }"
     get_sparql | \
         turtle2dot | \
-        dot -Tx11
+        dot -T$DOTOUT
 }
 
 function get_timeline
@@ -370,7 +370,7 @@ function get_timeline
 
     get_sparql | \
         turtle2dottime | \
-        dot -Tx11
+        dot -T$DOTOUT
 }
 
 function get_object
@@ -774,9 +774,11 @@ Git ommix can be configured system-wide with /etc/gitommix.conf,
 per user with \$XDG_CONFIG/.gitommix
 or with environment variables:
 
-- GIT_OMMIX_REPO_DIR : place to find patient repos (default: ~/GitOmmix/)
-- GIT_OMMIX_LARGE_FILES : git ommix rules for large files (default: largerthan=100Mb and (include=data/* or include=results/*))
-- GIT_OMMIX_DEFAULT_AUTHOR : set a default commit author (default: gitommix <gitommix>)" ;;
+- GIT_OMMIX_REPO_DIR: place to find patient repos (default: ~/GitOmmix/)
+- GIT_OMMIX_LARGE_FILES: git ommix rules for large files (default: largerthan=100Mb and (include=data/* or include=results/*))
+- GIT_OMMIX_DEFAULT_AUTHOR: set a default commit author (default: gitommix <gitommix>)
+- GIT_OMMIX_DEFAULT_DOT_OUTPUT: set the default dot output format (default: x11, works only on linux or if x11 is installed on OSX)" ;;
+
         add)
             echo "git ommix add <object> [--options] [--message] [FILES]
 
@@ -836,7 +838,13 @@ Run queries on the patient's git ommix store, optionally constrained to the hist
 - object: checkout the patient repo at the time of the addition of the object
 - log: get the git log of the repo
 - file: get the list of files added by an object
-- sparql: execute an arbitrary SPARQL query" ;;
+- sparql: execute an arbitrary SPARQL query
+
+The -o option can be used to specify the graphical output format for 'graph' and 'timeline'.
+It accepts the value documented at https://graphviz.org/docs/outputs (bmp, eps, svg, png, etc.).
+By default the output is x11 and displays directly on screen on x11 systems.
+When using a file format output, either redirect to write to a file (-o png > figure.png),
+or pipe to a displaying command such as imagemagick's 'display'." ;;
     esac
     exit 0
 }
@@ -870,6 +878,7 @@ shift 2
 # Default values
 PROVIDER="${PROVIDER:-}"
 METHOD=
+DOTOUT=
 PATIENT="${PATIENT:-}"
 SAMPLE="${SAMPLE:-}"
 DATE="${DATE:-$(date +'%Y-%m-%dT%H:%M:%S')}"
@@ -901,7 +910,7 @@ NAME=()
 ! getopt --test > /dev/null
 [[ ${PIPESTATUS[0]} -eq 4 ]] || die 'I’m sorry, `getopt --test` failed in this environment.'
 
-OPTIONS=p:s:m:dv
+OPTIONS=p:s:m:o:dv
 LONGOPTS=provider:,method:,patient:,sample:,date:,id:,invalidate:,use:,revision_of:,message:,debug,dry,verbose
 
 ! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "git-ommix" -- "$@")
@@ -930,6 +939,10 @@ while true; do
             ;;
         -s|--sample)
             SAMPLE="$2"
+            shift 2
+            ;;
+        -o)
+            DOTOUT="$2"
             shift 2
             ;;
         --date)
@@ -984,6 +997,9 @@ AUTHOR="${PROVIDER:-$GIT_OMMIX_DEFAULT_AUTHOR}"
 PROVIDER="${PROVIDER%% <*}"
 PROVIDER="${PROVIDER// /_}"
 
+# Use default dot output format if absent
+DOTOUT="${DOTOUT:-$GIT_OMMIX_DEFAULT_DOT_OUTPUT}"
+
 # The remaining arguments will be files when adding data|result
 # or a list of commit hashes or name when listing
 # If no file is given, use '*'
@@ -1010,6 +1026,7 @@ Revision_of: $REVISION_OF
 Message: $MESSAGE2
 Files: ${FILES[@]}
 Hashes: ${HASHES[@]}
+Dot output: $DOTOUT
 "
 
 ###############################################################################
