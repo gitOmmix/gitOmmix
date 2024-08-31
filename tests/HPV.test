@@ -8,14 +8,29 @@ mkdir -p "tests/$PATIENT"
 cd "tests/$PATIENT"
 
 echo "Anal biopsy" > data_anal_path
-echo "Lung biopsy" > data_b2
-echo "Blood sample" > data_blood
-echo "Bone biopsy" > data_b3
+echo "Multiplex HPV PCR" > data_anal_PCR
+echo "HGAIN resection digital pathology images" > data_hgain_path
+echo "HPV16 ctDNA ddPCR" > data_blood1
+echo "HPV16 ctDNA ddPCR" > data_blood2
+echo "HPV16 ctDNA ddPCR" > data_blood3
+echo "Bone biopsy digital pathology images" > data_bone_path
+echo "Multiplex HPV PCR" > data_bone_PCR
 
 echo "Malignant anal epithelial cells" > result_anal_path
-echo "Malignant epithelial lung cells" > result_b2
-echo "Circulating DNA matching markers from the gastric and lung cells" > result_blood
-echo "Malignant bone cells" > result_b3
+echo "HPV16, HPV11, and HPV6 positive" > result_anal_pcr
+echo "Confirmed HGAIN, with free resection margins" > result_hgain_path
+echo "HPV16 ctDNA positive" > result_blood1_HPV
+echo "HPV16 ctDNA positive" > result_blood2_HPV
+echo "HPV16 ctDNA positive" > result_blood3_HPV
+echo "Malignant bone cells" > result_bone_path
+echo "HPV16 positive" > result_bone_pcr
+
+echo "HPV capture sequencing data" > data_capture_bone
+echo "HPV genotyping: HPV16_Qv18158E" > result_capture_bone
+echo "HPV capture sequencing data" > data_capture_blood3
+echo "HPV genotyping: HPV16_Qv18158E" > result_capture_blood3
+echo "HPV capture sequencing data" > data_anal_capture
+echo "HPV genotyping: HPV16_Qv18158E" > result_anal_capture
 
 rm -rf ~/GitOmmix/$PATIENT
 
@@ -32,8 +47,8 @@ git-ommix add diagnosis --id HPV_HGAIN --use ${SAMPLE}_pathology --use ${SAMPLE}
 
 export SAMPLE=HGAIN_resection
 git-ommix add sample --id $SAMPLE
-git-ommix add data   --id ${SAMPLE}_pathology
-git-ommix add result --id ${SAMPLE}_pathology --use ${SAMPLE}_pathology --method pathology --provider "Dept of Pathology <pathology@aphp.fr>" 
+git-ommix add data   --id ${SAMPLE}_pathology data_hgain_path
+git-ommix add result --id ${SAMPLE}_pathology --use ${SAMPLE}_pathology --method pathology --provider "Dept of Pathology <pathology@aphp.fr>" result_hgain_path
 git-ommix add diagnosis --id HPV_HGAIN_T1N0M0 --revision_of HPV_HGAIN --use ${SAMPLE}_pathology 
 
 export SAMPLE=blood1
