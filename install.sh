@@ -102,10 +102,10 @@ function check_dep_ver
     local version
     if [[ "$3" ]];then
         command -v $1 &>/dev/null || return 1
-        version="$($3 &>/dev/stdout | grep -Pom1 '\d+\.\d+(\.\d+)?')" || return 2
+        version="$($3 &>/dev/stdout | grep -Eom1 '[0-9]+\.[0-9]+(\.[0-9]+)?')" || return 2
     else
         command -v "$1" &>/dev/null || return 1
-        version="$($1 --version | grep -Pom1 '\d+\.\d+(\.\d+)?')" || return 2
+        version="$($1 --version | grep -Eom1 '[0-9]+\.[0-9]+(\.[0-9]+)?')" || return 2
     fi
 
     semver $2 $version || return 3
