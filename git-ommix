@@ -75,9 +75,9 @@ function add
 function add_patient
 {
     # Create the patient repo dir and data and result subdirs
-    dbg mkdir --parents "$ID/data" || die "Unable to create a directory in the git ommix base directory at: $GIT_OMMIX_REPO_DIR
+    dbg mkdir -p "$ID/data" || die "Unable to create a directory in the git ommix base directory at: $GIT_OMMIX_REPO_DIR
 Please check your permissions"
-    dbg mkdir --parents "$ID/result"
+    dbg mkdir -p "$ID/result"
     dbg touch "$ID/data/.empty"
     dbg touch "$ID/result/.empty"
 
