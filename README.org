@@ -34,6 +34,8 @@ sudo apt-get install git-annex graphviz raptor2-utils rasqal-utils
 OSX users can find all the required dependencies on *homebrew*.\\
 *gnu-getopt* is an additional requirement on OSX as the version of getopt provided by the system is broken.
 
+*Some problems remain with the installation process on OSX, depending on your configuration. This is being worked out. gitOmmix still functions as long as git, git-annex, the rdf tools, and graphviz are installed.*
+
 #+begin_src sh
 brew install git-annex graphviz raptor rasqal gnu-getopt
 #+end_src
